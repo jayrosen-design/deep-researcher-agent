@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LogOut, RotateCcw } from "lucide-react";
 import { PromptInput } from "@/components/research/PromptInput";
+import { PasswordGate } from "@/components/research/PasswordGate";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
@@ -16,6 +17,12 @@ import {
   buildSearchObservation,
 } from "@/lib/agent-prompts";
 import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
+import { isAuthed, setAuthed } from "@/lib/auth";
+import {
+  DEFAULT_SETTINGS,
+  loadSettings,
+  type UserSettings,
+} from "@/lib/user-settings";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,8 +37,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const MAX_STEPS = 10;
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
