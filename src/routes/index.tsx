@@ -319,8 +319,30 @@ function Index() {
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
 
+  if (!authed) {
+    return <PasswordGate onSuccess={() => setAuthedState(true)} />;
+  }
+
   if (!prompt) {
-    return <PromptInput onSubmit={handleStart} model={model} onModelChange={setModel} />;
+    return (
+      <div className="relative">
+        <button
+          onClick={handleSignOut}
+          className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+          title="Sign out"
+        >
+          <LogOut className="size-3.5" />
+          Sign out
+        </button>
+        <PromptInput
+          onSubmit={handleStart}
+          model={model}
+          onModelChange={setModel}
+          settings={settings}
+          onSettingsChange={setSettings}
+        />
+      </div>
+    );
   }
 
   return (
