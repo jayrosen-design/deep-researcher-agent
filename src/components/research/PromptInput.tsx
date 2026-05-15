@@ -139,7 +139,17 @@ export function PromptInput({
           </p>
           <div className="space-y-3">
             <label className="block">
-              <div className="mb-1 text-xs text-muted-foreground">NaviGator API key</div>
+              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                <span>NaviGator API key</span>
+                <a
+                  href="https://api.ai.it.ufl.edu/ui/?page=api-keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 underline-offset-2 hover:underline"
+                >
+                  Get key ↗
+                </a>
+              </div>
               <input
                 type="password"
                 value={draft.navigatorApiKey}
@@ -151,7 +161,17 @@ export function PromptInput({
               />
             </label>
             <label className="block">
-              <div className="mb-1 text-xs text-muted-foreground">Tavily API key</div>
+              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                <span>Tavily API key</span>
+                <a
+                  href="https://www.tavily.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 underline-offset-2 hover:underline"
+                >
+                  Get key ↗
+                </a>
+              </div>
               <input
                 type="password"
                 value={draft.tavilyApiKey}
