@@ -84,6 +84,16 @@ function parseTurn(raw: string): AgentTurn {
 }
 
 function Index() {
+  const [authed, setAuthedState] = useState(false);
+  useEffect(() => {
+    setAuthedState(isAuthed());
+  }, []);
+
+  const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
+  useEffect(() => {
+    setSettings(loadSettings());
+  }, []);
+
   const [prompt, setPrompt] = useState<string | null>(null);
   const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
   const [trace, setTrace] = useState<TraceStep[]>([]);
@@ -92,6 +102,17 @@ function Index() {
   const [running, setRunning] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
   const cancelled = useRef(false);
+
+  const handleSignOut = useCallback(() => {
+    setAuthed(false);
+    setAuthedState(false);
+    setPrompt(null);
+    setTrace([]);
+    setReport(null);
+    setSources([]);
+    setFatalError(null);
+    cancelled.current = true;
+  }, []);
 
   const appendStep = useCallback((step: TraceStep) => {
     setTrace((t) => [...t, step]);
