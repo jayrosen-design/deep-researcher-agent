@@ -1,21 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { PromptInput } from "@/components/research/PromptInput";
-import {
-  ProgressTracker,
-  type Phase,
-  type PhaseStatus,
-} from "@/components/research/ProgressTracker";
+import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { webSearch, type SearchResult } from "@/lib/web-search.functions";
+import { readUrl } from "@/lib/read-url.functions";
 import {
-  PLANNER_SYSTEM_PROMPT,
-  SYNTHESIS_SYSTEM_PROMPT,
-  buildSynthesisUserPrompt,
-} from "@/lib/research-prompts";
+  AGENT_SYSTEM_PROMPT,
+  buildBudgetWarning,
+  buildInitialUserMessage,
+  buildReadObservation,
+  buildSearchObservation,
+} from "@/lib/agent-prompts";
 import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
 
 export const Route = createFileRoute("/")({
@@ -25,221 +24,250 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Ask any question. An autonomous agent plans, searches the web, and writes a fully cited Markdown report.",
+          "Ask any question. An autonomous ReAct agent plans, searches, reads sources, and writes a fully cited Markdown report.",
       },
     ],
   }),
   component: Index,
 });
 
-type PhaseKey = "plan" | "search" | "synthesize";
-type ContextBlock = { query: string; results: SearchResult[] };
+const MAX_STEPS = 10;
 
-type State = {
-  prompt: string | null;
-  plan: string[] | null;
-  context: ContextBlock[] | null;
-  report: string | null;
-  currentSearchQuery: string | null;
-  statuses: Record<PhaseKey, PhaseStatus>;
-  errors: Partial<Record<PhaseKey, string>>;
-};
+type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
-const INITIAL: State = {
-  prompt: null,
-  plan: null,
-  context: null,
-  report: null,
-  currentSearchQuery: null,
-  statuses: { plan: "pending", search: "pending", synthesize: "pending" },
-  errors: {},
-};
+type AgentAction =
+  | { tool: "web_search"; args: { query: string } }
+  | { tool: "read_url"; args: { url: string } }
+  | { tool: "finish"; args: { report: string } };
 
-function parsePlan(raw: string): string[] {
-  // Strip code fences if present
-  let text = raw.trim();
-  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence) text = fence[1].trim();
+type AgentTurn = { thought: string; action: AgentAction };
 
+function stripFences(s: string): string {
+  const t = s.trim();
+  const m = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  return (m ? m[1] : t).trim();
+}
+
+function parseTurn(raw: string): AgentTurn {
+  const text = stripFences(raw);
+  // Try direct parse; fall back to extracting first {...} block.
+  let parsed: unknown;
   try {
-    const parsed = JSON.parse(text);
-    const arr = Array.isArray(parsed) ? parsed : parsed.queries;
-    if (!Array.isArray(arr)) throw new Error("not an array");
-    const queries = arr
-      .map((q) => (typeof q === "string" ? q.trim() : ""))
-      .filter(Boolean)
-      .slice(0, 5);
-    if (queries.length === 0) throw new Error("empty");
-    return queries;
+    parsed = JSON.parse(text);
   } catch {
-    throw new Error("Planner did not return a valid JSON array of queries.");
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    if (start === -1 || end === -1) throw new Error("Agent did not return JSON.");
+    parsed = JSON.parse(text.slice(start, end + 1));
   }
+  if (typeof parsed !== "object" || parsed === null) throw new Error("Bad agent JSON.");
+  const obj = parsed as Record<string, unknown>;
+  const thought = typeof obj.thought === "string" ? obj.thought : "";
+  const action = obj.action as { tool?: string; args?: Record<string, unknown> } | undefined;
+  if (!action || typeof action.tool !== "string") throw new Error("Missing action.tool.");
+  const args = action.args ?? {};
+  if (action.tool === "web_search" && typeof args.query === "string") {
+    return { thought, action: { tool: "web_search", args: { query: args.query } } };
+  }
+  if (action.tool === "read_url" && typeof args.url === "string") {
+    return { thought, action: { tool: "read_url", args: { url: args.url } } };
+  }
+  if (action.tool === "finish" && typeof args.report === "string") {
+    return { thought, action: { tool: "finish", args: { report: args.report } } };
+  }
+  throw new Error(`Unknown or invalid tool: ${action.tool}`);
 }
 
 function Index() {
-  const [state, setState] = useState<State>(INITIAL);
+  const [prompt, setPrompt] = useState<string | null>(null);
   const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
+  const [trace, setTrace] = useState<TraceStep[]>([]);
+  const [report, setReport] = useState<string | null>(null);
+  const [sources, setSources] = useState<SearchResult[]>([]);
+  const [running, setRunning] = useState(false);
+  const [fatalError, setFatalError] = useState<string | null>(null);
+  const cancelled = useRef(false);
 
-  const setStatus = useCallback((key: PhaseKey, status: PhaseStatus, error?: string) => {
-    setState((s) => ({
-      ...s,
-      statuses: { ...s.statuses, [key]: status },
-      errors: { ...s.errors, [key]: error },
-    }));
+  const appendStep = useCallback((step: TraceStep) => {
+    setTrace((t) => [...t, step]);
   }, []);
 
-  const runPlan = useCallback(
-    async (prompt: string): Promise<string[] | null> => {
-      setStatus("plan", "active");
-      try {
-        const { content } = await navigatorChat({
-          data: {
-            model,
-            messages: [
-              { role: "system", content: PLANNER_SYSTEM_PROMPT },
-              { role: "user", content: prompt },
-            ],
-            temperature: 0.2,
-            responseFormat: "json_object",
-          },
-        });
-        const queries = parsePlan(content);
-        setState((s) => ({ ...s, plan: queries }));
-        setStatus("plan", "done");
-        return queries;
-      } catch (e) {
-        setStatus("plan", "error", e instanceof Error ? e.message : String(e));
-        return null;
-      }
-    },
-    [setStatus, model],
-  );
+  const updateLastStep = useCallback((updater: (s: TraceStep) => TraceStep) => {
+    setTrace((t) => {
+      if (t.length === 0) return t;
+      const copy = t.slice();
+      copy[copy.length - 1] = updater(copy[copy.length - 1]);
+      return copy;
+    });
+  }, []);
 
-  const runSearch = useCallback(
-    async (queries: string[]): Promise<ContextBlock[] | null> => {
-      setStatus("search", "active");
-      const blocks: ContextBlock[] = [];
+  const runAgent = useCallback(
+    async (userQuery: string) => {
+      cancelled.current = false;
+      setRunning(true);
+      setFatalError(null);
+      setReport(null);
+      setSources([]);
+      setTrace([]);
+
+      const messages: ChatMessage[] = [
+        { role: "system", content: AGENT_SYSTEM_PROMPT },
+        { role: "user", content: buildInitialUserMessage(userQuery, MAX_STEPS) },
+      ];
+      const seenUrls = new Set<string>();
+      const collectedSources: SearchResult[] = [];
+      let stepsUsed = 0;
+
       try {
-        for (const query of queries) {
-          setState((s) => ({ ...s, currentSearchQuery: query }));
-          const { results } = await webSearch({ data: { query } });
-          blocks.push({ query, results });
+        for (let i = 0; i < MAX_STEPS + 1; i++) {
+          if (cancelled.current) return;
+
+          const { content } = await navigatorChat({
+            data: { model, messages, temperature: 0.2, responseFormat: "json_object" },
+          });
+
+          let turn: AgentTurn;
+          try {
+            turn = parseTurn(content);
+          } catch (e) {
+            // Nudge the model to fix its output and retry once.
+            messages.push({ role: "assistant", content });
+            messages.push({
+              role: "user",
+              content: `System: Your previous response was not valid JSON in the required format (${
+                e instanceof Error ? e.message : String(e)
+              }). Respond again with a single JSON object only.`,
+            });
+            continue;
+          }
+
+          messages.push({ role: "assistant", content });
+
+          if (turn.thought) appendStep({ kind: "thought", text: turn.thought });
+
+          if (turn.action.tool === "finish") {
+            appendStep({ kind: "finish", status: "active" });
+            setReport(turn.action.args.report);
+            setSources(collectedSources);
+            updateLastStep(() => ({ kind: "finish", status: "done" }));
+            return;
+          }
+
+          // Tool step — counts against budget.
+          stepsUsed += 1;
+          const remaining = MAX_STEPS - stepsUsed;
+
+          if (turn.action.tool === "web_search") {
+            const query = turn.action.args.query;
+            appendStep({ kind: "search", query, status: "active" });
+            try {
+              const { results } = await webSearch({ data: { query } });
+              for (const r of results) {
+                if (!seenUrls.has(r.url)) {
+                  seenUrls.add(r.url);
+                  collectedSources.push(r);
+                }
+              }
+              updateLastStep(() => ({
+                kind: "search",
+                query,
+                status: "done",
+                resultCount: results.length,
+              }));
+              messages.push({
+                role: "user",
+                content:
+                  buildSearchObservation(query, results) +
+                  "\n\n" +
+                  buildBudgetWarning(remaining),
+              });
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : String(e);
+              updateLastStep(() => ({ kind: "search", query, status: "error", error: msg }));
+              messages.push({
+                role: "user",
+                content: `Observation (web_search "${query}"): ERROR — ${msg}\n\n${buildBudgetWarning(remaining)}`,
+              });
+            }
+          } else if (turn.action.tool === "read_url") {
+            const url = turn.action.args.url;
+            appendStep({ kind: "read", url, status: "active" });
+            try {
+              const page = await readUrl({ data: { url } });
+              updateLastStep(() => ({
+                kind: "read",
+                url,
+                status: "done",
+                chars: page.content.length,
+              }));
+              messages.push({
+                role: "user",
+                content:
+                  buildReadObservation(page.url, page.content) +
+                  "\n\n" +
+                  buildBudgetWarning(remaining),
+              });
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : String(e);
+              updateLastStep(() => ({ kind: "read", url, status: "error", error: msg }));
+              messages.push({
+                role: "user",
+                content: `Observation (read_url ${url}): ERROR — ${msg}\n\n${buildBudgetWarning(remaining)}`,
+              });
+            }
+          }
+
+          if (remaining <= 0) {
+            // Force a final finish call on the next iteration.
+            messages.push({
+              role: "user",
+              content: buildBudgetWarning(0),
+            });
+          }
         }
-        setState((s) => ({ ...s, context: blocks, currentSearchQuery: null }));
-        setStatus("search", "done");
-        return blocks;
+
+        // Loop exited without finish — synthesize fallback message.
+        setFatalError(
+          "Agent did not produce a final report within the step budget. Try again or pick a more focused query.",
+        );
       } catch (e) {
-        setState((s) => ({ ...s, currentSearchQuery: null }));
-        setStatus("search", "error", e instanceof Error ? e.message : String(e));
-        return null;
+        const msg = e instanceof Error ? e.message : String(e);
+        appendStep({ kind: "error", message: msg });
+        setFatalError(msg);
+      } finally {
+        setRunning(false);
       }
     },
-    [setStatus],
-  );
-
-  const runSynthesis = useCallback(
-    async (prompt: string, context: ContextBlock[]): Promise<void> => {
-      setStatus("synthesize", "active");
-      try {
-        const { content } = await navigatorChat({
-          data: {
-            model,
-            messages: [
-              { role: "system", content: SYNTHESIS_SYSTEM_PROMPT },
-              { role: "user", content: buildSynthesisUserPrompt(prompt, context) },
-            ],
-            temperature: 0.4,
-          },
-        });
-        setState((s) => ({ ...s, report: content }));
-        setStatus("synthesize", "done");
-      } catch (e) {
-        setStatus("synthesize", "error", e instanceof Error ? e.message : String(e));
-      }
-    },
-    [setStatus, model],
-  );
-
-  const runPipeline = useCallback(
-    async (prompt: string) => {
-      const queries = await runPlan(prompt);
-      if (!queries) return;
-      const blocks = await runSearch(queries);
-      if (!blocks) return;
-      await runSynthesis(prompt, blocks);
-    },
-    [runPlan, runSearch, runSynthesis],
+    [model, appendStep, updateLastStep],
   );
 
   const handleStart = useCallback(
-    (prompt: string) => {
-      setState({ ...INITIAL, prompt });
-      void runPipeline(prompt);
+    (q: string) => {
+      setPrompt(q);
+      void runAgent(q);
     },
-    [runPipeline],
+    [runAgent],
   );
 
-  const handleRetry = useCallback(
-    async (key: string) => {
-      const prompt = state.prompt;
-      if (!prompt) return;
-      if (key === "plan") {
-        const queries = await runPlan(prompt);
-        if (!queries) return;
-        const blocks = await runSearch(queries);
-        if (!blocks) return;
-        await runSynthesis(prompt, blocks);
-      } else if (key === "search" && state.plan) {
-        const blocks = await runSearch(state.plan);
-        if (!blocks) return;
-        await runSynthesis(prompt, blocks);
-      } else if (key === "synthesize" && state.context) {
-        await runSynthesis(prompt, state.context);
-      }
-    },
-    [state.prompt, state.plan, state.context, runPlan, runSearch, runSynthesis],
-  );
+  const handleReset = useCallback(() => {
+    cancelled.current = true;
+    setPrompt(null);
+    setTrace([]);
+    setReport(null);
+    setSources([]);
+    setFatalError(null);
+    setRunning(false);
+  }, []);
 
-  const handleReset = useCallback(() => setState(INITIAL), []);
+  const handleRetry = useCallback(() => {
+    if (prompt) void runAgent(prompt);
+  }, [prompt, runAgent]);
 
-  const phases: Phase[] = useMemo(() => {
-    const planDetail =
-      state.statuses.plan === "done" && state.plan
-        ? `${state.plan.length} queries planned`
-        : state.errors.plan;
+  const isDone = useMemo(() => !running && !!report, [running, report]);
 
-    let searchDetail: string | undefined;
-    if (state.statuses.search === "active" && state.currentSearchQuery) {
-      searchDetail = `Searching: "${state.currentSearchQuery}"`;
-    } else if (state.statuses.search === "done" && state.context) {
-      const total = state.context.reduce((n, b) => n + b.results.length, 0);
-      searchDetail = `${total} sources gathered`;
-    } else if (state.errors.search) {
-      searchDetail = state.errors.search;
-    }
-
-    return [
-      { key: "plan", label: "Drafting research plan", status: state.statuses.plan, detail: planDetail },
-      { key: "search", label: "Searching the web", status: state.statuses.search, detail: searchDetail },
-      {
-        key: "synthesize",
-        label: "Synthesizing final report",
-        status: state.statuses.synthesize,
-        detail: state.errors.synthesize,
-      },
-    ];
-  }, [state]);
-
-  const allSources: SearchResult[] = useMemo(
-    () => state.context?.flatMap((b) => b.results) ?? [],
-    [state.context],
-  );
-
-  if (!state.prompt) {
+  if (!prompt) {
     return <PromptInput onSubmit={handleStart} model={model} onModelChange={setModel} />;
   }
-
-  const isDone = state.statuses.synthesize === "done" && state.report;
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-10">
@@ -248,9 +276,7 @@ function Index() {
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Research
           </div>
-          <h1 className="mt-1 text-xl font-semibold leading-snug text-foreground">
-            {state.prompt}
-          </h1>
+          <h1 className="mt-1 text-xl font-semibold leading-snug text-foreground">{prompt}</h1>
         </div>
         <button
           onClick={handleReset}
@@ -263,31 +289,46 @@ function Index() {
 
       {!isDone && (
         <section className="rounded-xl border border-border bg-card p-6">
-          <ProgressTracker phases={phases} onRetry={handleRetry} />
-          {state.plan && state.statuses.plan === "done" && (
+          <div className="mb-4 flex items-center justify-between">
+            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Agent trace
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {MAX_STEPS} steps
+            </div>
+          </div>
+          {trace.length === 0 && running && (
+            <div className="text-sm text-muted-foreground">Thinking…</div>
+          )}
+          <AgentTrace steps={trace} />
+          {fatalError && (
             <div className="mt-6 border-t border-border pt-4">
-              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Plan
-              </div>
-              <ul className="space-y-1.5 text-sm text-foreground">
-                {state.plan.map((q, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-muted-foreground tabular-nums">{i + 1}.</span>
-                    <span>{q}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="text-sm text-destructive">{fatalError}</div>
+              <button
+                onClick={handleRetry}
+                className="mt-3 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+              >
+                Retry research
+              </button>
             </div>
           )}
         </section>
       )}
 
-      {isDone && state.report && (
+      {isDone && report && (
         <div className="space-y-8">
           <section className="rounded-xl border border-border bg-card p-8">
-            <ReportView markdown={state.report} />
+            <ReportView markdown={report} />
           </section>
-          <SourcesPanel sources={allSources} />
+          {trace.length > 0 && (
+            <section className="rounded-xl border border-border bg-card p-6">
+              <div className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Agent trace
+              </div>
+              <AgentTrace steps={trace} />
+            </section>
+          )}
+          <SourcesPanel sources={sources} />
         </div>
       )}
     </div>
