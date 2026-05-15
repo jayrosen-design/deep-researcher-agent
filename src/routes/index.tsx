@@ -146,6 +146,24 @@ function Index() {
           if (turn.thought) appendStep({ kind: "thought", text: turn.thought });
 
           if (turn.action.tool === "finish") {
+            const searchCount = collectedSources.length > 0 ? 1 : 0;
+            const readCount = trace.filter((s) => s.kind === "read" && (s.status === "done")).length;
+            // Hard guard: require real research before finishing (unless out of budget).
+            const minOk = collectedSources.length > 0 && stepsUsed >= 2;
+            const outOfBudget = stepsUsed >= MAX_STEPS;
+            if (!minOk && !outOfBudget) {
+              messages.push({
+                role: "user",
+                content: `System: REJECTED. You attempted to finish without doing real research (searches so far: ${stepsUsed}, sources gathered: ${collectedSources.length}, pages read: ${readCount}). You MUST call web_search at least 2 times AND read_url at least once before finishing. Continue researching now.`,
+              });
+              appendStep({
+                kind: "error",
+                message: "Agent tried to finish without researching — forcing it to search the web.",
+              });
+              // Don't count this as a tool step.
+              void searchCount;
+              continue;
+            }
             appendStep({ kind: "finish", status: "active" });
             setReport(turn.action.args.report);
             setSources(collectedSources);
