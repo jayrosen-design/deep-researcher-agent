@@ -1,23 +1,46 @@
-import { useState } from "react";
-import { ArrowUp, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUp, Settings as SettingsIcon, Sparkles } from "lucide-react";
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
+import {
+  DEFAULT_SETTINGS,
+  SOURCE_COUNT_OPTIONS,
+  loadSettings,
+  saveSettings,
+  type UserSettings,
+} from "@/lib/user-settings";
 
 export function PromptInput({
   onSubmit,
   model,
   onModelChange,
+  settings,
+  onSettingsChange,
 }: {
   onSubmit: (prompt: string) => void;
   model: NavigatorModel;
   onModelChange: (m: NavigatorModel) => void;
+  settings: UserSettings;
+  onSettingsChange: (s: UserSettings) => void;
 }) {
   const [value, setValue] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
+  const [draft, setDraft] = useState<UserSettings>(settings);
+
+  useEffect(() => {
+    setDraft(settings);
+  }, [settings]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = value.trim();
     if (!trimmed) return;
     onSubmit(trimmed);
+  };
+
+  const persistDraft = (next: UserSettings) => {
+    setDraft(next);
+    saveSettings(next);
+    onSettingsChange(next);
   };
 
   return (
@@ -45,21 +68,47 @@ export function PromptInput({
             rows={4}
             className="w-full resize-none rounded-2xl bg-transparent px-5 py-4 text-base text-foreground placeholder:text-muted-foreground/70 focus:outline-none"
           />
-          <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-2">
-            <label className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="px-1">Model</span>
-              <select
-                value={model}
-                onChange={(e) => onModelChange(e.target.value as NavigatorModel)}
-                className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-3 py-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="px-1">Model</span>
+                <select
+                  value={model}
+                  onChange={(e) => onModelChange(e.target.value as NavigatorModel)}
+                  className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                >
+                  {NAVIGATOR_MODELS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="px-1">Max sources</span>
+                <select
+                  value={settings.maxSources}
+                  onChange={(e) =>
+                    persistDraft({ ...draft, maxSources: Number(e.target.value) })
+                  }
+                  className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                >
+                  {SOURCE_COUNT_OPTIONS.map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowSettings((s) => !s)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
               >
-                {NAVIGATOR_MODELS.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <SettingsIcon className="size-3.5" />
+                API keys
+              </button>
+            </div>
             <button
               type="submit"
               disabled={!value.trim()}
@@ -71,6 +120,51 @@ export function PromptInput({
           </div>
         </div>
       </form>
+
+      {showSettings && (
+        <div className="mt-4 w-full rounded-xl border border-border bg-card p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-sm font-medium text-foreground">Your API keys</div>
+            <button
+              type="button"
+              onClick={() => persistDraft(DEFAULT_SETTINGS)}
+              className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+            >
+              Reset
+            </button>
+          </div>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Stored only in your browser (localStorage) and sent with each request.
+            Leave blank to use the server's default keys.
+          </p>
+          <div className="space-y-3">
+            <label className="block">
+              <div className="mb-1 text-xs text-muted-foreground">NaviGator API key</div>
+              <input
+                type="password"
+                value={draft.navigatorApiKey}
+                onChange={(e) =>
+                  persistDraft({ ...draft, navigatorApiKey: e.target.value.trim() })
+                }
+                placeholder="sk-…"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+              />
+            </label>
+            <label className="block">
+              <div className="mb-1 text-xs text-muted-foreground">Tavily API key</div>
+              <input
+                type="password"
+                value={draft.tavilyApiKey}
+                onChange={(e) =>
+                  persistDraft({ ...draft, tavilyApiKey: e.target.value.trim() })
+                }
+                placeholder="tvly-…"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+              />
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
