@@ -370,7 +370,7 @@ function Index() {
               Agent trace
             </div>
             <div className="text-xs text-muted-foreground">
-              {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {MAX_STEPS} steps
+              {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {settings.maxSources} steps
             </div>
           </div>
           {trace.length === 0 && running && (
