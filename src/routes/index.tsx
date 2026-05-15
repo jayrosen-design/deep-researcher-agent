@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LogOut, RotateCcw } from "lucide-react";
 import { PromptInput } from "@/components/research/PromptInput";
+import { PasswordGate } from "@/components/research/PasswordGate";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
@@ -16,6 +17,12 @@ import {
   buildSearchObservation,
 } from "@/lib/agent-prompts";
 import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
+import { isAuthed, setAuthed } from "@/lib/auth";
+import {
+  DEFAULT_SETTINGS,
+  loadSettings,
+  type UserSettings,
+} from "@/lib/user-settings";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,8 +37,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const MAX_STEPS = 10;
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -79,6 +84,16 @@ function parseTurn(raw: string): AgentTurn {
 }
 
 function Index() {
+  const [authed, setAuthedState] = useState(false);
+  useEffect(() => {
+    setAuthedState(isAuthed());
+  }, []);
+
+  const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
+  useEffect(() => {
+    setSettings(loadSettings());
+  }, []);
+
   const [prompt, setPrompt] = useState<string | null>(null);
   const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
   const [trace, setTrace] = useState<TraceStep[]>([]);
@@ -87,6 +102,17 @@ function Index() {
   const [running, setRunning] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
   const cancelled = useRef(false);
+
+  const handleSignOut = useCallback(() => {
+    setAuthed(false);
+    setAuthedState(false);
+    setPrompt(null);
+    setTrace([]);
+    setReport(null);
+    setSources([]);
+    setFatalError(null);
+    cancelled.current = true;
+  }, []);
 
   const appendStep = useCallback((step: TraceStep) => {
     setTrace((t) => [...t, step]);
@@ -110,20 +136,30 @@ function Index() {
       setSources([]);
       setTrace([]);
 
+      const maxSteps = settings.maxSources;
+      const navigatorKey = settings.navigatorApiKey || undefined;
+      const tavilyKey = settings.tavilyApiKey || undefined;
+
       const messages: ChatMessage[] = [
         { role: "system", content: AGENT_SYSTEM_PROMPT },
-        { role: "user", content: buildInitialUserMessage(userQuery, MAX_STEPS) },
+        { role: "user", content: buildInitialUserMessage(userQuery, maxSteps) },
       ];
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       let stepsUsed = 0;
 
       try {
-        for (let i = 0; i < MAX_STEPS + 1; i++) {
+        for (let i = 0; i < maxSteps + 1; i++) {
           if (cancelled.current) return;
 
           const { content } = await navigatorChat({
-            data: { model, messages, temperature: 0.2, responseFormat: "json_object" },
+            data: {
+              model,
+              messages,
+              temperature: 0.2,
+              responseFormat: "json_object",
+              apiKey: navigatorKey,
+            },
           });
 
           let turn: AgentTurn;
@@ -150,7 +186,7 @@ function Index() {
             const readCount = trace.filter((s) => s.kind === "read" && (s.status === "done")).length;
             // Hard guard: require real research before finishing (unless out of budget).
             const minOk = collectedSources.length > 0 && stepsUsed >= 2;
-            const outOfBudget = stepsUsed >= MAX_STEPS;
+            const outOfBudget = stepsUsed >= maxSteps;
             if (!minOk && !outOfBudget) {
               messages.push({
                 role: "user",
@@ -173,13 +209,13 @@ function Index() {
 
           // Tool step — counts against budget.
           stepsUsed += 1;
-          const remaining = MAX_STEPS - stepsUsed;
+          const remaining = maxSteps - stepsUsed;
 
           if (turn.action.tool === "web_search") {
             const query = turn.action.args.query;
             appendStep({ kind: "search", query, status: "active" });
             try {
-              const { results } = await webSearch({ data: { query } });
+              const { results } = await webSearch({ data: { query, apiKey: tavilyKey } });
               for (const r of results) {
                 if (!seenUrls.has(r.url)) {
                   seenUrls.add(r.url);
@@ -211,7 +247,7 @@ function Index() {
             const url = turn.action.args.url;
             appendStep({ kind: "read", url, status: "active" });
             try {
-              const page = await readUrl({ data: { url } });
+              const page = await readUrl({ data: { url, apiKey: tavilyKey } });
               updateLastStep(() => ({
                 kind: "read",
                 url,
@@ -256,7 +292,7 @@ function Index() {
         setRunning(false);
       }
     },
-    [model, appendStep, updateLastStep],
+    [model, settings, appendStep, updateLastStep, trace],
   );
 
   const handleStart = useCallback(
@@ -283,8 +319,30 @@ function Index() {
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
 
+  if (!authed) {
+    return <PasswordGate onSuccess={() => setAuthedState(true)} />;
+  }
+
   if (!prompt) {
-    return <PromptInput onSubmit={handleStart} model={model} onModelChange={setModel} />;
+    return (
+      <div className="relative">
+        <button
+          onClick={handleSignOut}
+          className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+          title="Sign out"
+        >
+          <LogOut className="size-3.5" />
+          Sign out
+        </button>
+        <PromptInput
+          onSubmit={handleStart}
+          model={model}
+          onModelChange={setModel}
+          settings={settings}
+          onSettingsChange={setSettings}
+        />
+      </div>
+    );
   }
 
   return (
@@ -312,7 +370,7 @@ function Index() {
               Agent trace
             </div>
             <div className="text-xs text-muted-foreground">
-              {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {MAX_STEPS} steps
+              {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {settings.maxSources} steps
             </div>
           </div>
           {trace.length === 0 && running && (

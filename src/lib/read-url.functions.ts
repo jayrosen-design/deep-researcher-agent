@@ -3,6 +3,7 @@ import { z } from "zod";
 
 const inputSchema = z.object({
   url: z.string().url(),
+  apiKey: z.string().min(1).max(500).optional(),
 });
 
 export type ExtractedPage = {
@@ -13,8 +14,8 @@ export type ExtractedPage = {
 export const readUrl = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }): Promise<ExtractedPage> => {
-    const apiKey = process.env.TAVILY_API_KEY;
-    if (!apiKey) throw new Error("TAVILY_API_KEY is not configured");
+    const apiKey = data.apiKey || process.env.TAVILY_API_KEY;
+    if (!apiKey) throw new Error("Tavily API key not configured. Add one in Settings.");
 
     const res = await fetch("https://api.tavily.com/extract", {
       method: "POST",

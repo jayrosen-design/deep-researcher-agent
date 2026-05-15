@@ -3,6 +3,7 @@ import { z } from "zod";
 
 const inputSchema = z.object({
   query: z.string().min(1).max(500),
+  apiKey: z.string().min(1).max(500).optional(),
 });
 
 export type SearchResult = {
@@ -14,8 +15,8 @@ export type SearchResult = {
 export const webSearch = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }): Promise<{ results: SearchResult[] }> => {
-    const apiKey = process.env.TAVILY_API_KEY;
-    if (!apiKey) throw new Error("TAVILY_API_KEY is not configured");
+    const apiKey = data.apiKey || process.env.TAVILY_API_KEY;
+    if (!apiKey) throw new Error("Tavily API key not configured. Add one in Settings.");
 
     const res = await fetch("https://api.tavily.com/search", {
       method: "POST",

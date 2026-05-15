@@ -11,13 +11,14 @@ const inputSchema = z.object({
   model: z.string().optional(),
   temperature: z.number().min(0).max(2).optional(),
   responseFormat: z.enum(["text", "json_object"]).optional(),
+  apiKey: z.string().min(1).max(500).optional(),
 });
 
 export const navigatorChat = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
-    const apiKey = process.env.UF_NAVIGATOR_API_KEY;
-    if (!apiKey) throw new Error("UF_NAVIGATOR_API_KEY is not configured");
+    const apiKey = data.apiKey || process.env.UF_NAVIGATOR_API_KEY;
+    if (!apiKey) throw new Error("NaviGator API key not configured. Add one in Settings.");
 
     const body: Record<string, unknown> = {
       model: data.model ?? "gemini-1.5-pro",
