@@ -336,7 +336,7 @@ function Index() {
       {isDone && report && (
         <div className="space-y-8">
           <section className="rounded-xl border border-border bg-card p-8">
-            <ReportView markdown={report} />
+            <ReportView markdown={report} sources={sources} prompt={prompt} />
           </section>
           {trace.length > 0 && (
             <section className="rounded-xl border border-border bg-card p-6">
