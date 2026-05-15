@@ -136,20 +136,30 @@ function Index() {
       setSources([]);
       setTrace([]);
 
+      const maxSteps = settings.maxSources;
+      const navigatorKey = settings.navigatorApiKey || undefined;
+      const tavilyKey = settings.tavilyApiKey || undefined;
+
       const messages: ChatMessage[] = [
         { role: "system", content: AGENT_SYSTEM_PROMPT },
-        { role: "user", content: buildInitialUserMessage(userQuery, MAX_STEPS) },
+        { role: "user", content: buildInitialUserMessage(userQuery, maxSteps) },
       ];
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       let stepsUsed = 0;
 
       try {
-        for (let i = 0; i < MAX_STEPS + 1; i++) {
+        for (let i = 0; i < maxSteps + 1; i++) {
           if (cancelled.current) return;
 
           const { content } = await navigatorChat({
-            data: { model, messages, temperature: 0.2, responseFormat: "json_object" },
+            data: {
+              model,
+              messages,
+              temperature: 0.2,
+              responseFormat: "json_object",
+              apiKey: navigatorKey,
+            },
           });
 
           let turn: AgentTurn;
@@ -176,7 +186,7 @@ function Index() {
             const readCount = trace.filter((s) => s.kind === "read" && (s.status === "done")).length;
             // Hard guard: require real research before finishing (unless out of budget).
             const minOk = collectedSources.length > 0 && stepsUsed >= 2;
-            const outOfBudget = stepsUsed >= MAX_STEPS;
+            const outOfBudget = stepsUsed >= maxSteps;
             if (!minOk && !outOfBudget) {
               messages.push({
                 role: "user",
@@ -199,13 +209,13 @@ function Index() {
 
           // Tool step — counts against budget.
           stepsUsed += 1;
-          const remaining = MAX_STEPS - stepsUsed;
+          const remaining = maxSteps - stepsUsed;
 
           if (turn.action.tool === "web_search") {
             const query = turn.action.args.query;
             appendStep({ kind: "search", query, status: "active" });
             try {
-              const { results } = await webSearch({ data: { query } });
+              const { results } = await webSearch({ data: { query, apiKey: tavilyKey } });
               for (const r of results) {
                 if (!seenUrls.has(r.url)) {
                   seenUrls.add(r.url);
@@ -237,7 +247,7 @@ function Index() {
             const url = turn.action.args.url;
             appendStep({ kind: "read", url, status: "active" });
             try {
-              const page = await readUrl({ data: { url } });
+              const page = await readUrl({ data: { url, apiKey: tavilyKey } });
               updateLastStep(() => ({
                 kind: "read",
                 url,
@@ -282,7 +292,7 @@ function Index() {
         setRunning(false);
       }
     },
-    [model, appendStep, updateLastStep],
+    [model, settings, appendStep, updateLastStep, trace],
   );
 
   const handleStart = useCallback(
