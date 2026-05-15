@@ -16,6 +16,7 @@ import {
   SYNTHESIS_SYSTEM_PROMPT,
   buildSynthesisUserPrompt,
 } from "@/lib/research-prompts";
+import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -77,6 +78,7 @@ function parsePlan(raw: string): string[] {
 
 function Index() {
   const [state, setState] = useState<State>(INITIAL);
+  const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
 
   const setStatus = useCallback((key: PhaseKey, status: PhaseStatus, error?: string) => {
     setState((s) => ({
@@ -92,6 +94,7 @@ function Index() {
       try {
         const { content } = await navigatorChat({
           data: {
+            model,
             messages: [
               { role: "system", content: PLANNER_SYSTEM_PROMPT },
               { role: "user", content: prompt },
@@ -109,7 +112,7 @@ function Index() {
         return null;
       }
     },
-    [setStatus],
+    [setStatus, model],
   );
 
   const runSearch = useCallback(
@@ -140,6 +143,7 @@ function Index() {
       try {
         const { content } = await navigatorChat({
           data: {
+            model,
             messages: [
               { role: "system", content: SYNTHESIS_SYSTEM_PROMPT },
               { role: "user", content: buildSynthesisUserPrompt(prompt, context) },
@@ -153,7 +157,7 @@ function Index() {
         setStatus("synthesize", "error", e instanceof Error ? e.message : String(e));
       }
     },
-    [setStatus],
+    [setStatus, model],
   );
 
   const runPipeline = useCallback(
@@ -232,7 +236,7 @@ function Index() {
   );
 
   if (!state.prompt) {
-    return <PromptInput onSubmit={handleStart} />;
+    return <PromptInput onSubmit={handleStart} model={model} onModelChange={setModel} />;
   }
 
   const isDone = state.statuses.synthesize === "done" && state.report;
