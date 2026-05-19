@@ -102,6 +102,7 @@ function Index() {
   const [sources, setSources] = useState<SearchResult[]>([]);
   const [running, setRunning] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
+  const [traceOpen, setTraceOpen] = useState(false);
   const cancelled = useRef(false);
 
   const handleSignOut = useCallback(() => {
