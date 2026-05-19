@@ -476,6 +476,43 @@ function Index() {
     ];
   }, [trace, running, fatalError]);
 
+  const workflowSteps = useMemo<WorkflowStep[]>(() => {
+    const hasResearchActivity = trace.length > 0;
+    const reportReady = !!report;
+    const onInput = phase === "input";
+    const onPlan = phase === "plan";
+    const onResearch = phase === "research";
+
+    return [
+      {
+        key: "topic",
+        label: "Topic",
+        status: onInput ? "active" : "done",
+      },
+      {
+        key: "plan",
+        label: "Plan",
+        status: onInput ? "pending" : onPlan ? "active" : "done",
+      },
+      {
+        key: "searching",
+        label: "Searching",
+        status: !onResearch
+          ? "pending"
+          : reportReady
+            ? "done"
+            : hasResearchActivity || running
+              ? "active"
+              : "pending",
+      },
+      {
+        key: "report",
+        label: "Report",
+        status: reportReady ? "done" : onResearch && running ? "active" : "pending",
+      },
+    ];
+  }, [phase, trace.length, report, running]);
+
   if (!authed) {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
