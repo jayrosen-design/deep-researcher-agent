@@ -684,6 +684,8 @@ function Index() {
     setReport(entry.report);
     savedReportRef.current = entry.report;
     setActiveHistoryId(entry.id);
+    setFollowUps([]);
+    setReviewing(false);
     setPhase("research");
   }, []);
 
