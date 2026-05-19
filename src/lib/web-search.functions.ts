@@ -5,6 +5,9 @@ const inputSchema = z.object({
   query: z.string().min(1).max(500),
   apiKey: z.string().min(1).max(500).optional(),
   maxResults: z.number().int().min(1).max(20).optional(),
+  timeRange: z.enum(["day", "week", "month", "year"]).optional(),
+  includeDomains: z.array(z.string().min(1).max(253)).max(20).optional(),
+  chunksPerSource: z.number().int().min(1).max(5).optional(),
 });
 
 export type SearchResult = {
@@ -20,17 +23,24 @@ export const webSearch = createServerFn({ method: "POST" })
     if (!apiKey) throw new Error("Tavily API key not configured. Add one in Settings.");
 
     const maxResults = data.maxResults ?? 5;
+    const body: Record<string, unknown> = {
+      query: data.query,
+      max_results: maxResults,
+      search_depth: "advanced",
+      chunks_per_source: data.chunksPerSource ?? 3,
+    };
+    if (data.timeRange) body.time_range = data.timeRange;
+    if (data.includeDomains && data.includeDomains.length > 0) {
+      body.include_domains = data.includeDomains;
+    }
+
     const res = await fetch("https://api.tavily.com/search", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        query: data.query,
-        max_results: maxResults,
-        search_depth: "advanced",
-      }),
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {

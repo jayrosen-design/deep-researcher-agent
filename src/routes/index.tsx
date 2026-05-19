@@ -20,6 +20,7 @@ import {
   buildInitialUserMessage,
   buildReadObservation,
   buildSearchObservation,
+  buildStepCounter,
   buildSynthesisUserMessage,
   type SynthesisSource,
 } from "@/lib/agent-prompts";
@@ -29,7 +30,7 @@ import {
   buildPlanRevisionMessage,
   buildPlanUserMessage,
 } from "@/lib/plan-prompts";
-import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
+import { type NavigatorModel } from "@/lib/models";
 import { isAuthed, setAuthed } from "@/lib/auth";
 import {
   DEFAULT_SETTINGS,
@@ -54,7 +55,14 @@ export const Route = createFileRoute("/")({
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
 type AgentAction =
-  | { tool: "web_search"; args: { query: string } }
+  | {
+      tool: "web_search";
+      args: {
+        query: string;
+        timeRange?: "day" | "week" | "month" | "year";
+        includeDomains?: string[];
+      };
+    }
   | { tool: "read_url"; args: { url: string } }
   | { tool: "finish"; args: Record<string, unknown> };
 
@@ -65,6 +73,8 @@ function stripFences(s: string): string {
   const m = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
   return (m ? m[1] : t).trim();
 }
+
+const ALLOWED_TIME_RANGES = ["day", "week", "month", "year"] as const;
 
 function parseTurn(raw: string): AgentTurn {
   const text = stripFences(raw);
@@ -84,7 +94,26 @@ function parseTurn(raw: string): AgentTurn {
   if (!action || typeof action.tool !== "string") throw new Error("Missing action.tool.");
   const args = action.args ?? {};
   if (action.tool === "web_search" && typeof args.query === "string") {
-    return { thought, action: { tool: "web_search", args: { query: args.query } } };
+    const rawTime = args.time_range ?? args.timeRange;
+    const timeRange =
+      typeof rawTime === "string" && (ALLOWED_TIME_RANGES as readonly string[]).includes(rawTime)
+        ? (rawTime as (typeof ALLOWED_TIME_RANGES)[number])
+        : undefined;
+    const rawDomains = args.include_domains ?? args.includeDomains;
+    const includeDomains = Array.isArray(rawDomains)
+      ? rawDomains.filter((d): d is string => typeof d === "string" && d.length > 0).slice(0, 20)
+      : undefined;
+    return {
+      thought,
+      action: {
+        tool: "web_search",
+        args: {
+          query: args.query,
+          ...(timeRange ? { timeRange } : {}),
+          ...(includeDomains && includeDomains.length > 0 ? { includeDomains } : {}),
+        },
+      },
+    };
   }
   if (action.tool === "read_url" && typeof args.url === "string") {
     return { thought, action: { tool: "read_url", args: { url: args.url } } };
@@ -111,7 +140,7 @@ function Index() {
   const [plan, setPlan] = useState<string | null>(null);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
-  const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
+  // Investigator + synthesizer models come from settings (split-model).
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [report, setReport] = useState<string | null>(null);
   const [sources, setSources] = useState<SearchResult[]>([]);
@@ -181,10 +210,16 @@ function Index() {
         for (let i = 0; i < maxSteps + 1; i++) {
           if (cancelled.current) return;
 
+          // Inject dynamic step counter so the LLM tracks its remaining budget.
+          const counterMsg: ChatMessage = {
+            role: "user",
+            content: buildStepCounter(stepsUsed + 1, maxSteps),
+          };
+
           const { content } = await navigatorChat({
             data: {
-              model,
-              messages,
+              model: settings.investigatorModel,
+              messages: [...messages, counterMsg],
               temperature: 0.2,
               responseFormat: "json_object",
               apiKey: navigatorKey,
@@ -242,7 +277,7 @@ function Index() {
             ];
             const { content: reportMd } = await navigatorChat({
               data: {
-                model,
+                model: settings.synthesisModel,
                 messages: synthesisMessages,
                 temperature: 0.3,
                 apiKey: navigatorKey,
@@ -259,13 +294,19 @@ function Index() {
           const remaining = maxSteps - stepsUsed;
 
           if (turn.action.tool === "web_search") {
-            const query = turn.action.args.query;
+            const { query, timeRange, includeDomains } = turn.action.args;
             appendStep({ kind: "search", query, status: "active" });
             try {
               const remainingCap = Math.max(1, maxSources - collectedSources.length);
               const requestSize = Math.min(10, Math.max(3, remainingCap));
               const { results } = await webSearch({
-                data: { query, apiKey: tavilyKey, maxResults: requestSize },
+                data: {
+                  query,
+                  apiKey: tavilyKey,
+                  maxResults: requestSize,
+                  ...(timeRange ? { timeRange } : {}),
+                  ...(includeDomains && includeDomains.length > 0 ? { includeDomains } : {}),
+                },
               });
               for (const r of results) {
                 if (collectedSources.length >= maxSources) break;
@@ -355,7 +396,7 @@ function Index() {
         setRunning(false);
       }
     },
-    [model, settings, appendStep, updateLastStep],
+    [settings, appendStep, updateLastStep],
   );
 
   const generatePlan = useCallback(
@@ -372,7 +413,7 @@ function Index() {
             : buildPlanUserMessage(query);
         const { content } = await navigatorChat({
           data: {
-            model,
+            model: settings.synthesisModel,
             messages: [
               { role: "system", content: PLAN_SYSTEM_PROMPT },
               { role: "user", content: userMsg },
@@ -389,7 +430,7 @@ function Index() {
         setPlanLoading(false);
       }
     },
-    [model, settings.navigatorApiKey],
+    [settings.synthesisModel, settings.navigatorApiKey],
   );
 
   const handleStart = useCallback(
@@ -557,8 +598,6 @@ function Index() {
         <WorkflowStepper steps={workflowSteps} />
         <PromptInput
           onSubmit={handleStart}
-          model={model}
-          onModelChange={setModel}
           settings={settings}
           onSettingsChange={setSettings}
         />
