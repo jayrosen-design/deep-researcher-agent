@@ -13,7 +13,7 @@ import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { Navbar } from "@/components/research/Navbar";
 import { HistorySidebar } from "@/components/research/HistorySidebar";
-import { saveEntry, type HistoryEntry } from "@/lib/research-history";
+import { saveEntry, updateEntry, type HistoryEntry } from "@/lib/research-history";
 
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
