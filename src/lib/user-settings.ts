@@ -2,6 +2,8 @@
 // Sent with each request to override server-side defaults.
 
 import { DEFAULT_INVESTIGATOR_MODEL, DEFAULT_SYNTHESIS_MODEL, NAVIGATOR_MODELS, type NavigatorModel } from "./models";
+import { AGENT_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT } from "./agent-prompts";
+import { PLAN_SYSTEM_PROMPT } from "./plan-prompts";
 
 const KEY = "dr-settings-v1";
 
@@ -11,6 +13,9 @@ export type UserSettings = {
   maxSources: number; // 10..100, increments of 10
   investigatorModel: NavigatorModel;
   synthesisModel: NavigatorModel;
+  planSystemPrompt: string;
+  agentSystemPrompt: string;
+  synthesisSystemPrompt: string;
 };
 
 export const DEFAULT_SETTINGS: UserSettings = {
@@ -19,6 +24,9 @@ export const DEFAULT_SETTINGS: UserSettings = {
   maxSources: 30,
   investigatorModel: DEFAULT_INVESTIGATOR_MODEL,
   synthesisModel: DEFAULT_SYNTHESIS_MODEL,
+  planSystemPrompt: PLAN_SYSTEM_PROMPT,
+  agentSystemPrompt: AGENT_SYSTEM_PROMPT,
+  synthesisSystemPrompt: SYNTHESIS_SYSTEM_PROMPT,
 };
 
 export const SOURCE_COUNT_OPTIONS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
@@ -27,6 +35,10 @@ function coerceModel(m: unknown, fallback: NavigatorModel): NavigatorModel {
   return typeof m === "string" && (NAVIGATOR_MODELS as readonly string[]).includes(m)
     ? (m as NavigatorModel)
     : fallback;
+}
+
+function coerceString(v: unknown, fallback: string): string {
+  return typeof v === "string" && v.trim().length > 0 ? v : fallback;
 }
 
 export function loadSettings(): UserSettings {
@@ -45,6 +57,9 @@ export function loadSettings(): UserSettings {
           : DEFAULT_SETTINGS.maxSources,
       investigatorModel: coerceModel(parsed.investigatorModel, DEFAULT_INVESTIGATOR_MODEL),
       synthesisModel: coerceModel(parsed.synthesisModel, DEFAULT_SYNTHESIS_MODEL),
+      planSystemPrompt: coerceString(parsed.planSystemPrompt, PLAN_SYSTEM_PROMPT),
+      agentSystemPrompt: coerceString(parsed.agentSystemPrompt, AGENT_SYSTEM_PROMPT),
+      synthesisSystemPrompt: coerceString(parsed.synthesisSystemPrompt, SYNTHESIS_SYSTEM_PROMPT),
     };
   } catch {
     return DEFAULT_SETTINGS;
