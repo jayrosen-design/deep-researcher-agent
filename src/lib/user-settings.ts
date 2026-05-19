@@ -1,7 +1,7 @@
 // User-configurable settings stored in browser localStorage.
 // Sent with each request to override server-side defaults.
 
-import { DEFAULT_INVESTIGATOR_MODEL, DEFAULT_SYNTHESIS_MODEL, NAVIGATOR_MODELS, type NavigatorModel } from "./models";
+import { DEFAULT_INVESTIGATOR_MODEL, DEFAULT_SYNTHESIS_MODEL, type NavigatorModel } from "./models";
 import { AGENT_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT } from "./agent-prompts";
 import { PLAN_SYSTEM_PROMPT } from "./plan-prompts";
 
