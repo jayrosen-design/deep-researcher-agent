@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUp, Settings as SettingsIcon, Sparkles } from "lucide-react";
+import { ArrowUp, Settings as SettingsIcon, Sparkles, LayoutTemplate } from "lucide-react";
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
 import {
   DEFAULT_SETTINGS,
@@ -8,6 +8,7 @@ import {
   saveSettings,
   type UserSettings,
 } from "@/lib/user-settings";
+import { RESEARCH_TEMPLATES } from "@/lib/research-templates";
 
 export function PromptInput({
   onSubmit,
@@ -24,6 +25,7 @@ export function PromptInput({
 }) {
   const [value, setValue] = useState("");
   const [showSettings, setShowSettings] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [draft, setDraft] = useState<UserSettings>(settings);
 
   useEffect(() => {
@@ -102,6 +104,14 @@ export function PromptInput({
               </label>
               <button
                 type="button"
+                onClick={() => setShowTemplates((s) => !s)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+              >
+                <LayoutTemplate className="size-3.5" />
+                Templates
+              </button>
+              <button
+                type="button"
                 onClick={() => setShowSettings((s) => !s)}
                 className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
               >
@@ -120,6 +130,33 @@ export function PromptInput({
           </div>
         </div>
       </form>
+
+      {showTemplates && (
+        <div className="mt-4 w-full rounded-xl border border-border bg-card p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-sm font-medium text-foreground">Prompt templates</div>
+            <div className="text-xs text-muted-foreground">
+              Click one to load it. Replace [PLACEHOLDERS] with your specifics.
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {RESEARCH_TEMPLATES.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => {
+                  setValue(t.prompt);
+                  setShowTemplates(false);
+                }}
+                className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
+              >
+                <div className="text-sm font-medium text-foreground">{t.label}</div>
+                <div className="text-xs text-muted-foreground">{t.description}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {showSettings && (
         <div className="mt-4 w-full rounded-xl border border-border bg-card p-5">

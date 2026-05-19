@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LogOut, RotateCcw } from "lucide-react";
+import { LogOut, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
 import { PromptInput } from "@/components/research/PromptInput";
 import { PasswordGate } from "@/components/research/PasswordGate";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
+import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { navigatorChat } from "@/lib/navigator-chat.functions";
@@ -101,6 +102,7 @@ function Index() {
   const [sources, setSources] = useState<SearchResult[]>([]);
   const [running, setRunning] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
+  const [traceOpen, setTraceOpen] = useState(false);
   const cancelled = useRef(false);
 
   const handleSignOut = useCallback(() => {
@@ -319,6 +321,65 @@ function Index() {
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
 
+  const phases = useMemo<Phase[]>(() => {
+    const hasSearch = trace.some((s) => s.kind === "search");
+    const searchDone = trace.filter((s) => s.kind === "search" && s.status === "done").length;
+    const hasRead = trace.some((s) => s.kind === "read");
+    const readDone = trace.filter((s) => s.kind === "read" && s.status === "done").length;
+    const finishStep = trace.find((s) => s.kind === "finish");
+    const finishDone = !!finishStep && finishStep.kind === "finish" && finishStep.status === "done";
+
+    const phase = (
+      key: string,
+      label: string,
+      isDoneCond: boolean,
+      isActiveCond: boolean,
+      detail?: string,
+    ): Phase => ({
+      key,
+      label,
+      status: isDoneCond
+        ? "done"
+        : isActiveCond
+          ? running
+            ? "active"
+            : fatalError
+              ? "error"
+              : "pending"
+          : "pending",
+      detail,
+    });
+
+    return [
+      phase(
+        "plan",
+        "Planning research",
+        hasSearch || hasRead || !!finishStep,
+        running && !hasSearch && !finishStep,
+      ),
+      phase(
+        "search",
+        "Searching the web",
+        hasRead || !!finishStep,
+        hasSearch && !hasRead && !finishStep,
+        hasSearch ? `${searchDone} ${searchDone === 1 ? "search" : "searches"} run` : undefined,
+      ),
+      phase(
+        "read",
+        "Reading sources",
+        !!finishStep,
+        hasRead && !finishStep,
+        hasRead ? `${readDone} ${readDone === 1 ? "page" : "pages"} read` : undefined,
+      ),
+      phase(
+        "write",
+        "Writing report",
+        finishDone,
+        !!finishStep && !finishDone,
+      ),
+    ];
+  }, [trace, running, fatalError]);
+
   if (!authed) {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
@@ -364,31 +425,61 @@ function Index() {
       </header>
 
       {!isDone && (
-        <section className="rounded-xl border border-border bg-card p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Agent trace
+        <div className="space-y-6">
+          <section className="rounded-xl border border-border bg-card p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Progress
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {settings.maxSources} steps
+              </div>
             </div>
-            <div className="text-xs text-muted-foreground">
-              {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {settings.maxSources} steps
-            </div>
-          </div>
-          {trace.length === 0 && running && (
-            <div className="text-sm text-muted-foreground">Thinking…</div>
-          )}
-          <AgentTrace steps={trace} />
-          {fatalError && (
-            <div className="mt-6 border-t border-border pt-4">
-              <div className="text-sm text-destructive">{fatalError}</div>
-              <button
-                onClick={handleRetry}
-                className="mt-3 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
-              >
-                Retry research
-              </button>
-            </div>
-          )}
-        </section>
+            <ProgressTracker phases={phases} />
+            {fatalError && (
+              <div className="mt-6 border-t border-border pt-4">
+                <div className="text-sm text-destructive">{fatalError}</div>
+                <button
+                  onClick={handleRetry}
+                  className="mt-3 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+                >
+                  Retry research
+                </button>
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-xl border border-border bg-card">
+            <button
+              type="button"
+              onClick={() => setTraceOpen((o) => !o)}
+              className="flex w-full items-center justify-between gap-2 px-6 py-4 text-left"
+            >
+              <div className="flex items-center gap-2">
+                {traceOpen ? (
+                  <ChevronDown className="size-4 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="size-4 text-muted-foreground" />
+                )}
+                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Agent trace
+                </span>
+                <span className="text-xs text-muted-foreground">({trace.length})</span>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {traceOpen ? "Hide details" : "Show details"}
+              </span>
+            </button>
+            {traceOpen && (
+              <div className="border-t border-border px-6 py-5">
+                {trace.length === 0 && running && (
+                  <div className="text-sm text-muted-foreground">Thinking…</div>
+                )}
+                <AgentTrace steps={trace} />
+              </div>
+            )}
+          </section>
+        </div>
       )}
 
       {isDone && report && (
@@ -397,11 +488,32 @@ function Index() {
             <ReportView markdown={report} sources={sources} prompt={prompt} />
           </section>
           {trace.length > 0 && (
-            <section className="rounded-xl border border-border bg-card p-6">
-              <div className="mb-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Agent trace
-              </div>
-              <AgentTrace steps={trace} />
+            <section className="rounded-xl border border-border bg-card">
+              <button
+                type="button"
+                onClick={() => setTraceOpen((o) => !o)}
+                className="flex w-full items-center justify-between gap-2 px-6 py-4 text-left"
+              >
+                <div className="flex items-center gap-2">
+                  {traceOpen ? (
+                    <ChevronDown className="size-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronRight className="size-4 text-muted-foreground" />
+                  )}
+                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Agent trace
+                  </span>
+                  <span className="text-xs text-muted-foreground">({trace.length} steps)</span>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {traceOpen ? "Hide details" : "Show details"}
+                </span>
+              </button>
+              {traceOpen && (
+                <div className="border-t border-border px-6 py-5">
+                  <AgentTrace steps={trace} />
+                </div>
+              )}
             </section>
           )}
           <SourcesPanel sources={sources} />
