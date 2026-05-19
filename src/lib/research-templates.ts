@@ -361,6 +361,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Conduct a market landscape scan for [PRODUCT CATEGORY / SERVICE AREA / INDUSTRY]. Research major providers, customer segments, pricing patterns when available, recent product trends, adoption drivers, risks, market shifts, and credible forecasts. The final report should support planning, purchasing, partnership, or product strategy decisions.",
       },
+      {
+        id: "cost-benefit-research-brief",
+        roleId: "business-operations",
+        label: "Cost-benefit research brief",
+        description: "Direct, hidden costs and likely benefits",
+        prompt:
+          "Research the cost-benefit case for [TOOL / SERVICE / PROCESS CHANGE / INITIATIVE]. Identify direct costs, hidden costs, staff time, training needs, implementation risks, maintenance burden, likely benefits, comparable examples, and metrics that should be tracked to determine return on investment.",
+      },
+      {
+        id: "procurement-landscape-scan",
+        roleId: "business-operations",
+        label: "Procurement landscape scan",
+        description: "Vendors, pricing, contracts, decision criteria",
+        prompt:
+          "Research purchasing options for [PRODUCT / SERVICE / PLATFORM CATEGORY]. Compare vendors, pricing models when public, contract considerations, implementation requirements, support quality, accessibility, privacy and security posture, customer examples, and risks. Recommend a shortlist and decision criteria.",
+      },
+      {
+        id: "operational-risk-review",
+        roleId: "business-operations",
+        label: "Operational risk review",
+        description: "Failure points, dependencies, mitigation",
+        prompt:
+          "Research operational risks associated with [WORKFLOW / SERVICE / TECHNOLOGY / INITIATIVE]. Identify failure points, staffing dependencies, vendor risks, compliance concerns, data risks, user support needs, continuity planning, and mitigation strategies used by comparable organizations.",
+      },
     ],
   },
   {
