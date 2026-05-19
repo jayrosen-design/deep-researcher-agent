@@ -83,6 +83,12 @@ Strict requirements:
 - Structure: open with a short **Executive Summary**, then detailed body sections using ## and ### headings, then a brief **Conclusion**.
 - Use bullet lists, bold for emphasis, and fenced code blocks where appropriate.
 - Citations: every non-trivial claim must include an inline Markdown link to the EXACT source URL it came from, e.g. "...as reported by [Source Title](https://example.com)." Cite multiple sources where claims are non-trivial or contested.
+- FORBIDDEN citation formats — do NOT use any of these under any circumstances:
+  - Bracketed reference markers like 【4†L1-L4】, 【2†L1】, [oai_citation:...], or any "†" / "‡" / "Lxx" line-range syntax
+  - Numeric footnote markers like [1], [2], [3] that are not Markdown links
+  - Parenthetical "(Source 4)" / "(Read Page 2)" references to the indices used in the input
+  - Trailing reference lists keyed by number — instead, every citation is an inline [Title](URL) link at the point of the claim
+  If you find yourself wanting to write a citation marker, STOP and rewrite it as a proper Markdown link of the form [descriptive text](https://exact-url-from-sources). The reader must be able to click the citation directly.
 - Absolute grounding: use ONLY the provided sources. Do NOT invent facts, URLs, or quotes. If the sources are insufficient on a point, say so briefly rather than guessing.
 - Prefer information from full-text "Read pages" over short search snippets when they conflict.
 - Do not output the research plan or tool trace. Output only the final report.`;
