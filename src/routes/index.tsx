@@ -10,6 +10,8 @@ import { WorkflowStepper, type WorkflowStep } from "@/components/research/Workfl
 import { Disclaimer } from "@/components/research/Disclaimer";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
+import { ThemeToggle } from "@/components/research/ThemeToggle";
+
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { webSearch, type SearchResult } from "@/lib/web-search.functions";
 import { readUrl } from "@/lib/read-url.functions";
@@ -609,14 +611,18 @@ function Index() {
   if (phase === "input" || !prompt) {
     return (
       <div className="relative">
-        <button
-          onClick={handleSignOut}
-          className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
-          title="Sign out"
-        >
-          <LogOut className="size-3.5" />
-          Sign out
-        </button>
+        <div className="absolute right-4 top-4 inline-flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={handleSignOut}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+            title="Sign out"
+          >
+            <LogOut className="size-3.5" />
+            Sign out
+          </button>
+        </div>
+
         <WorkflowStepper steps={workflowSteps} />
         <PromptInput
           onSubmit={handleStart}
