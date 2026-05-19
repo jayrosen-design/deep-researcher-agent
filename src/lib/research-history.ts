@@ -63,6 +63,16 @@ export function saveEntry(entry: Omit<HistoryEntry, "id" | "createdAt">): Histor
   return full;
 }
 
+export function updateEntry(id: string, patch: Partial<Omit<HistoryEntry, "id">>): HistoryEntry | null {
+  const all = loadHistory();
+  const idx = all.findIndex((e) => e.id === id);
+  if (idx === -1) return null;
+  const updated = { ...all[idx], ...patch };
+  all[idx] = updated;
+  persist(all);
+  return updated;
+}
+
 export function deleteEntry(id: string): HistoryEntry[] {
   const next = loadHistory().filter((e) => e.id !== id);
   persist(next);
