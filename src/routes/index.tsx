@@ -211,27 +211,45 @@ function Index() {
           if (turn.thought) appendStep({ kind: "thought", text: turn.thought });
 
           if (turn.action.tool === "finish") {
-            const searchCount = collectedSources.length > 0 ? 1 : 0;
-            const readCount = trace.filter((s) => s.kind === "read" && (s.status === "done")).length;
-            // Hard guard: require real research before finishing (unless out of budget).
-            const minOk = collectedSources.length > 0 && stepsUsed >= 2;
+            const readCount = readPages.length;
+            const minOk = collectedSources.length > 0 && stepsUsed >= 2 && readCount >= 1;
             const outOfBudget = stepsUsed >= maxSteps;
             if (!minOk && !outOfBudget) {
               messages.push({
                 role: "user",
-                content: `System: REJECTED. You attempted to finish without doing real research (searches so far: ${stepsUsed}, sources gathered: ${collectedSources.length}, pages read: ${readCount}). You MUST call web_search at least 2 times AND read_url at least once before finishing. Continue researching now.`,
+                content: `System: REJECTED. You attempted to finish without doing real research (tool steps so far: ${stepsUsed}, sources gathered: ${collectedSources.length}, pages read: ${readCount}). You MUST call web_search at least 2 times AND read_url at least once before finishing. Continue researching now.`,
               });
               appendStep({
                 kind: "error",
-                message: "Agent tried to finish without researching — forcing it to search the web.",
+                message: "Agent tried to finish without researching — forcing it to keep going.",
               });
-              // Don't count this as a tool step.
-              void searchCount;
               continue;
             }
+            // Hand off to dedicated synthesizer.
             appendStep({ kind: "finish", status: "active" });
-            setReport(turn.action.args.report);
             setSources(collectedSources);
+            const synthesisMessages: ChatMessage[] = [
+              { role: "system", content: SYNTHESIS_SYSTEM_PROMPT },
+              {
+                role: "user",
+                content: buildSynthesisUserMessage(
+                  userQuery,
+                  approvedPlan ?? null,
+                  collectedSources,
+                  readPages,
+                ),
+              },
+            ];
+            const { content: reportMd } = await navigatorChat({
+              data: {
+                model,
+                messages: synthesisMessages,
+                temperature: 0.3,
+                apiKey: navigatorKey,
+              },
+            });
+            if (cancelled.current) return;
+            setReport(reportMd.trim());
             updateLastStep(() => ({ kind: "finish", status: "done" }));
             return;
           }
