@@ -131,6 +131,33 @@ export function PromptInput({
         </div>
       </form>
 
+      {showTemplates && (
+        <div className="mt-4 w-full rounded-xl border border-border bg-card p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-sm font-medium text-foreground">Prompt templates</div>
+            <div className="text-xs text-muted-foreground">
+              Click one to load it. Replace [PLACEHOLDERS] with your specifics.
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {RESEARCH_TEMPLATES.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => {
+                  setValue(t.prompt);
+                  setShowTemplates(false);
+                }}
+                className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
+              >
+                <div className="text-sm font-medium text-foreground">{t.label}</div>
+                <div className="text-xs text-muted-foreground">{t.description}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {showSettings && (
         <div className="mt-4 w-full rounded-xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center justify-between">
