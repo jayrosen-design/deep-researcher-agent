@@ -20,6 +20,7 @@ import {
   buildInitialUserMessage,
   buildReadObservation,
   buildSearchObservation,
+  buildStepCounter,
   buildSynthesisUserMessage,
   type SynthesisSource,
 } from "@/lib/agent-prompts";
@@ -29,7 +30,7 @@ import {
   buildPlanRevisionMessage,
   buildPlanUserMessage,
 } from "@/lib/plan-prompts";
-import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
+import { type NavigatorModel } from "@/lib/models";
 import { isAuthed, setAuthed } from "@/lib/auth";
 import {
   DEFAULT_SETTINGS,
