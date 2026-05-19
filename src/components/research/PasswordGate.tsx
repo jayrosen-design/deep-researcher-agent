@@ -32,7 +32,7 @@ export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
         Sign in to continue
       </h1>
       <p className="mt-2 text-center text-sm text-muted-foreground">
-        Enter the access password to use Deep Research.
+        Enter the access password to use Deep Researcher AI.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 w-full space-y-3">
