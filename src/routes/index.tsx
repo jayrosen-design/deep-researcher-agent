@@ -103,6 +103,10 @@ function Index() {
   }, []);
 
   const [prompt, setPrompt] = useState<string | null>(null);
+  const [phase, setPhase] = useState<"input" | "plan" | "research">("input");
+  const [plan, setPlan] = useState<string | null>(null);
+  const [planLoading, setPlanLoading] = useState(false);
+  const [planError, setPlanError] = useState<string | null>(null);
   const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [report, setReport] = useState<string | null>(null);
