@@ -197,9 +197,10 @@ function Index() {
         : buildInitialUserMessage(userQuery, maxSteps);
 
       const messages: ChatMessage[] = [
-        { role: "system", content: AGENT_SYSTEM_PROMPT },
+        { role: "system", content: settings.agentSystemPrompt || AGENT_SYSTEM_PROMPT },
         { role: "user", content: initialUser },
       ];
+
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       const readPages: SynthesisSource[] = [];
@@ -264,7 +265,8 @@ function Index() {
             appendStep({ kind: "finish", status: "active" });
             setSources(collectedSources);
             const synthesisMessages: ChatMessage[] = [
-              { role: "system", content: SYNTHESIS_SYSTEM_PROMPT },
+              { role: "system", content: settings.synthesisSystemPrompt || SYNTHESIS_SYSTEM_PROMPT },
+
               {
                 role: "user",
                 content: buildSynthesisUserMessage(
@@ -415,7 +417,7 @@ function Index() {
           data: {
             model: settings.synthesisModel,
             messages: [
-              { role: "system", content: PLAN_SYSTEM_PROMPT },
+              { role: "system", content: settings.planSystemPrompt || PLAN_SYSTEM_PROMPT },
               { role: "user", content: userMsg },
             ],
             temperature: 0.4,
@@ -430,8 +432,9 @@ function Index() {
         setPlanLoading(false);
       }
     },
-    [settings.synthesisModel, settings.navigatorApiKey],
+    [settings.synthesisModel, settings.navigatorApiKey, settings.planSystemPrompt],
   );
+
 
   const handleStart = useCallback(
     (q: string) => {
