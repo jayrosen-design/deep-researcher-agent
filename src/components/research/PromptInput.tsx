@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, Settings as SettingsIcon, LayoutTemplate, FileText, RotateCcw } from "lucide-react";
-import { Logo } from "@/components/ui/logo";
+
 
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
 import {
