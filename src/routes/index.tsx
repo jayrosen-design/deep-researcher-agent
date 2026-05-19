@@ -387,7 +387,9 @@ function Index() {
               const { results } = await webSearch({
                 data: {
                   query,
-                  apiKey: tavilyKey,
+                  provider: searchProvider,
+                  tavilyApiKey: tavilyKey,
+                  firecrawlApiKey: firecrawlKey,
                   maxResults: requestSize,
                   ...(timeRange ? { timeRange } : {}),
                   ...(includeDomains && includeDomains.length > 0 ? { includeDomains } : {}),
