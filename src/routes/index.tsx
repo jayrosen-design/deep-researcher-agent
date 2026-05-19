@@ -158,6 +158,8 @@ function Index() {
   const [running, setRunning] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
   const [traceOpen, setTraceOpen] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
+  const [followUps, setFollowUps] = useState<FollowUpSuggestion[]>([]);
   const cancelled = useRef(false);
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [historyRefresh, setHistoryRefresh] = useState(0);
