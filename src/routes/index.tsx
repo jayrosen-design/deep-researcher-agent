@@ -254,6 +254,8 @@ function Index() {
       const maxSteps = Math.max(8, Math.ceil(maxSources * 1.5));
       const navigatorKey = settings.navigatorApiKey || undefined;
       const tavilyKey = settings.tavilyApiKey || undefined;
+      const firecrawlKey = settings.firecrawlApiKey || undefined;
+      const searchProvider = settings.searchProvider;
 
       const initialUser = approvedPlan
         ? `${buildInitialUserMessage(userQuery, maxSteps)}\n\n${buildAgentPlanContext(approvedPlan)}`
