@@ -23,7 +23,9 @@ export function PromptInput({
   const [value, setValue] = useState("");
   const [showSettings, setShowSettings] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showPrompts, setShowPrompts] = useState(false);
   const [draft, setDraft] = useState<UserSettings>(settings);
+
 
   useEffect(() => {
     setDraft(settings);
