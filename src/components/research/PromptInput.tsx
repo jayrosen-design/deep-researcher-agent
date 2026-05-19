@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, Settings as SettingsIcon, LayoutTemplate, FileText, RotateCcw } from "lucide-react";
-import { Logo } from "@/components/ui/logo";
+
 
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
 import {
@@ -48,11 +48,11 @@ export function PromptInput({
 
   return (
     <div className="mx-auto flex min-h-[80vh] w-full max-w-4xl flex-col items-center justify-center px-6">
-      <Logo className="mb-4 size-14 text-foreground" />
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
         Deep Researcher Agent
       </div>
       <h1 className="text-center text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+
 
         What should we research?
       </h1>

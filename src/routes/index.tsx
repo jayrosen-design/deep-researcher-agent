@@ -11,6 +11,8 @@ import { Disclaimer } from "@/components/research/Disclaimer";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { ThemeToggle } from "@/components/research/ThemeToggle";
+import { BrandLockup } from "@/components/research/BrandLockup";
+
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { webSearch, type SearchResult } from "@/lib/web-search.functions";
@@ -611,6 +613,8 @@ function Index() {
   if (phase === "input" || !prompt) {
     return (
       <div className="relative">
+        <BrandLockup className="absolute left-4 top-4" />
+
         <div className="absolute right-4 top-4 inline-flex items-center gap-2">
           <ThemeToggle />
           <button
