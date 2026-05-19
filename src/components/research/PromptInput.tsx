@@ -46,6 +46,7 @@ export function PromptInput({
   const [showSettings, setShowSettings] = useState(false);
   const [activeRoleId, setActiveRoleId] = useState<UserRoleId>("researcher");
   const [showPrompts, setShowPrompts] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(true);
   const [draft, setDraft] = useState<UserSettings>(settings);
   const [remoteModels, setRemoteModels] = useState<string[] | null>(null);
   const [modelsLoading, setModelsLoading] = useState(false);
