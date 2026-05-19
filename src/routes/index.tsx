@@ -693,6 +693,15 @@ function Index() {
     if (prompt) void runAgent(prompt, plan);
   }, [prompt, plan, runAgent]);
 
+  const handleFollowUp = useCallback(
+    (nextPrompt: string) => {
+      handleReset();
+      // Defer to next tick so reset state is committed before starting.
+      setTimeout(() => handleStartRef.current?.(nextPrompt), 0);
+    },
+    [handleReset],
+  );
+
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
 
