@@ -45,7 +45,7 @@ Markdown report — all from the browser.
 
 ## How the multi-agent process works
 
-The app uses three specialized LLM roles instead of one monolithic prompt:
+The app uses specialized LLM roles instead of one monolithic prompt:
 
 1. **Strategist** drafts the research plan from the user's topic (and any
    role-specific template prompt they started from).
@@ -56,6 +56,9 @@ The app uses three specialized LLM roles instead of one monolithic prompt:
    collected search snippets, and the full-text read pages, and writes the
    final cited Markdown report in a single raw-text (non-JSON) call. A
    citation validator then checks every link against the gathered sources.
+4. **Reviewer** (the synthesizer returning in JSON mode) polishes the draft
+   in place and proposes 3 follow-up research prompts targeting the gaps
+   it identified. Each follow-up is a one-click launch into a new run.
 
 ```mermaid
 flowchart TD
@@ -82,8 +85,12 @@ flowchart TD
     FIN --> CTX[Build synthesis context:<br/>question + plan +<br/>snippets + read pages]
     CTX --> SY[Synthesizer LLM<br/>raw Markdown, no JSON]
     SY --> CV[Citation validator]
-    CV --> OUT[Cited report +<br/>Sources panel +<br/>Agent trace]
+    CV --> RV[Reviewer LLM<br/>JSON: revisedReport + followUps]
+    RV --> OUT[Polished report +<br/>Sources panel +<br/>Agent trace]
+    RV --> FU[Continue the research<br/>3 follow-up prompt buttons]
+    FU -->|User clicks one| S
 ```
+
 
 ### Why split the agent?
 
