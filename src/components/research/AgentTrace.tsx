@@ -2,10 +2,19 @@ import { Loader2, Search, FileText, CheckCircle2, AlertCircle, Brain } from "luc
 
 export type TraceStep =
   | { kind: "thought"; text: string }
-  | { kind: "search"; query: string; resultCount?: number; status: "active" | "done" | "error"; error?: string }
+  | { kind: "search"; query: string; resultCount?: number; resultUrls?: string[]; status: "active" | "done" | "error"; error?: string }
   | { kind: "read"; url: string; status: "active" | "done" | "error"; error?: string; chars?: number }
   | { kind: "finish"; status: "active" | "done" }
   | { kind: "error"; message: string };
+
+function faviconUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
+  } catch {
+    return "";
+  }
+}
 
 function hostname(url: string): string {
   try {
