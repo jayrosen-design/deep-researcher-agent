@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LogOut, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
+import { LogOut, RotateCcw, ChevronDown, ChevronRight, HelpCircle } from "lucide-react";
+
 import { PromptInput } from "@/components/research/PromptInput";
 import { PasswordGate } from "@/components/research/PasswordGate";
 import { PlanReview } from "@/components/research/PlanReview";
@@ -617,6 +618,15 @@ function Index() {
 
         <div className="absolute right-4 top-4 inline-flex items-center gap-2">
           <ThemeToggle />
+          <Link
+            to="/how-it-works"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+            title="How it Works"
+          >
+            <HelpCircle className="size-3.5" />
+            How it Works
+          </Link>
+
           <button
             onClick={handleSignOut}
             className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"

@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from "react";
-import { Lock } from "lucide-react";
+import { Lock, HelpCircle } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { setAuthed, verifyPassword } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
 import { BrandLockup } from "./BrandLockup";
+
 
 
 
@@ -29,8 +31,16 @@ export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
   return (
     <div className="relative mx-auto flex min-h-[80vh] w-full max-w-md flex-col items-center justify-center px-6">
       <BrandLockup className="absolute left-4 top-4" />
-      <div className="absolute right-4 top-4">
+      <div className="absolute right-4 top-4 inline-flex items-center gap-2">
         <ThemeToggle />
+        <Link
+          to="/how-it-works"
+          className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+          title="How it Works"
+        >
+          <HelpCircle className="size-3.5" />
+          How it Works
+        </Link>
       </div>
 
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
