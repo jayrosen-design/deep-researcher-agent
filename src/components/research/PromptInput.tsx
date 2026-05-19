@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowUp, Settings as SettingsIcon, FileText, RotateCcw } from "lucide-react";
 
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
 import {
   DEFAULT_SETTINGS,
