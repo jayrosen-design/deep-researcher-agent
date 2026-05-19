@@ -105,6 +105,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research support strategies for [STUDENT GROUP / LEARNING CHALLENGE / CLASSROOM NEED]. Prioritize credible education research, practitioner guidance, and examples from school settings. Identify what works, what conditions are needed, common mistakes, equity concerns, family communication considerations, and practical next steps a teacher could take.",
       },
+      {
+        id: "lesson-strategy-evidence-scan",
+        roleId: "school-teacher",
+        label: "Lesson strategy evidence scan",
+        description: "Instructional moves and conditions for impact",
+        prompt:
+          "Research effective teaching strategies for helping students learn [CONCEPT / SKILL / STANDARD]. Prioritize classroom studies, practitioner guidance from credible education organizations, curriculum examples, and evidence syntheses. Identify instructional moves, example activities, differentiation options, common misconceptions, assessment ideas, and conditions that make the strategy more or less effective.",
+      },
+      {
+        id: "classroom-technology-use-case-review",
+        roleId: "school-teacher",
+        label: "Classroom technology use case review",
+        description: "Tool fit, workload, privacy, examples",
+        prompt:
+          "Research whether [DIGITAL TOOL / TECHNOLOGY CATEGORY] is useful for teaching [SUBJECT / GRADE BAND / SKILL]. Compare evidence of learning impact, classroom management needs, student accessibility, teacher workload, device or connectivity requirements, privacy concerns, and examples of successful classroom implementation.",
+      },
+      {
+        id: "family-engagement-research-brief",
+        roleId: "school-teacher",
+        label: "Family engagement research brief",
+        description: "Messages, channels, culturally responsive practices",
+        prompt:
+          "Research evidence-based ways to communicate with families about [STUDENT NEED / CLASSROOM INITIATIVE / LEARNING GOAL]. Identify what messages are most effective, what barriers families may face, culturally responsive communication practices, recommended channels, timing, examples from schools, and ways to measure whether communication improved participation or student support.",
+      },
     ],
   },
   {
