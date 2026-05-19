@@ -37,6 +37,8 @@ import {
   loadSettings,
   type UserSettings,
 } from "@/lib/user-settings";
+import { sanitizeReportCitations } from "@/lib/citation-validator";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -286,8 +288,25 @@ function Index() {
               },
             });
             if (cancelled.current) return;
-            setReport(reportMd.trim());
+            const { sanitizedMarkdown, hallucinatedUrls } = sanitizeReportCitations(
+              reportMd.trim(),
+              collectedSources,
+            );
+            setReport(sanitizedMarkdown);
             updateLastStep(() => ({ kind: "finish", status: "done" }));
+            if (hallucinatedUrls.length > 0) {
+              console.warn("Hallucinated citations stripped:", hallucinatedUrls);
+              appendStep({
+                kind: "error",
+                message: `Stripped ${hallucinatedUrls.length} hallucinated citation${
+                  hallucinatedUrls.length === 1 ? "" : "s"
+                } from the report: ${hallucinatedUrls.slice(0, 5).join(", ")}${
+                  hallucinatedUrls.length > 5 ? "…" : ""
+                }`,
+              });
+            }
+
+
             return;
           }
 
