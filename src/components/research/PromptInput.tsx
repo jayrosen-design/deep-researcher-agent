@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowUp, Settings as SettingsIcon, FileText, RotateCcw } from "lucide-react";
+import { ArrowUp, Settings as SettingsIcon, FileText, RotateCcw, LayoutTemplate } from "lucide-react";
 
 import {
   Dialog,
@@ -46,6 +46,7 @@ export function PromptInput({
   const [showSettings, setShowSettings] = useState(false);
   const [activeRoleId, setActiveRoleId] = useState<UserRoleId>("researcher");
   const [showPrompts, setShowPrompts] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(true);
   const [draft, setDraft] = useState<UserSettings>(settings);
   const [remoteModels, setRemoteModels] = useState<string[] | null>(null);
   const [modelsLoading, setModelsLoading] = useState(false);
@@ -113,7 +114,7 @@ export function PromptInput({
         What should we research?
       </h1>
       <p className="mt-3 text-center text-base text-muted-foreground">
-        I'll plan, search the web, and synthesize a cited report.
+        Multi-agents work together to plan, search the web, and synthesize a cited report.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-10 w-full">
@@ -201,6 +202,14 @@ export function PromptInput({
                 </label>
                 <button
                   type="button"
+                  onClick={() => setShowTemplates((s) => !s)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  <LayoutTemplate className="size-3.5" />
+                  Templates
+                </button>
+                <button
+                  type="button"
                   onClick={() => setShowSettings((s) => !s)}
                   className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
                 >
@@ -231,6 +240,7 @@ export function PromptInput({
         </div>
       </form>
 
+      {showTemplates && (
       <div className="mt-6 w-full">
         <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
           {RESEARCH_ROLE_GROUPS.map((role) => {
@@ -282,6 +292,7 @@ export function PromptInput({
           );
         })()}
       </div>
+      )}
 
 
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
