@@ -143,3 +143,21 @@
     color: var(--color-foreground);
   }
 }
+
+@keyframes collapsible-down {
+  from { height: 0; opacity: 0; }
+  to { height: var(--radix-collapsible-content-height); opacity: 1; }
+}
+@keyframes collapsible-up {
+  from { height: var(--radix-collapsible-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
+}
+.collapsible-content {
+  overflow: hidden;
+}
+.collapsible-content[data-state="open"] {
+  animation: collapsible-down 240ms ease-out;
+}
+.collapsible-content[data-state="closed"] {
+  animation: collapsible-up 200ms ease-in;
+}
