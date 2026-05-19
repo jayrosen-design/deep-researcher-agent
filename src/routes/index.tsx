@@ -648,7 +648,7 @@ function Index() {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
 
-  let content: React.ReactNode;
+  let content: ReactNode;
   if (phase === "input" || !prompt) {
     content = (
       <>
