@@ -233,6 +233,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research service design approaches for [SERVICE / PROGRAM / SUPPORT WORKFLOW]. Identify user journeys, stakeholder touchpoints, common failure points, support expectations, communication needs, accessibility issues, operational constraints, and examples from similar services. Recommend improvements to the end-to-end experience.",
       },
+      {
+        id: "usability-research-benchmark",
+        roleId: "experience-designer",
+        label: "Usability research benchmark",
+        description: "Friction points, testing, trust signals",
+        prompt:
+          "Research usability best practices for [PRODUCT / WEBSITE / APPLICATION / DIGITAL SERVICE]. Compare navigation, onboarding, search, forms, dashboards, feedback, mobile use, accessibility, and trust signals. Identify examples, common friction points, testing methods, and design recommendations grounded in research or comparable implementations.",
+      },
+      {
+        id: "learner-journey-research",
+        roleId: "experience-designer",
+        label: "Learner journey research",
+        description: "Goals, barriers, drop-off, support needs",
+        prompt:
+          "Research the learner journey for [AUDIENCE / COURSE / PROGRAM / DIGITAL EXPERIENCE]. Identify user goals, emotions, barriers, decision points, support needs, accessibility needs, communication touchpoints, and drop-off risks. Recommend design changes that improve clarity, confidence, and completion.",
+      },
+      {
+        id: "information-architecture-scan",
+        roleId: "experience-designer",
+        label: "Information architecture scan",
+        description: "Navigation, taxonomy, search, metadata",
+        prompt:
+          "Research information architecture patterns for [WEBSITE / PORTAL / RESOURCE LIBRARY / KNOWLEDGE BASE]. Compare navigation models, taxonomy, search behavior, metadata, filtering, content grouping, accessibility, and examples from comparable organizations. Recommend a structure that helps users find high-value content quickly.",
+      },
     ],
   },
   {
