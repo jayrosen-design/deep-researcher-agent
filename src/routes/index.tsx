@@ -220,8 +220,13 @@ function Index() {
             const query = turn.action.args.query;
             appendStep({ kind: "search", query, status: "active" });
             try {
-              const { results } = await webSearch({ data: { query, apiKey: tavilyKey } });
+              const remainingCap = Math.max(1, maxSources - collectedSources.length);
+              const requestSize = Math.min(10, Math.max(3, remainingCap));
+              const { results } = await webSearch({
+                data: { query, apiKey: tavilyKey, maxResults: requestSize },
+              });
               for (const r of results) {
+                if (collectedSources.length >= maxSources) break;
                 if (!seenUrls.has(r.url)) {
                   seenUrls.add(r.url);
                   collectedSources.push(r);
@@ -233,12 +238,19 @@ function Index() {
                 status: "done",
                 resultCount: results.length,
               }));
+              const capReached = collectedSources.length >= maxSources;
+              const capMsg =
+                capReached && !sourceCapNotified
+                  ? `\n\nSystem: You have reached the user's max-sources cap of ${maxSources}. Do not run more web_search calls. You may still read_url on already-collected sources, then call finish.`
+                  : "";
+              if (capReached) sourceCapNotified = true;
               messages.push({
                 role: "user",
                 content:
                   buildSearchObservation(query, results) +
                   "\n\n" +
-                  buildBudgetWarning(remaining),
+                  buildBudgetWarning(remaining) +
+                  capMsg,
               });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
