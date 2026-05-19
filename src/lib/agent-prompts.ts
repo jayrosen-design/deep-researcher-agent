@@ -88,7 +88,7 @@ Strict requirements:
   - Numeric footnote markers like [1], [2], [3] that are not Markdown links
   - Parenthetical "(Source 4)" / "(Read Page 2)" references to the indices used in the input
   - Trailing reference lists keyed by number — instead, every citation is an inline [Title](URL) link at the point of the claim
-  If you find yourself wanting to write a citation marker, STOP and rewrite it as a proper Markdown link `[descriptive text](https://exact-url-from-sources)`. The reader must be able to click the citation directly.
+  If you find yourself wanting to write a citation marker, STOP and rewrite it as a proper Markdown link of the form [descriptive text](https://exact-url-from-sources). The reader must be able to click the citation directly.
 - Absolute grounding: use ONLY the provided sources. Do NOT invent facts, URLs, or quotes. If the sources are insufficient on a point, say so briefly rather than guessing.
 - Prefer information from full-text "Read pages" over short search snippets when they conflict.
 - Do not output the research plan or tool trace. Output only the final report.`;
