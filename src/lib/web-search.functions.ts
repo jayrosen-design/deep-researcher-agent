@@ -4,6 +4,7 @@ import { z } from "zod";
 const inputSchema = z.object({
   query: z.string().min(1).max(500),
   apiKey: z.string().min(1).max(500).optional(),
+  maxResults: z.number().int().min(1).max(20).optional(),
 });
 
 export type SearchResult = {
