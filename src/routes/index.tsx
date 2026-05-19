@@ -556,6 +556,7 @@ function Index() {
           onRegenerate={handleRegeneratePlan}
           onCancel={handleReset}
         />
+        <Disclaimer />
       </div>
     );
   }
