@@ -15,10 +15,13 @@ import { webSearch, type SearchResult } from "@/lib/web-search.functions";
 import { readUrl } from "@/lib/read-url.functions";
 import {
   AGENT_SYSTEM_PROMPT,
+  SYNTHESIS_SYSTEM_PROMPT,
   buildBudgetWarning,
   buildInitialUserMessage,
   buildReadObservation,
   buildSearchObservation,
+  buildSynthesisUserMessage,
+  type SynthesisSource,
 } from "@/lib/agent-prompts";
 import {
   PLAN_SYSTEM_PROMPT,
@@ -53,7 +56,7 @@ type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 type AgentAction =
   | { tool: "web_search"; args: { query: string } }
   | { tool: "read_url"; args: { url: string } }
-  | { tool: "finish"; args: { report: string } };
+  | { tool: "finish"; args: Record<string, unknown> };
 
 type AgentTurn = { thought: string; action: AgentAction };
 
@@ -65,7 +68,6 @@ function stripFences(s: string): string {
 
 function parseTurn(raw: string): AgentTurn {
   const text = stripFences(raw);
-  // Try direct parse; fall back to extracting first {...} block.
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -87,8 +89,8 @@ function parseTurn(raw: string): AgentTurn {
   if (action.tool === "read_url" && typeof args.url === "string") {
     return { thought, action: { tool: "read_url", args: { url: args.url } } };
   }
-  if (action.tool === "finish" && typeof args.report === "string") {
-    return { thought, action: { tool: "finish", args: { report: args.report } } };
+  if (action.tool === "finish") {
+    return { thought, action: { tool: "finish", args } };
   }
   throw new Error(`Unknown or invalid tool: ${action.tool}`);
 }
@@ -171,6 +173,7 @@ function Index() {
       ];
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
+      const readPages: SynthesisSource[] = [];
       let stepsUsed = 0;
       let sourceCapNotified = false;
 
@@ -208,27 +211,45 @@ function Index() {
           if (turn.thought) appendStep({ kind: "thought", text: turn.thought });
 
           if (turn.action.tool === "finish") {
-            const searchCount = collectedSources.length > 0 ? 1 : 0;
-            const readCount = trace.filter((s) => s.kind === "read" && (s.status === "done")).length;
-            // Hard guard: require real research before finishing (unless out of budget).
-            const minOk = collectedSources.length > 0 && stepsUsed >= 2;
+            const readCount = readPages.length;
+            const minOk = collectedSources.length > 0 && stepsUsed >= 2 && readCount >= 1;
             const outOfBudget = stepsUsed >= maxSteps;
             if (!minOk && !outOfBudget) {
               messages.push({
                 role: "user",
-                content: `System: REJECTED. You attempted to finish without doing real research (searches so far: ${stepsUsed}, sources gathered: ${collectedSources.length}, pages read: ${readCount}). You MUST call web_search at least 2 times AND read_url at least once before finishing. Continue researching now.`,
+                content: `System: REJECTED. You attempted to finish without doing real research (tool steps so far: ${stepsUsed}, sources gathered: ${collectedSources.length}, pages read: ${readCount}). You MUST call web_search at least 2 times AND read_url at least once before finishing. Continue researching now.`,
               });
               appendStep({
                 kind: "error",
-                message: "Agent tried to finish without researching — forcing it to search the web.",
+                message: "Agent tried to finish without researching — forcing it to keep going.",
               });
-              // Don't count this as a tool step.
-              void searchCount;
               continue;
             }
+            // Hand off to dedicated synthesizer.
             appendStep({ kind: "finish", status: "active" });
-            setReport(turn.action.args.report);
             setSources(collectedSources);
+            const synthesisMessages: ChatMessage[] = [
+              { role: "system", content: SYNTHESIS_SYSTEM_PROMPT },
+              {
+                role: "user",
+                content: buildSynthesisUserMessage(
+                  userQuery,
+                  approvedPlan ?? null,
+                  collectedSources,
+                  readPages,
+                ),
+              },
+            ];
+            const { content: reportMd } = await navigatorChat({
+              data: {
+                model,
+                messages: synthesisMessages,
+                temperature: 0.3,
+                apiKey: navigatorKey,
+              },
+            });
+            if (cancelled.current) return;
+            setReport(reportMd.trim());
             updateLastStep(() => ({ kind: "finish", status: "done" }));
             return;
           }
@@ -286,6 +307,9 @@ function Index() {
             appendStep({ kind: "read", url, status: "active" });
             try {
               const page = await readUrl({ data: { url, apiKey: tavilyKey } });
+              const matchedTitle =
+                collectedSources.find((s) => s.url === page.url || s.url === url)?.title ?? "";
+              readPages.push({ url: page.url, title: matchedTitle, content: page.content });
               updateLastStep(() => ({
                 kind: "read",
                 url,
@@ -330,7 +354,7 @@ function Index() {
         setRunning(false);
       }
     },
-    [model, settings, appendStep, updateLastStep, trace],
+    [model, settings, appendStep, updateLastStep],
   );
 
   const generatePlan = useCallback(
