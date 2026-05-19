@@ -1,10 +1,11 @@
-import { Loader2, Search, FileText, CheckCircle2, AlertCircle, Brain } from "lucide-react";
+import { Loader2, Search, FileText, CheckCircle2, AlertCircle, Brain, Ban } from "lucide-react";
 
 export type TraceStep =
   | { kind: "thought"; text: string }
   | { kind: "search"; query: string; resultCount?: number; resultUrls?: string[]; status: "active" | "done" | "error"; error?: string }
   | { kind: "read"; url: string; status: "active" | "done" | "error"; error?: string; chars?: number }
   | { kind: "finish"; status: "active" | "done" }
+  | { kind: "blocked"; tool: "web_search" | "read_url"; target: string; reason: string }
   | { kind: "error"; message: string };
 
 function faviconUrl(url: string): string {
