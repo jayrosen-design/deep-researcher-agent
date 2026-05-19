@@ -240,6 +240,7 @@ export function PromptInput({
         </div>
       </form>
 
+      {showTemplates && (
       <div className="mt-6 w-full">
         <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
           {RESEARCH_ROLE_GROUPS.map((role) => {
