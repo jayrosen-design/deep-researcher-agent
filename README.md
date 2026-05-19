@@ -27,13 +27,17 @@ Markdown report — all from the browser.
   report structure). You can approve, edit, or regenerate it before any
   searches run.
 - **Multi-agent architecture** — A ReAct **investigator** gathers evidence,
-  then a dedicated **synthesizer** writes the final report. Splitting these
-  roles avoids JSON-escaping crashes on large Markdown and produces
-  higher-quality, fully-cited prose.
+  a dedicated **synthesizer** writes the final report, then the synthesizer
+  returns for a **review pass** to polish the draft and propose follow-up
+  research prompts. Splitting these roles avoids JSON-escaping crashes on
+  large Markdown and produces higher-quality, fully-cited prose.
 - **Live trace** — Collapsible view of every thought, search (with site
   favicons), and page read.
 - **Cited Markdown report** — Inline links back to every source, validated
   against the gathered URL set.
+- **Continue the research** — After the review pass, the app surfaces 3
+  suggested follow-up prompts that fill the most important gaps in the
+  report. One click starts a new research run pre-filled with that prompt.
 - **Bring-your-own keys** — Optional client-side override of the NaviGator
   (LLM) and Tavily (web search) API keys.
 
