@@ -55,7 +55,14 @@ export const Route = createFileRoute("/")({
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
 type AgentAction =
-  | { tool: "web_search"; args: { query: string } }
+  | {
+      tool: "web_search";
+      args: {
+        query: string;
+        timeRange?: "day" | "week" | "month" | "year";
+        includeDomains?: string[];
+      };
+    }
   | { tool: "read_url"; args: { url: string } }
   | { tool: "finish"; args: Record<string, unknown> };
 
@@ -66,6 +73,8 @@ function stripFences(s: string): string {
   const m = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
   return (m ? m[1] : t).trim();
 }
+
+const ALLOWED_TIME_RANGES = ["day", "week", "month", "year"] as const;
 
 function parseTurn(raw: string): AgentTurn {
   const text = stripFences(raw);
@@ -85,7 +94,26 @@ function parseTurn(raw: string): AgentTurn {
   if (!action || typeof action.tool !== "string") throw new Error("Missing action.tool.");
   const args = action.args ?? {};
   if (action.tool === "web_search" && typeof args.query === "string") {
-    return { thought, action: { tool: "web_search", args: { query: args.query } } };
+    const rawTime = args.time_range ?? args.timeRange;
+    const timeRange =
+      typeof rawTime === "string" && (ALLOWED_TIME_RANGES as readonly string[]).includes(rawTime)
+        ? (rawTime as (typeof ALLOWED_TIME_RANGES)[number])
+        : undefined;
+    const rawDomains = args.include_domains ?? args.includeDomains;
+    const includeDomains = Array.isArray(rawDomains)
+      ? rawDomains.filter((d): d is string => typeof d === "string" && d.length > 0).slice(0, 20)
+      : undefined;
+    return {
+      thought,
+      action: {
+        tool: "web_search",
+        args: {
+          query: args.query,
+          ...(timeRange ? { timeRange } : {}),
+          ...(includeDomains && includeDomains.length > 0 ? { includeDomains } : {}),
+        },
+      },
+    };
   }
   if (action.tool === "read_url" && typeof args.url === "string") {
     return { thought, action: { tool: "read_url", args: { url: args.url } } };
