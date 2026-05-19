@@ -265,6 +265,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research the current tooling landscape for [DEVELOPMENT TASK / FRAMEWORK / TECHNICAL WORKFLOW]. Prioritize official documentation, active repositories, release notes, technical benchmarks, security advisories, and credible engineering analysis. Identify mature options, emerging options, common pitfalls, compatibility constraints, and recommended next steps for prototyping.",
       },
+      {
+        id: "security-privacy-architecture-scan",
+        roleId: "software-developer",
+        label: "Security and privacy architecture scan",
+        description: "Auth, storage, encryption, threat models",
+        prompt:
+          "Research security and privacy considerations for building [APPLICATION / PLATFORM / FEATURE]. Focus on authentication, authorization, data storage, logging, encryption, third-party services, threat models, secure development practices, accessibility, compliance considerations, and examples of common failures to avoid.",
+      },
+      {
+        id: "api-integration-review",
+        roleId: "software-developer",
+        label: "API integration review",
+        description: "Auth, rate limits, reliability, risks",
+        prompt:
+          "Research integration options for connecting [SYSTEM A] with [SYSTEM B] or building around [SERVICE / APPLICATION PROGRAMMING INTERFACE]. Compare official documentation, authentication methods, rate limits, data formats, developer support, reliability, pricing when available, security concerns, and maintenance risks.",
+      },
+      {
+        id: "open-source-dependency-review",
+        roleId: "software-developer",
+        label: "Open-source dependency review",
+        description: "Maintenance, license, security, adoption",
+        prompt:
+          "Research open-source libraries or frameworks for [TECHNICAL TASK / FEATURE / WORKFLOW]. Prioritize official repositories, documentation, release history, issue activity, community adoption, license terms, security advisories, performance benchmarks, and long-term maintenance signals. Recommend mature options and identify risky dependencies.",
+      },
     ],
   },
   {
