@@ -126,6 +126,7 @@ export function PromptInput({
                   {modelOptions.map((m) => (
                     <option key={m} value={m}>
                       {m}
+                      {RECOMMENDED_INVESTIGATOR.has(m) ? " (Recommended)" : ""}
                     </option>
                   ))}
                 </select>
@@ -143,10 +144,12 @@ export function PromptInput({
                   {modelOptions.map((m) => (
                     <option key={m} value={m}>
                       {m}
+                      {RECOMMENDED_SYNTHESIZER.has(m) ? " (Recommended)" : ""}
                     </option>
                   ))}
                 </select>
               </label>
+
               <span className="text-[11px] text-muted-foreground/80">
                 {modelsLoading
                   ? "Loading models…"
