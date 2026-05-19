@@ -447,7 +447,7 @@ function Index() {
                 Progress
               </div>
               <div className="text-xs text-muted-foreground">
-                {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {settings.maxSources} steps
+                {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · up to {settings.maxSources} sources
               </div>
             </div>
             <ProgressTracker phases={phases} />
