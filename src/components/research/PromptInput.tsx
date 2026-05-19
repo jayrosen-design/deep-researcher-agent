@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowUp, Settings as SettingsIcon, LayoutTemplate, FileText, RotateCcw } from "lucide-react";
+import { ArrowUp, Settings as SettingsIcon, FileText, RotateCcw } from "lucide-react";
 
 
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
