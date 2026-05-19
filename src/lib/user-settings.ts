@@ -7,9 +7,13 @@ import { PLAN_SYSTEM_PROMPT } from "./plan-prompts";
 
 const KEY = "dr-settings-v1";
 
+export type SearchProvider = "firecrawl" | "tavily";
+
 export type UserSettings = {
   navigatorApiKey: string;
   tavilyApiKey: string;
+  firecrawlApiKey: string;
+  searchProvider: SearchProvider;
   maxSources: number; // 10..100, increments of 10
   investigatorModel: NavigatorModel;
   synthesisModel: NavigatorModel;
@@ -21,6 +25,8 @@ export type UserSettings = {
 export const DEFAULT_SETTINGS: UserSettings = {
   navigatorApiKey: "",
   tavilyApiKey: "",
+  firecrawlApiKey: "",
+  searchProvider: "firecrawl",
   maxSources: 30,
   investigatorModel: DEFAULT_INVESTIGATOR_MODEL,
   synthesisModel: DEFAULT_SYNTHESIS_MODEL,
