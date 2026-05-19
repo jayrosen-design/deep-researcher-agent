@@ -1,93 +1,402 @@
+import type { LucideIcon } from "lucide-react";
+import {
+  Microscope,
+  GraduationCap,
+  BookOpen,
+  PencilRuler,
+  Building2,
+  Palette,
+  Code2,
+  Megaphone,
+  Video,
+  Briefcase,
+  Users,
+} from "lucide-react";
+
+export type UserRoleId =
+  | "researcher"
+  | "school-teacher"
+  | "higher-education-instructor"
+  | "instructional-designer"
+  | "education-leader"
+  | "experience-designer"
+  | "software-developer"
+  | "communications-marketing"
+  | "video-media-producer"
+  | "business-operations"
+  | "human-resources";
+
 export type ResearchTemplate = {
   id: string;
+  roleId: UserRoleId;
   label: string;
   description: string;
   prompt: string;
 };
 
-export const RESEARCH_TEMPLATES: ResearchTemplate[] = [
+export type ResearchRoleGroup = {
+  id: UserRoleId;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+  templates: ResearchTemplate[];
+};
+
+export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
   {
-    id: "evidence-map",
-    label: "Evidence map",
-    description: "Research base, strength of evidence, gaps",
-    prompt:
-      "Create an evidence map for [EDUCATION TOPIC / INTERVENTION / TECHNOLOGY] for use by UF College of Education staff and faculty. Focus the research on peer-reviewed studies, major research syntheses, federal or foundation reports, and credible professional organizations. Identify what is well-supported, what is promising but uncertain, what populations or contexts have been studied, what outcomes were measured, where evidence is weak or conflicting, and what practical implications ETC should consider before recommending or building around this approach.",
+    id: "researcher",
+    label: "Researcher",
+    description: "Literature, evidence, methods, gaps, and research trends",
+    icon: Microscope,
+    templates: [
+      {
+        id: "evidence-map",
+        roleId: "researcher",
+        label: "Evidence map",
+        description: "What is known, uncertain, or missing",
+        prompt:
+          "Create a deep research evidence map on [TOPIC / INTERVENTION / TECHNOLOGY]. Prioritize peer-reviewed studies, systematic reviews, meta-analyses, government reports, foundation reports, and major professional organizations. Identify the strongest findings, areas of consensus, disputed claims, populations studied, outcomes measured, methodological limits, research gaps, and practical implications for future projects or decision-making.",
+      },
+      {
+        id: "literature-review",
+        roleId: "researcher",
+        label: "Literature review",
+        description: "Peer-reviewed research synthesis",
+        prompt:
+          "Conduct a focused literature review on [RESEARCH TOPIC]. Emphasize peer-reviewed sources and high-quality research syntheses. Compare major theories, study designs, findings, limitations, and recent developments from the last 5 years. Identify seminal work, emerging directions, unresolved questions, and implications for research, practice, or future funding proposals.",
+      },
+      {
+        id: "methods-measurement-scan",
+        roleId: "researcher",
+        label: "Methods and measurement scan",
+        description: "Instruments, outcomes, datasets, study designs",
+        prompt:
+          "Research methods and measurement approaches used to study [TOPIC / PROGRAM / INTERVENTION]. Identify common research designs, validated instruments, outcome measures, data sources, sampling strategies, analysis methods, ethical concerns, and known validity or reliability issues. Recommend which approaches appear most appropriate for a new study or evaluation.",
+      },
+    ],
   },
   {
-    id: "edtech-adoption-brief",
-    label: "EdTech adoption brief",
-    description: "Adoption decision, risks, fit, implementation",
-    prompt:
-      "Prepare a deep research adoption brief on [EDTECH TOOL / PLATFORM / CATEGORY] for UF College of Education and ETC decision-making. Investigate current product capabilities, higher education use cases, Canvas or LMS integrations, accessibility support, privacy and data practices, FERPA-relevant concerns, vendor stability, cost model if publicly available, faculty and student support needs, comparable tools, and evidence of instructional value. The final report should help ETC decide whether to pilot, recommend, avoid, or monitor this technology.",
+    id: "school-teacher",
+    label: "School Teacher",
+    description: "Classroom practice, curriculum, interventions, student support",
+    icon: GraduationCap,
+    templates: [
+      {
+        id: "classroom-intervention-scan",
+        roleId: "school-teacher",
+        label: "Classroom intervention scan",
+        description: "Evidence-based classroom strategies",
+        prompt:
+          "Research evidence-based classroom strategies for [SUBJECT / GRADE BAND / STUDENT NEED]. Focus on studies, professional guidance, classroom implementation examples, student outcomes, required materials, teacher workload, equity considerations, and common challenges. The final report should distinguish between strongly supported practices, promising practices, and practices with limited evidence.",
+      },
+      {
+        id: "curriculum-resource-review",
+        roleId: "school-teacher",
+        label: "Curriculum resource review",
+        description: "Compare teaching resources and materials",
+        prompt:
+          "Compare available curriculum resources, lesson collections, activities, and instructional materials for [TOPIC / GRADE BAND / SUBJECT]. Evaluate alignment with learning goals, evidence base, accessibility, differentiation options, cultural relevance, ease of classroom use, cost if available, and teacher preparation requirements. Include specific examples and a recommendation for different classroom contexts.",
+      },
+      {
+        id: "student-support-research",
+        roleId: "school-teacher",
+        label: "Student support research",
+        description: "Support strategies for specific learners",
+        prompt:
+          "Research support strategies for [STUDENT GROUP / LEARNING CHALLENGE / CLASSROOM NEED]. Prioritize credible education research, practitioner guidance, and examples from school settings. Identify what works, what conditions are needed, common mistakes, equity concerns, family communication considerations, and practical next steps a teacher could take.",
+      },
+    ],
   },
   {
-    id: "ai-workflow-evaluation",
-    label: "AI workflow evaluation",
-    description: "AI use case, governance, quality, labor impact",
-    prompt:
-      "Research the feasibility, risks, and best practices for using [AI TOOL / AI WORKFLOW / AGENTIC SYSTEM] in an ETC or College of Education workflow. Focus on evidence from universities, education technology teams, AI governance guidance, professional associations, and vendor documentation when necessary. Evaluate likely benefits, quality-control requirements, privacy and data risks, accessibility issues, bias concerns, staff workload implications, training needs, and an implementation model that keeps humans accountable for final decisions.",
+    id: "higher-education-instructor",
+    label: "Higher Education Instructor",
+    description: "Course design, teaching practice, assessment, student engagement",
+    icon: BookOpen,
+    templates: [
+      {
+        id: "course-redesign-scan",
+        roleId: "higher-education-instructor",
+        label: "Course redesign scan",
+        description: "Evidence-based redesign options",
+        prompt:
+          "Research evidence-based redesign options for [COURSE / MODULE / ASSIGNMENT]. Focus on learning outcomes, active learning, assessment design, online or blended teaching, student engagement, accessibility, workload, and examples from higher education. The final report should identify realistic redesign options, the evidence behind them, trade-offs, and ways to measure whether the redesign works.",
+      },
+      {
+        id: "assessment-practice-review",
+        roleId: "higher-education-instructor",
+        label: "Assessment practice review",
+        description: "Rubrics, exams, projects, feedback",
+        prompt:
+          "Research assessment approaches for [COURSE / SKILL / SUBJECT AREA]. Compare exams, projects, portfolios, discussions, rubrics, peer review, automated feedback, and authentic assessment where relevant. Identify evidence on learning impact, grading reliability, academic integrity, accessibility, student workload, instructor workload, and recommended implementation practices.",
+      },
+      {
+        id: "teaching-with-generative-tools",
+        roleId: "higher-education-instructor",
+        label: "Teaching with generative tools",
+        description: "Instructional uses, policy, risks",
+        prompt:
+          "Research how generative artificial intelligence tools are being used in higher education teaching for [COURSE / DISCIPLINE / LEARNING GOAL]. Focus on instructional value, assignment design, student learning, academic integrity, bias, accessibility, privacy, policy examples, faculty workload, and assessment redesign. The final report should separate responsible uses from high-risk or poorly supported uses.",
+      },
+    ],
   },
   {
-    id: "xr-learning-feasibility",
-    label: "XR learning feasibility",
-    description: "AR/VR/MR use case, evidence, build decision",
-    prompt:
-      "Research whether an AR, VR, MR, WebXR, or simulation-based learning experience is appropriate for [LEARNING TOPIC / SKILL / COURSE / TRAINING NEED]. Prioritize evidence on learning outcomes, embodiment, presence, simulation training, accessibility, motion comfort, hardware constraints, development cost, maintenance burden, classroom logistics, and comparable university projects. The report should help ETC determine whether the experience should be built in Unity, WebXR, mobile AR, 360 video, interactive web media, or a lower-cost non-XR format.",
+    id: "instructional-designer",
+    label: "Instructional Designer",
+    description: "Learning design, accessibility, evaluation, media, online learning",
+    icon: PencilRuler,
+    templates: [
+      {
+        id: "learning-design-patterns",
+        roleId: "instructional-designer",
+        label: "Learning design patterns",
+        description: "Instructional strategies and design models",
+        prompt:
+          "Research learning design patterns for [LEARNING GOAL / TRAINING TOPIC / COURSE TYPE]. Compare instructional models, sequencing strategies, practice activities, feedback approaches, assessment methods, multimedia principles, accessibility considerations, and evidence of effectiveness. The final report should translate the research into design recommendations and example learning activities.",
+      },
+      {
+        id: "accessibility-inclusive-design",
+        roleId: "instructional-designer",
+        label: "Accessibility and inclusive design",
+        description: "Barriers, standards, remediation, testing",
+        prompt:
+          "Research accessibility and inclusive design best practices for [COURSE / WEBSITE / APP / DIGITAL MATERIAL / MEDIA PROJECT]. Prioritize web accessibility guidance, inclusive pedagogy research, universal design for learning, disability support resources, and examples from education settings. Identify likely barriers, testing methods, remediation priorities, design recommendations, and implementation trade-offs.",
+      },
+      {
+        id: "online-learning-quality-review",
+        roleId: "instructional-designer",
+        label: "Online learning quality review",
+        description: "Quality standards and course improvement",
+        prompt:
+          "Research quality standards and best practices for improving [ONLINE COURSE / TRAINING PROGRAM / DIGITAL LEARNING EXPERIENCE]. Focus on course structure, learner navigation, instructor presence, interaction, assessment, multimedia, accessibility, student support, analytics, and evaluation. The final report should identify practical improvement priorities and examples of strong implementation.",
+      },
+    ],
   },
   {
-    id: "peer-benchmarking",
-    label: "Peer institution scan",
-    description: "Comparable university programs and practices",
-    prompt:
-      "Conduct a peer institution scan on how Colleges of Education or university e-learning teams are approaching [PROGRAM / SERVICE / TECHNOLOGY / INITIATIVE]. Identify strong examples from peer universities, aspirational universities, and relevant public higher education institutions. Compare goals, staffing models, technologies, funding, public-facing outputs, support structures, accessibility practices, and measurable outcomes when available. The report should identify models UF College of Education or ETC could realistically adapt.",
+    id: "education-leader",
+    label: "Education Leader",
+    description: "Strategy, policy, adoption, evaluation, organizational planning",
+    icon: Building2,
+    templates: [
+      {
+        id: "strategic-landscape-scan",
+        roleId: "education-leader",
+        label: "Strategic landscape scan",
+        description: "Trends, risks, opportunities, decisions",
+        prompt:
+          "Conduct a strategic landscape scan on [TOPIC / INITIATIVE / TECHNOLOGY / PROGRAM AREA]. Identify current trends, drivers of change, major stakeholders, peer examples, risks, opportunities, costs or resource implications when available, policy considerations, and likely 3-year outlook. The final report should support leadership decision-making and include practical options.",
+      },
+      {
+        id: "program-evaluation-framework",
+        roleId: "education-leader",
+        label: "Program evaluation framework",
+        description: "Logic model, metrics, reporting",
+        prompt:
+          "Research evaluation frameworks for [PROGRAM / INITIATIVE / SERVICE / LEARNING EXPERIENCE]. Identify possible logic models, evaluation questions, outcome measures, data sources, reporting formats, equity considerations, privacy constraints, and examples from similar programs. Recommend a practical evaluation approach that could be used for leadership, funders, or continuous improvement.",
+      },
+      {
+        id: "policy-risk-review",
+        roleId: "education-leader",
+        label: "Policy and risk review",
+        description: "Governance, compliance, adoption risks",
+        prompt:
+          "Research policy, governance, and risk considerations for [TOOL / PROGRAM / INITIATIVE / WORKFLOW]. Focus on student privacy, data security, accessibility, procurement, copyright, artificial intelligence governance if relevant, implementation risks, stakeholder concerns, and examples of how similar organizations manage these issues. Separate confirmed requirements from recommended risk-management practices.",
+      },
+    ],
   },
   {
-    id: "grant-opportunity-scan",
-    label: "Grant opportunity scan",
-    description: "Funders, programs, deadlines, positioning",
-    prompt:
-      "Research current and recurring grant opportunities for [PROJECT AREA / RESEARCH IDEA / EDUCATION TECHNOLOGY INITIATIVE]. Focus on federal agencies, foundations, Florida or regional funders, university programs, and education-focused funding sources. Identify funder priorities, eligibility, award ranges, deadline cycles, required partners, evaluation expectations, technology or dissemination requirements, and how UF College of Education could position a competitive proposal. Flag opportunities that are currently open separately from recurring or likely future opportunities.",
+    id: "experience-designer",
+    label: "Experience Designer",
+    description: "User research, service design, usability, interaction patterns",
+    icon: Palette,
+    templates: [
+      {
+        id: "user-needs-research",
+        roleId: "experience-designer",
+        label: "User needs research",
+        description: "Audience needs, pain points, behaviors",
+        prompt:
+          "Research user needs, pain points, and behavior patterns for [AUDIENCE / PRODUCT / SERVICE / LEARNING EXPERIENCE]. Use credible reports, case studies, usability research, education technology research, and comparable products or services. Identify user goals, barriers, motivations, accessibility needs, trust concerns, and design implications.",
+      },
+      {
+        id: "design-pattern-benchmark",
+        roleId: "experience-designer",
+        label: "Design pattern benchmark",
+        description: "Comparable products and interaction models",
+        prompt:
+          "Benchmark design patterns used in [PRODUCT CATEGORY / WEBSITE TYPE / LEARNING EXPERIENCE / DIGITAL SERVICE]. Compare navigation, onboarding, search, dashboards, feedback, personalization, accessibility, visual hierarchy, and interaction models. The final report should identify strong examples, weak patterns to avoid, and recommendations for a new design.",
+      },
+      {
+        id: "service-design-scan",
+        roleId: "experience-designer",
+        label: "Service design scan",
+        description: "Journey, touchpoints, support model",
+        prompt:
+          "Research service design approaches for [SERVICE / PROGRAM / SUPPORT WORKFLOW]. Identify user journeys, stakeholder touchpoints, common failure points, support expectations, communication needs, accessibility issues, operational constraints, and examples from similar services. Recommend improvements to the end-to-end experience.",
+      },
+    ],
   },
   {
-    id: "course-redesign-research",
-    label: "Course redesign research",
-    description: "Evidence-based redesign options",
-    prompt:
-      "Research evidence-based redesign options for [COURSE / TRAINING / MODULE / ONLINE PROGRAM]. Focus on instructional strategies, digital learning design, active learning, assessment models, multimedia learning, accessibility, student engagement, and comparable higher education examples. The final report should translate the research into practical redesign options for ETC, including what to change, why it is supported, what tools or media may be needed, and how success could be measured.",
+    id: "software-developer",
+    label: "Software Developer",
+    description: "Architecture, tools, implementation, security, build decisions",
+    icon: Code2,
+    templates: [
+      {
+        id: "technical-architecture-comparison",
+        roleId: "software-developer",
+        label: "Technical architecture comparison",
+        description: "Stack options, trade-offs, implementation",
+        prompt:
+          "Research technical architecture options for building [APP / TOOL / PLATFORM / FEATURE]. Compare relevant frameworks, hosting models, databases, application programming interfaces, authentication options, security considerations, scalability, cost, developer experience, maintenance burden, and examples from similar systems. The final report should recommend a practical architecture with trade-offs.",
+      },
+      {
+        id: "build-vs-buy-feasibility",
+        roleId: "software-developer",
+        label: "Build versus buy feasibility",
+        description: "Custom development versus existing tools",
+        prompt:
+          "Research whether [PRODUCT / FEATURE / WORKFLOW] should be built internally, purchased, integrated, or avoided. Compare existing tools, open-source options, custom development complexity, integration needs, security and privacy risks, accessibility, long-term maintenance, vendor dependency, and total cost considerations when available. The final report should provide a clear recommendation.",
+      },
+      {
+        id: "developer-tooling-scan",
+        roleId: "software-developer",
+        label: "Developer tooling scan",
+        description: "Frameworks, libraries, services, workflows",
+        prompt:
+          "Research the current tooling landscape for [DEVELOPMENT TASK / FRAMEWORK / TECHNICAL WORKFLOW]. Prioritize official documentation, active repositories, release notes, technical benchmarks, security advisories, and credible engineering analysis. Identify mature options, emerging options, common pitfalls, compatibility constraints, and recommended next steps for prototyping.",
+      },
+    ],
   },
   {
-    id: "accessibility-udl-research",
-    label: "Accessibility and UDL research",
-    description: "Inclusive design standards and best practices",
-    prompt:
-      "Research accessibility, Universal Design for Learning, and inclusive digital learning best practices for [COURSE / WEBSITE / APP / MEDIA PROJECT / LEARNING TOOL]. Prioritize WCAG guidance, higher education accessibility resources, UDL research, disability services guidance, and examples from universities. Identify likely barriers, legal or policy considerations, design recommendations, testing methods, remediation priorities, and practical guidance ETC can use when supporting faculty or building digital learning materials.",
+    id: "communications-marketing",
+    label: "Communications and Marketing",
+    description: "Audience research, campaigns, messaging, channels, analytics",
+    icon: Megaphone,
+    templates: [
+      {
+        id: "audience-message-research",
+        roleId: "communications-marketing",
+        label: "Audience and message research",
+        description: "Messaging strategy and audience needs",
+        prompt:
+          "Research audience needs, message positioning, and communication strategies for [PROGRAM / SERVICE / EVENT / INITIATIVE]. Identify target audiences, motivations, barriers, trusted channels, comparable campaigns, message examples, accessibility considerations, visual communication patterns, and metrics used to evaluate reach or engagement.",
+      },
+      {
+        id: "campaign-benchmark-scan",
+        roleId: "communications-marketing",
+        label: "Campaign benchmark scan",
+        description: "Comparable campaigns and launch tactics",
+        prompt:
+          "Benchmark communication campaigns related to [TOPIC / PROGRAM / EVENT / SERVICE]. Compare goals, audiences, channels, tone, visuals, content formats, calls to action, posting cadence, media coverage, and available impact metrics. The final report should identify best practices and practical ideas for a new campaign.",
+      },
+      {
+        id: "content-strategy-research",
+        roleId: "communications-marketing",
+        label: "Content strategy research",
+        description: "Website, newsletter, social, storytelling",
+        prompt:
+          "Research content strategy options for [ORGANIZATION / PROGRAM / TOPIC / AUDIENCE]. Focus on website structure, newsletter themes, social media formats, storytelling angles, search visibility, accessibility, editorial workflow, content governance, and examples from similar organizations. Recommend a content plan grounded in evidence and comparable examples.",
+      },
+    ],
   },
   {
-    id: "evaluation-framework",
-    label: "Evaluation framework",
-    description: "Metrics, instruments, outcomes, reporting",
-    prompt:
-      "Research how to evaluate the effectiveness of [PROGRAM / APP / COURSE / TRAINING / TECHNOLOGY INITIATIVE] in a College of Education context. Identify evaluation models, outcome measures, validated instruments if available, learning analytics approaches, qualitative and quantitative data sources, equity considerations, privacy constraints, reporting formats, and examples from similar education initiatives. The final report should recommend a practical evaluation framework ETC could support or implement.",
+    id: "video-media-producer",
+    label: "Video and Media Producer",
+    description: "Educational media, production models, formats, accessibility",
+    icon: Video,
+    templates: [
+      {
+        id: "educational-video-format-review",
+        roleId: "video-media-producer",
+        label: "Educational video format review",
+        description: "Video types and learning impact",
+        prompt:
+          "Research effective video and media formats for teaching [TOPIC / SKILL / CONCEPT]. Compare lecture video, demonstration, interview, animation, screen recording, scenario-based video, short-form clips, and interactive media where relevant. Evaluate evidence on learning impact, attention, accessibility, production effort, reuse value, and recommended format choices.",
+      },
+      {
+        id: "media-production-workflow",
+        roleId: "video-media-producer",
+        label: "Media production workflow",
+        description: "Planning, tools, roles, timeline, delivery",
+        prompt:
+          "Research production workflows for [VIDEO / PODCAST / MULTIMEDIA / ONLINE COURSE MEDIA PROJECT]. Identify planning steps, scripting practices, recording approaches, editing workflows, accessibility requirements, captioning and transcript practices, file delivery standards, quality-control methods, staffing needs, and examples from education or training media teams.",
+      },
+      {
+        id: "interactive-media-scan",
+        roleId: "video-media-producer",
+        label: "Interactive media scan",
+        description: "Interactive video, branching, simulations",
+        prompt:
+          "Research interactive media approaches for [LEARNING TOPIC / TRAINING SCENARIO / AUDIENCE]. Compare branching video, interactive timelines, simulations, quizzes inside media, immersive media, and web-based interactives. Evaluate learning benefits, production complexity, accessibility, hosting requirements, analytics, and examples of strong implementations.",
+      },
+    ],
   },
   {
-    id: "policy-compliance-diligence",
-    label: "Policy and compliance diligence",
-    description: "Privacy, FERPA, AI, copyright, accessibility",
-    prompt:
-      "Conduct policy and compliance due diligence for [TOOL / PLATFORM / WORKFLOW / DIGITAL LEARNING PROJECT] in a public university education setting. Research FERPA and student privacy concerns, accessibility obligations, AI governance issues if relevant, copyright and licensing, data retention, vendor risk, procurement concerns, research or IRB considerations when applicable, and examples of how universities manage similar risks. The final report should separate confirmed requirements from practical risk-management recommendations.",
+    id: "business-operations",
+    label: "Business and Operations",
+    description: "Costs, vendors, processes, market landscape, efficiency",
+    icon: Briefcase,
+    templates: [
+      {
+        id: "vendor-comparison",
+        roleId: "business-operations",
+        label: "Vendor comparison",
+        description: "Options, cost, fit, risk",
+        prompt:
+          "Compare vendors or product options for [NEED / TOOL CATEGORY / SERVICE]. Research features, pricing when available, implementation requirements, support model, accessibility, privacy and security posture, contract or procurement considerations, customer examples, risks, and alternatives. The final report should recommend the strongest options for different budget or complexity levels.",
+      },
+      {
+        id: "process-improvement-research",
+        roleId: "business-operations",
+        label: "Process improvement research",
+        description: "Workflow efficiency and automation",
+        prompt:
+          "Research process improvement options for [WORKFLOW / SERVICE / ADMINISTRATIVE PROCESS]. Identify common bottlenecks, automation possibilities, staffing implications, software tools, quality-control practices, risk points, change-management needs, and examples from comparable organizations. Estimate potential benefits qualitatively when hard data is unavailable.",
+      },
+      {
+        id: "market-landscape-scan",
+        roleId: "business-operations",
+        label: "Market landscape scan",
+        description: "Industry, products, trends, competitors",
+        prompt:
+          "Conduct a market landscape scan for [PRODUCT CATEGORY / SERVICE AREA / INDUSTRY]. Research major providers, customer segments, pricing patterns when available, recent product trends, adoption drivers, risks, market shifts, and credible forecasts. The final report should support planning, purchasing, partnership, or product strategy decisions.",
+      },
+    ],
   },
   {
-    id: "communications-landscape",
-    label: "Communications landscape",
-    description: "Audience, channels, examples, message strategy",
-    prompt:
-      "Research the communications landscape for [PROGRAM / INITIATIVE / EVENT / SERVICE / RESEARCH PROJECT] at a College of Education or university unit. Identify target audiences, comparable communication campaigns, successful messaging approaches, web and newsletter examples, social media strategies, visual communication patterns, accessibility considerations, stakeholder concerns, and metrics used to evaluate reach or engagement. The final report should help ETC create a stronger launch or awareness strategy.",
-  },
-  {
-    id: "implementation-roadmap-research",
-    label: "Implementation roadmap research",
-    description: "Phased rollout, staffing, support, risks",
-    prompt:
-      "Research implementation models and best practices for launching [TECHNOLOGY / SERVICE / COURSE MODEL / DIGITAL LEARNING INITIATIVE] in a university or College of Education context. Investigate staffing needs, training models, governance, technical dependencies, stakeholder engagement, rollout phases, support models, maintenance requirements, risks, and comparable examples. The final report should provide a phased roadmap that ETC leadership could use for planning, resourcing, and decision-making.",
+    id: "human-resources",
+    label: "Human Resources",
+    description: "Training, roles, hiring, workplace policy, professional growth",
+    icon: Users,
+    templates: [
+      {
+        id: "workforce-training-research",
+        roleId: "human-resources",
+        label: "Workforce training research",
+        description: "Training needs, formats, outcomes",
+        prompt:
+          "Research best practices for workforce training on [SKILL / POLICY / TOOL / WORKPLACE NEED]. Compare training formats, adult learning principles, competency models, assessment approaches, accessibility, learner motivation, time requirements, reinforcement strategies, and evaluation methods. The final report should recommend a practical training model.",
+      },
+      {
+        id: "role-competency-benchmark",
+        roleId: "human-resources",
+        label: "Role and competency benchmark",
+        description: "Job roles, skills, career paths",
+        prompt:
+          "Benchmark roles, responsibilities, and competency expectations for [JOB FAMILY / POSITION / TEAM FUNCTION]. Research job descriptions, professional frameworks, salary or labor-market information when available, required skills, emerging competencies, career progression, training needs, and examples from similar organizations. The final report should support role design, hiring, promotion, or professional development planning.",
+      },
+      {
+        id: "workplace-policy-scan",
+        roleId: "human-resources",
+        label: "Workplace policy scan",
+        description: "Policy examples and implementation concerns",
+        prompt:
+          "Research workplace policy examples and implementation considerations for [POLICY AREA / WORKPLACE PRACTICE / STAFF PROCESS]. Focus on credible guidance, comparable organizations, legal or compliance considerations at a general level, equity and accessibility, communication needs, training needs, risks, and evaluation methods. The final report should identify policy options and practical rollout considerations.",
+      },
+    ],
   },
 ];
+
+export const RESEARCH_TEMPLATES: ResearchTemplate[] = RESEARCH_ROLE_GROUPS.flatMap(
+  (role) => role.templates,
+);
