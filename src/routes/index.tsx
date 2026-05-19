@@ -921,6 +921,47 @@ function Index() {
               <section className="rounded-xl border border-border bg-card p-8">
                 <ReportView markdown={report} sources={sources} prompt={prompt} />
               </section>
+
+              {followUps.length > 0 && (
+                <section className="rounded-xl border border-border bg-card p-6">
+                  <div className="mb-4 flex items-center gap-2">
+                    <Sparkles className="size-4 text-foreground" />
+                    <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                      Continue the research
+                    </h2>
+                  </div>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    The synthesizer reviewed the report and identified these gaps. Each suggestion
+                    is a ready-to-run research prompt.
+                  </p>
+                  <ul className="space-y-3">
+                    {followUps.map((f, i) => (
+                      <li
+                        key={i}
+                        className="rounded-lg border border-border bg-background p-4"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-foreground">{f.title}</div>
+                            {f.rationale && (
+                              <div className="mt-1 text-xs text-muted-foreground">{f.rationale}</div>
+                            )}
+                            <div className="mt-2 text-sm text-foreground/90">{f.prompt}</div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleFollowUp(f.prompt)}
+                            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:opacity-90"
+                          >
+                            Start research
+                            <ArrowRight className="size-3.5" />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
               {trace.length > 0 && (
                 <section className="rounded-xl border border-border bg-card">
                   <button
