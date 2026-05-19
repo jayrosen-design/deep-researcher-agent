@@ -120,6 +120,10 @@ function Index() {
     setAuthed(false);
     setAuthedState(false);
     setPrompt(null);
+    setPhase("input");
+    setPlan(null);
+    setPlanError(null);
+    setPlanLoading(false);
     setTrace([]);
     setReport(null);
     setSources([]);
