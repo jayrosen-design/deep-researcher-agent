@@ -137,6 +137,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research how generative artificial intelligence tools are being used in higher education teaching for [COURSE / DISCIPLINE / LEARNING GOAL]. Focus on instructional value, assignment design, student learning, academic integrity, bias, accessibility, privacy, policy examples, faculty workload, and assessment redesign. The final report should separate responsible uses from high-risk or poorly supported uses.",
       },
+      {
+        id: "student-engagement-strategy-scan",
+        roleId: "higher-education-instructor",
+        label: "Student engagement strategy scan",
+        description: "Active learning, discussion, feedback",
+        prompt:
+          "Research evidence-based ways to increase student engagement in [COURSE TYPE / DISCIPLINE / MODALITY]. Compare active learning, discussion, collaborative work, reflective assignments, formative feedback, attendance or participation structures, and digital tools. Evaluate evidence of impact, implementation difficulty, equity considerations, and student workload.",
+      },
+      {
+        id: "academic-integrity-landscape-review",
+        roleId: "higher-education-instructor",
+        label: "Academic integrity landscape review",
+        description: "Policy, assessment redesign, detection limits",
+        prompt:
+          "Research academic integrity challenges and responses related to [ASSIGNMENT TYPE / COURSE / TECHNOLOGY]. Focus on current higher education guidance, policy examples, assessment redesign, student motivation, detection limits, privacy concerns, and approaches that reduce misconduct while preserving meaningful learning.",
+      },
+      {
+        id: "discipline-teaching-benchmark",
+        roleId: "higher-education-instructor",
+        label: "Discipline-specific teaching benchmark",
+        description: "Pedagogical models and signature assignments",
+        prompt:
+          "Research how instructors teach [SUBJECT / DISCIPLINE / SKILL] across higher education. Identify common pedagogical models, signature assignments, assessment methods, lab or studio practices if relevant, common student difficulties, examples from universities, and emerging changes in the field.",
+      },
     ],
   },
   {
