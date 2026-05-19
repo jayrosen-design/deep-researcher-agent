@@ -46,8 +46,34 @@ export function AgentTrace({ steps }: { steps: TraceStep[] }) {
                   <span className="text-muted-foreground">Search:</span>{" "}
                   <span className="font-medium">"{s.query}"</span>
                 </div>
+                {s.status === "done" && s.resultUrls && s.resultUrls.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                    {s.resultUrls.slice(0, 12).map((u, idx) => (
+                      <a
+                        key={idx}
+                        href={u}
+                        target="_blank"
+                        rel="noreferrer"
+                        title={hostname(u)}
+                        className="inline-flex size-5 items-center justify-center overflow-hidden rounded-sm border border-border bg-muted"
+                      >
+                        <img
+                          src={faviconUrl(u)}
+                          alt=""
+                          width={16}
+                          height={16}
+                          loading="lazy"
+                          className="size-4"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).style.visibility = "hidden";
+                          }}
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
                 {s.status === "done" && typeof s.resultCount === "number" && (
-                  <div className="mt-0.5 text-xs text-muted-foreground">{s.resultCount} results</div>
+                  <div className="mt-1 text-xs text-muted-foreground">{s.resultCount} results</div>
                 )}
                 {s.status === "error" && s.error && (
                   <div className="mt-0.5 text-xs text-destructive">{s.error}</div>
@@ -56,7 +82,18 @@ export function AgentTrace({ steps }: { steps: TraceStep[] }) {
             )}
             {s.kind === "read" && (
               <div>
-                <div className="text-foreground">
+                <div className="flex items-center gap-1.5 text-foreground">
+                  <img
+                    src={faviconUrl(s.url)}
+                    alt=""
+                    width={16}
+                    height={16}
+                    loading="lazy"
+                    className="size-4 shrink-0 rounded-sm"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.visibility = "hidden";
+                    }}
+                  />
                   <span className="text-muted-foreground">Read:</span>{" "}
                   <a
                     href={s.url}
