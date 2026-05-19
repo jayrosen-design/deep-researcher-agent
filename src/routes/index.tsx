@@ -156,6 +156,24 @@ function Index() {
   const [fatalError, setFatalError] = useState<string | null>(null);
   const [traceOpen, setTraceOpen] = useState(false);
   const cancelled = useRef(false);
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
+  const [historyRefresh, setHistoryRefresh] = useState(0);
+  const savedReportRef = useRef<string | null>(null);
+
+  // Persist completed researches to localStorage (per-device only).
+  useEffect(() => {
+    if (!report || !prompt) return;
+    if (savedReportRef.current === report) return;
+    if (activeHistoryId) {
+      // Loaded from history — don't re-save.
+      savedReportRef.current = report;
+      return;
+    }
+    const entry = saveEntry({ prompt, plan, report, sources });
+    savedReportRef.current = report;
+    setActiveHistoryId(entry.id);
+    setHistoryRefresh((n) => n + 1);
+  }, [report, prompt, plan, sources, activeHistoryId]);
 
   const handleSignOut = useCallback(() => {
     setAuthed(false);
