@@ -648,9 +648,10 @@ function Index() {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
 
+  let content: React.ReactNode;
   if (phase === "input" || !prompt) {
-    return (
-      <div>
+    content = (
+      <>
         <Navbar onSignOut={handleSignOut} />
         <WorkflowStepper steps={workflowSteps} />
         <PromptInput
@@ -659,13 +660,11 @@ function Index() {
           onSettingsChange={setSettings}
         />
         <Disclaimer />
-      </div>
+      </>
     );
-  }
-
-  if (phase === "plan") {
-    return (
-      <div>
+  } else if (phase === "plan") {
+    content = (
+      <>
         <Navbar onSignOut={handleSignOut} />
         <WorkflowStepper steps={workflowSteps} />
         <PlanReview
@@ -679,129 +678,140 @@ function Index() {
           onCancel={handleReset}
         />
         <Disclaimer />
-      </div>
+      </>
+    );
+  } else {
+    content = (
+      <>
+        <Navbar onSignOut={handleSignOut} />
+        <WorkflowStepper steps={workflowSteps} />
+        <div className="mx-auto w-full max-w-4xl px-6 py-10">
+          <header className="mb-8 flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Research
+              </div>
+              <h1 className="mt-1 text-xl font-semibold leading-snug text-foreground">{prompt}</h1>
+            </div>
+            <button
+              onClick={handleReset}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+            >
+              <RotateCcw className="size-3.5" />
+              New research
+            </button>
+          </header>
+
+          {!isDone && (
+            <div className="space-y-6">
+              <section className="rounded-xl border border-border bg-card p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Progress
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · up to {settings.maxSources} sources
+                  </div>
+                </div>
+                <ProgressTracker phases={phases} />
+                {fatalError && (
+                  <div className="mt-6 border-t border-border pt-4">
+                    <div className="text-sm text-destructive">{fatalError}</div>
+                    <button
+                      onClick={handleRetry}
+                      className="mt-3 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+                    >
+                      Retry research
+                    </button>
+                  </div>
+                )}
+              </section>
+
+              <section className="rounded-xl border border-border bg-card">
+                <button
+                  type="button"
+                  onClick={() => setTraceOpen((o) => !o)}
+                  className="flex w-full items-center justify-between gap-2 px-6 py-4 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    {traceOpen ? (
+                      <ChevronDown className="size-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronRight className="size-4 text-muted-foreground" />
+                    )}
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Agent trace
+                    </span>
+                    <span className="text-xs text-muted-foreground">({trace.length})</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {traceOpen ? "Hide details" : "Show details"}
+                  </span>
+                </button>
+                {traceOpen && (
+                  <div className="border-t border-border px-6 py-5">
+                    {trace.length === 0 && running && (
+                      <div className="text-sm text-muted-foreground">Thinking…</div>
+                    )}
+                    <AgentTrace steps={trace} />
+                  </div>
+                )}
+              </section>
+            </div>
+          )}
+
+          {isDone && report && (
+            <div className="space-y-8">
+              <section className="rounded-xl border border-border bg-card p-8">
+                <ReportView markdown={report} sources={sources} prompt={prompt} />
+              </section>
+              {trace.length > 0 && (
+                <section className="rounded-xl border border-border bg-card">
+                  <button
+                    type="button"
+                    onClick={() => setTraceOpen((o) => !o)}
+                    className="flex w-full items-center justify-between gap-2 px-6 py-4 text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      {traceOpen ? (
+                        <ChevronDown className="size-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="size-4 text-muted-foreground" />
+                      )}
+                      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                        Agent trace
+                      </span>
+                      <span className="text-xs text-muted-foreground">({trace.length} steps)</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {traceOpen ? "Hide details" : "Show details"}
+                    </span>
+                  </button>
+                  {traceOpen && (
+                    <div className="border-t border-border px-6 py-5">
+                      <AgentTrace steps={trace} />
+                    </div>
+                  )}
+                </section>
+              )}
+              <SourcesPanel sources={sources} />
+            </div>
+          )}
+        </div>
+        <Disclaimer />
+      </>
     );
   }
 
-
   return (
-    <div>
-      <Navbar onSignOut={handleSignOut} />
-      <WorkflowStepper steps={workflowSteps} />
-      <div className="mx-auto w-full max-w-4xl px-6 py-10">
-      <header className="mb-8 flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Research
-          </div>
-          <h1 className="mt-1 text-xl font-semibold leading-snug text-foreground">{prompt}</h1>
-        </div>
-        <button
-          onClick={handleReset}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
-        >
-          <RotateCcw className="size-3.5" />
-          New research
-        </button>
-      </header>
-
-      {!isDone && (
-        <div className="space-y-6">
-          <section className="rounded-xl border border-border bg-card p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Progress
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · up to {settings.maxSources} sources
-              </div>
-            </div>
-            <ProgressTracker phases={phases} />
-            {fatalError && (
-              <div className="mt-6 border-t border-border pt-4">
-                <div className="text-sm text-destructive">{fatalError}</div>
-                <button
-                  onClick={handleRetry}
-                  className="mt-3 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
-                >
-                  Retry research
-                </button>
-              </div>
-            )}
-          </section>
-
-          <section className="rounded-xl border border-border bg-card">
-            <button
-              type="button"
-              onClick={() => setTraceOpen((o) => !o)}
-              className="flex w-full items-center justify-between gap-2 px-6 py-4 text-left"
-            >
-              <div className="flex items-center gap-2">
-                {traceOpen ? (
-                  <ChevronDown className="size-4 text-muted-foreground" />
-                ) : (
-                  <ChevronRight className="size-4 text-muted-foreground" />
-                )}
-                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Agent trace
-                </span>
-                <span className="text-xs text-muted-foreground">({trace.length})</span>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {traceOpen ? "Hide details" : "Show details"}
-              </span>
-            </button>
-            {traceOpen && (
-              <div className="border-t border-border px-6 py-5">
-                {trace.length === 0 && running && (
-                  <div className="text-sm text-muted-foreground">Thinking…</div>
-                )}
-                <AgentTrace steps={trace} />
-              </div>
-            )}
-          </section>
-        </div>
-      )}
-
-      {isDone && report && (
-        <div className="space-y-8">
-          <section className="rounded-xl border border-border bg-card p-8">
-            <ReportView markdown={report} sources={sources} prompt={prompt} />
-          </section>
-          {trace.length > 0 && (
-            <section className="rounded-xl border border-border bg-card">
-              <button
-                type="button"
-                onClick={() => setTraceOpen((o) => !o)}
-                className="flex w-full items-center justify-between gap-2 px-6 py-4 text-left"
-              >
-                <div className="flex items-center gap-2">
-                  {traceOpen ? (
-                    <ChevronDown className="size-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronRight className="size-4 text-muted-foreground" />
-                  )}
-                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    Agent trace
-                  </span>
-                  <span className="text-xs text-muted-foreground">({trace.length} steps)</span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {traceOpen ? "Hide details" : "Show details"}
-                </span>
-              </button>
-              {traceOpen && (
-                <div className="border-t border-border px-6 py-5">
-                  <AgentTrace steps={trace} />
-                </div>
-              )}
-            </section>
-          )}
-          <SourcesPanel sources={sources} />
-        </div>
-      )}
-      </div>
-      <Disclaimer />
+    <div className="flex min-h-screen w-full items-stretch">
+      <HistorySidebar
+        activeId={activeHistoryId}
+        onSelect={handleSelectHistory}
+        onNew={handleReset}
+        refreshKey={historyRefresh}
+      />
+      <div className="min-w-0 flex-1">{content}</div>
     </div>
   );
 }
