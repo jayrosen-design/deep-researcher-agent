@@ -13,6 +13,18 @@ import {
 import { RESEARCH_TEMPLATES } from "@/lib/research-templates";
 import { listNavigatorModels } from "@/lib/navigator-models.functions";
 
+const RECOMMENDED_INVESTIGATOR = new Set<string>([
+  "llama-3.1-8b-instruct",
+  "gpt-oss-20b",
+  "llama-3.1-nemotron-nano-8B-v1",
+]);
+const RECOMMENDED_SYNTHESIZER = new Set<string>([
+  "gpt-oss-120b",
+  "llama-3.3-70b-instruct",
+  "nemotron-3-super-120b-a12b",
+]);
+
+
 
 
 export function PromptInput({
