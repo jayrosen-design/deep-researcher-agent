@@ -10,6 +10,20 @@ Markdown report — all from the browser.
 
 ---
 
+## Screenshots
+
+![Prompt](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/1-prompt.png)
+
+![Planning](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/2-planning.png)
+
+![Search](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/3-search.png)
+
+![Report](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/4-report.png)
+
+![Continue Research](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/5-continue-research.png)
+
+---
+
 ## Features
 
 - **Role-based prompt library** — 11 user roles (Researcher, School Teacher,
