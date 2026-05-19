@@ -140,7 +140,7 @@ function Index() {
   const [plan, setPlan] = useState<string | null>(null);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
-  const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
+  // Investigator + synthesizer models come from settings (split-model).
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [report, setReport] = useState<string | null>(null);
   const [sources, setSources] = useState<SearchResult[]>([]);
@@ -210,10 +210,16 @@ function Index() {
         for (let i = 0; i < maxSteps + 1; i++) {
           if (cancelled.current) return;
 
+          // Inject dynamic step counter so the LLM tracks its remaining budget.
+          const counterMsg: ChatMessage = {
+            role: "user",
+            content: buildStepCounter(stepsUsed + 1, maxSteps),
+          };
+
           const { content } = await navigatorChat({
             data: {
-              model,
-              messages,
+              model: settings.investigatorModel,
+              messages: [...messages, counterMsg],
               temperature: 0.2,
               responseFormat: "json_object",
               apiKey: navigatorKey,
@@ -271,7 +277,7 @@ function Index() {
             ];
             const { content: reportMd } = await navigatorChat({
               data: {
-                model,
+                model: settings.synthesisModel,
                 messages: synthesisMessages,
                 temperature: 0.3,
                 apiKey: navigatorKey,
