@@ -269,8 +269,8 @@ function Index() {
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       const readPages: SynthesisSource[] = [];
-      const failedSearches = new Set<string>();
-      const failedReads = new Set<string>();
+      const failedSearches = new Map<string, string>();
+      const failedReads = new Map<string, string>();
       let stepsUsed = 0;
       let sourceCapNotified = false;
 
