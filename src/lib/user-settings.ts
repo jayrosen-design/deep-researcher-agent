@@ -32,10 +32,11 @@ export const DEFAULT_SETTINGS: UserSettings = {
 export const SOURCE_COUNT_OPTIONS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
 function coerceModel(m: unknown, fallback: NavigatorModel): NavigatorModel {
-  return typeof m === "string" && (NAVIGATOR_MODELS as readonly string[]).includes(m)
-    ? (m as NavigatorModel)
-    : fallback;
+  // Accept any non-empty string so dynamically-discovered models work too.
+  if (typeof m === "string" && m.length > 0) return m as NavigatorModel;
+  return fallback;
 }
+
 
 function coerceString(v: unknown, fallback: string): string {
   return typeof v === "string" && v.trim().length > 0 ? v : fallback;
