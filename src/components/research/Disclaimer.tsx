@@ -5,6 +5,9 @@ export function Disclaimer() {
         Deep Researcher Agent is experimental. AI responses may be inaccurate —
         please double-check its output.
       </p>
+      <p className="mt-2 text-center text-xs text-muted-foreground">
+        © 2026 University of Florida
+      </p>
     </footer>
   );
 }
