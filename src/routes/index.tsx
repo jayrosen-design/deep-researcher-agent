@@ -253,6 +253,8 @@ function Index() {
       setReport(null);
       setSources([]);
       setTrace([]);
+      setFollowUps([]);
+      setReviewing(false);
 
       const maxSources = settings.maxSources;
       // Step budget scales with desired source count but stays reasonable.
