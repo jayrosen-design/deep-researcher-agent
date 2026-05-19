@@ -10,6 +10,8 @@ import { WorkflowStepper, type WorkflowStep } from "@/components/research/Workfl
 import { Disclaimer } from "@/components/research/Disclaimer";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
+import { ThemeToggle } from "@/components/research/ThemeToggle";
+
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { webSearch, type SearchResult } from "@/lib/web-search.functions";
 import { readUrl } from "@/lib/read-url.functions";
