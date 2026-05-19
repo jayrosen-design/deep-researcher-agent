@@ -119,6 +119,17 @@ export function AgentTrace({ steps }: { steps: TraceStep[] }) {
                 {s.status === "active" ? "Writing final report…" : "Report complete"}
               </div>
             )}
+            {s.kind === "blocked" && (
+              <div>
+                <div className="text-foreground">
+                  <span className="text-amber-600 dark:text-amber-500 font-medium">Skipped duplicate {s.tool === "web_search" ? "search" : "read"}:</span>{" "}
+                  <span className="font-medium break-all">{s.tool === "web_search" ? `"${s.target}"` : s.target}</span>
+                </div>
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  Previously failed — {s.reason}
+                </div>
+              </div>
+            )}
             {s.kind === "error" && (
               <div className="text-destructive">{s.message}</div>
             )}
