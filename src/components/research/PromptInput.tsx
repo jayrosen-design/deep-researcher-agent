@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUp, Settings as SettingsIcon, Sparkles } from "lucide-react";
+import { ArrowUp, Settings as SettingsIcon, Sparkles, LayoutTemplate } from "lucide-react";
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
 import {
   DEFAULT_SETTINGS,
@@ -8,6 +8,7 @@ import {
   saveSettings,
   type UserSettings,
 } from "@/lib/user-settings";
+import { RESEARCH_TEMPLATES } from "@/lib/research-templates";
 
 export function PromptInput({
   onSubmit,
