@@ -173,7 +173,44 @@ function Index() {
     savedReportRef.current = report;
     setActiveHistoryId(entry.id);
     setHistoryRefresh((n) => n + 1);
-  }, [report, prompt, plan, sources, activeHistoryId]);
+
+    // Generate a short, memorable title via the LLM (best-effort).
+    (async () => {
+      try {
+        const { content } = await navigatorChat({
+          data: {
+            model: settings.investigatorModel,
+            temperature: 0.3,
+            maxTokens: 32,
+            apiKey: settings.navigatorApiKey || undefined,
+            messages: [
+              {
+                role: "system",
+                content:
+                  "You generate ultra-short titles (3–6 words, Title Case, no quotes, no trailing punctuation) that capture the specific subject of a research request. Reply with ONLY the title.",
+              },
+              {
+                role: "user",
+                content: `Research prompt:\n${prompt}\n\nReport excerpt:\n${report.slice(0, 800)}\n\nTitle:`,
+              },
+            ],
+          },
+        });
+        const title = content
+          .trim()
+          .replace(/^["'`]+|["'`]+$/g, "")
+          .replace(/[.!?]+$/g, "")
+          .split("\n")[0]
+          .slice(0, 80);
+        if (title) {
+          updateEntry(entry.id, { title });
+          setHistoryRefresh((n) => n + 1);
+        }
+      } catch {
+        /* keep prompt as fallback */
+      }
+    })();
+  }, [report, prompt, plan, sources, activeHistoryId, settings.investigatorModel, settings.navigatorApiKey]);
 
   const handleSignOut = useCallback(() => {
     setAuthed(false);
