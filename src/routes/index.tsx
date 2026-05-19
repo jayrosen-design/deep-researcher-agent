@@ -613,6 +613,8 @@ function Index() {
   if (phase === "input" || !prompt) {
     return (
       <div className="relative">
+        <BrandLockup className="absolute left-4 top-4" />
+
         <div className="absolute right-4 top-4 inline-flex items-center gap-2">
           <ThemeToggle />
           <button
