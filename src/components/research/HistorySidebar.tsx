@@ -110,8 +110,8 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props)
                     }`}
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-xs font-medium text-foreground">
-                        {e.prompt}
+                      <div className="truncate text-xs font-medium text-foreground" title={e.prompt}>
+                        {e.title || e.prompt}
                       </div>
                       <div className="mt-0.5 text-[10px] text-muted-foreground">
                         {formatDate(e.createdAt)} · {e.sources.length} sources

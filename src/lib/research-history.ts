@@ -9,6 +9,7 @@ const MAX_ENTRIES = 100;
 export type HistoryEntry = {
   id: string;
   prompt: string;
+  title?: string;
   plan: string | null;
   report: string;
   sources: SearchResult[];
@@ -60,6 +61,16 @@ export function saveEntry(entry: Omit<HistoryEntry, "id" | "createdAt">): Histor
   const all = [full, ...loadHistory()];
   persist(all);
   return full;
+}
+
+export function updateEntry(id: string, patch: Partial<Omit<HistoryEntry, "id">>): HistoryEntry | null {
+  const all = loadHistory();
+  const idx = all.findIndex((e) => e.id === id);
+  if (idx === -1) return null;
+  const updated = { ...all[idx], ...patch };
+  all[idx] = updated;
+  persist(all);
+  return updated;
 }
 
 export function deleteEntry(id: string): HistoryEntry[] {
