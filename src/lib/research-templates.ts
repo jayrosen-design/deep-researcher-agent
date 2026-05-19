@@ -7,108 +7,87 @@ export type ResearchTemplate = {
 
 export const RESEARCH_TEMPLATES: ResearchTemplate[] = [
   {
-    id: "instructional-design-brief",
-    label: "Instructional design brief",
-    description: "Learning goals, audience, activities, assessment",
+    id: "evidence-map",
+    label: "Evidence map",
+    description: "Research base, strength of evidence, gaps",
     prompt:
-      "Create an instructional design brief for [COURSE/PROGRAM/TRAINING TOPIC] at the University of Florida College of Education. Identify the target learners, learning objectives, prerequisite knowledge, recommended instructional strategies, activity ideas, assessment approaches, accessibility considerations, and evidence-based design principles. Include examples from higher education, teacher education, or professional learning when available.",
+      "Create an evidence map for [EDUCATION TOPIC / INTERVENTION / TECHNOLOGY] for use by UF College of Education staff and faculty. Focus the research on peer-reviewed studies, major research syntheses, federal or foundation reports, and credible professional organizations. Identify what is well-supported, what is promising but uncertain, what populations or contexts have been studied, what outcomes were measured, where evidence is weak or conflicting, and what practical implications ETC should consider before recommending or building around this approach.",
   },
   {
-    id: "edtech-tool-evaluation",
-    label: "EdTech tool evaluation",
-    description: "Features, evidence, cost, risks, fit",
+    id: "edtech-adoption-brief",
+    label: "EdTech adoption brief",
+    description: "Adoption decision, risks, fit, implementation",
     prompt:
-      "Evaluate [EDTECH TOOL/PLATFORM] for use by UF College of Education faculty, staff, or students. Cover core features, pedagogical use cases, evidence of effectiveness, accessibility, FERPA/privacy considerations, integrations with Canvas or common university systems, licensing or cost model, implementation effort, support needs, risks, and a recommendation for whether ETC should pilot, adopt, avoid, or monitor it.",
+      "Prepare a deep research adoption brief on [EDTECH TOOL / PLATFORM / CATEGORY] for UF College of Education and ETC decision-making. Investigate current product capabilities, higher education use cases, Canvas or LMS integrations, accessibility support, privacy and data practices, FERPA-relevant concerns, vendor stability, cost model if publicly available, faculty and student support needs, comparable tools, and evidence of instructional value. The final report should help ETC decide whether to pilot, recommend, avoid, or monitor this technology.",
   },
   {
-    id: "ai-teaching-learning",
-    label: "AI in teaching & learning",
-    description: "Use cases, risks, policy, implementation",
+    id: "ai-workflow-evaluation",
+    label: "AI workflow evaluation",
+    description: "AI use case, governance, quality, labor impact",
     prompt:
-      "Research how [AI TOOL/AI APPROACH] can support teaching, learning, research, or staff workflows in a College of Education context. Include practical use cases, benefits, limitations, ethical risks, privacy and data governance concerns, accessibility issues, faculty/staff training needs, student impact, examples from peer institutions, and a responsible implementation plan.",
+      "Research the feasibility, risks, and best practices for using [AI TOOL / AI WORKFLOW / AGENTIC SYSTEM] in an ETC or College of Education workflow. Focus on evidence from universities, education technology teams, AI governance guidance, professional associations, and vendor documentation when necessary. Evaluate likely benefits, quality-control requirements, privacy and data risks, accessibility issues, bias concerns, staff workload implications, training needs, and an implementation model that keeps humans accountable for final decisions.",
   },
   {
-    id: "xr-learning-experience",
-    label: "XR learning experience",
-    description: "AR/VR use case, design, feasibility",
+    id: "xr-learning-feasibility",
+    label: "XR learning feasibility",
+    description: "AR/VR/MR use case, evidence, build decision",
     prompt:
-      "Develop a research-informed concept brief for an AR, VR, mixed reality, or simulation-based learning experience about [TOPIC/SKILL]. Focus on learning objectives, learner audience, interaction design, hardware/software requirements, accessibility and motion comfort, assessment strategy, development complexity, relevant examples, and whether the experience should be built as AR, VR, WebXR, Unity, mobile, or a lower-cost alternative.",
+      "Research whether an AR, VR, MR, WebXR, or simulation-based learning experience is appropriate for [LEARNING TOPIC / SKILL / COURSE / TRAINING NEED]. Prioritize evidence on learning outcomes, embodiment, presence, simulation training, accessibility, motion comfort, hardware constraints, development cost, maintenance burden, classroom logistics, and comparable university projects. The report should help ETC determine whether the experience should be built in Unity, WebXR, mobile AR, 360 video, interactive web media, or a lower-cost non-XR format.",
   },
   {
-    id: "literature-review-education",
-    label: "Education literature review",
-    description: "Research base for programs and proposals",
-    prompt:
-      "Conduct an academic literature review on [EDUCATION TOPIC/INTERVENTION]. Prioritize peer-reviewed research, major reports, and recent findings from the last 5 years. Summarize key theories, evidence of effectiveness, target populations, implementation conditions, measurement approaches, gaps in the literature, and implications for UF College of Education projects, grants, or instructional design.",
-  },
-  {
-    id: "grant-landscape-scan",
-    label: "Grant landscape scan",
-    description: "Funders, priorities, fit, next steps",
-    prompt:
-      "Research the grant and funding landscape for [PROJECT IDEA/RESEARCH AREA] related to education, learning technology, literacy, AI, workforce development, or digital learning. Identify relevant federal, foundation, state, and university funding opportunities; summarize funder priorities, eligibility, award size, deadlines, required partners, evaluation expectations, and how UF College of Education or ETC could position a competitive proposal.",
-  },
-  {
-    id: "accessibility-udl-review",
-    label: "Accessibility & UDL review",
-    description: "WCAG, UDL, inclusive learning design",
-    prompt:
-      "Review [COURSE/WEBSITE/APP/LEARNING MATERIAL/TOOL] through accessibility, Universal Design for Learning, and inclusive design lenses. Identify likely barriers for learners with disabilities, multilingual learners, mobile users, and users with limited bandwidth or technology access. Include WCAG-related considerations, UDL recommendations, media captioning/transcript needs, usability improvements, testing methods, and a prioritized remediation checklist.",
-  },
-  {
-    id: "communications-strategy",
-    label: "Communications strategy",
-    description: "Audience, messaging, channels, rollout",
-    prompt:
-      "Create a communications strategy for [PROGRAM/INITIATIVE/RESEARCH PROJECT/EVENT] at UF College of Education. Identify key audiences, stakeholder needs, core messages, tone, recommended channels, content calendar ideas, website/newsletter/social media angles, visual asset needs, success metrics, risks, and a concise launch plan for ETC support.",
-  },
-  {
-    id: "program-evaluation-plan",
-    label: "Program evaluation plan",
-    description: "Metrics, data, instruments, reporting",
-    prompt:
-      "Design a practical evaluation plan for [PROGRAM/COURSE/APP/TRAINING/INTERVENTION]. Define the logic model, evaluation questions, success metrics, data sources, collection instruments, timeline, analysis approach, equity/accessibility considerations, reporting format, and recommendations for communicating findings to faculty, administrators, funders, or community partners.",
-  },
-  {
-    id: "implementation-roadmap",
-    label: "Implementation roadmap",
-    description: "Timeline, roles, risks, deliverables",
-    prompt:
-      "Create an implementation roadmap for [PROJECT/TOOL/COURSE REDESIGN/TECHNOLOGY INITIATIVE]. Include phases, timeline, key milestones, roles and responsibilities, technical requirements, training needs, stakeholder communication, risk register, dependencies, support model, maintenance plan, and decision points for leadership approval.",
-  },
-  {
-    id: "policy-compliance-scan",
-    label: "Policy & compliance scan",
-    description: "FERPA, privacy, AI, procurement, accessibility",
-    prompt:
-      "Research the policy and compliance considerations for [TOOL/PROJECT/WORKFLOW] in a public university education setting. Cover FERPA, student privacy, data security, accessibility, AI governance, copyright, procurement, records retention, research/IRB considerations if relevant, vendor risk, and practical questions ETC should resolve before adoption or launch.",
-  },
-  {
-    id: "peer-institution-scan",
+    id: "peer-benchmarking",
     label: "Peer institution scan",
-    description: "Comparable programs and best practices",
+    description: "Comparable university programs and practices",
     prompt:
-      "Find and compare how peer universities or Colleges of Education are approaching [TOPIC/PROGRAM/TECHNOLOGY]. Identify 5 to 10 strong examples, summarize their goals, audiences, technologies, staffing models, funding, public outcomes, strengths, gaps, and lessons UF College of Education or ETC could adapt.",
+      "Conduct a peer institution scan on how Colleges of Education or university e-learning teams are approaching [PROGRAM / SERVICE / TECHNOLOGY / INITIATIVE]. Identify strong examples from peer universities, aspirational universities, and relevant public higher education institutions. Compare goals, staffing models, technologies, funding, public-facing outputs, support structures, accessibility practices, and measurable outcomes when available. The report should identify models UF College of Education or ETC could realistically adapt.",
   },
   {
-    id: "learning-analytics-report",
-    label: "Learning analytics report",
-    description: "Data sources, metrics, dashboards, insights",
+    id: "grant-opportunity-scan",
+    label: "Grant opportunity scan",
+    description: "Funders, programs, deadlines, positioning",
     prompt:
-      "Research best practices for using learning analytics to evaluate [COURSE/PROGRAM/APP/ONLINE LEARNING EXPERIENCE]. Include relevant metrics, data sources, dashboard examples, student success indicators, privacy and ethics considerations, interpretation pitfalls, recommended visualizations, and a practical reporting format for faculty, staff, and leadership.",
+      "Research current and recurring grant opportunities for [PROJECT AREA / RESEARCH IDEA / EDUCATION TECHNOLOGY INITIATIVE]. Focus on federal agencies, foundations, Florida or regional funders, university programs, and education-focused funding sources. Identify funder priorities, eligibility, award ranges, deadline cycles, required partners, evaluation expectations, technology or dissemination requirements, and how UF College of Education could position a competitive proposal. Flag opportunities that are currently open separately from recurring or likely future opportunities.",
   },
   {
-    id: "staff-workflow-automation",
-    label: "Staff workflow automation",
-    description: "Process, tools, risks, ROI",
+    id: "course-redesign-research",
+    label: "Course redesign research",
+    description: "Evidence-based redesign options",
     prompt:
-      "Analyze how ETC could improve or automate the workflow for [ADMINISTRATIVE/COMMUNICATIONS/E-LEARNING/TECH SUPPORT PROCESS]. Map the current process, identify pain points, compare potential tools or automation approaches, estimate time savings, note risks and compliance issues, and recommend a phased implementation plan with human review points.",
+      "Research evidence-based redesign options for [COURSE / TRAINING / MODULE / ONLINE PROGRAM]. Focus on instructional strategies, digital learning design, active learning, assessment models, multimedia learning, accessibility, student engagement, and comparable higher education examples. The final report should translate the research into practical redesign options for ETC, including what to change, why it is supported, what tools or media may be needed, and how success could be measured.",
   },
   {
-    id: "stakeholder-brief",
-    label: "Leadership stakeholder brief",
-    description: "Concise decision memo for leaders",
+    id: "accessibility-udl-research",
+    label: "Accessibility and UDL research",
+    description: "Inclusive design standards and best practices",
     prompt:
-      "Prepare a concise leadership brief on [TOPIC/DECISION/PROJECT IDEA] for UF College of Education stakeholders. Include the issue, why it matters now, evidence summary, options, costs or resource needs, risks, equity/accessibility implications, recommended action, and next steps. Write it in a clear format suitable for a dean, director, PI, or department leadership meeting.",
+      "Research accessibility, Universal Design for Learning, and inclusive digital learning best practices for [COURSE / WEBSITE / APP / MEDIA PROJECT / LEARNING TOOL]. Prioritize WCAG guidance, higher education accessibility resources, UDL research, disability services guidance, and examples from universities. Identify likely barriers, legal or policy considerations, design recommendations, testing methods, remediation priorities, and practical guidance ETC can use when supporting faculty or building digital learning materials.",
+  },
+  {
+    id: "evaluation-framework",
+    label: "Evaluation framework",
+    description: "Metrics, instruments, outcomes, reporting",
+    prompt:
+      "Research how to evaluate the effectiveness of [PROGRAM / APP / COURSE / TRAINING / TECHNOLOGY INITIATIVE] in a College of Education context. Identify evaluation models, outcome measures, validated instruments if available, learning analytics approaches, qualitative and quantitative data sources, equity considerations, privacy constraints, reporting formats, and examples from similar education initiatives. The final report should recommend a practical evaluation framework ETC could support or implement.",
+  },
+  {
+    id: "policy-compliance-diligence",
+    label: "Policy and compliance diligence",
+    description: "Privacy, FERPA, AI, copyright, accessibility",
+    prompt:
+      "Conduct policy and compliance due diligence for [TOOL / PLATFORM / WORKFLOW / DIGITAL LEARNING PROJECT] in a public university education setting. Research FERPA and student privacy concerns, accessibility obligations, AI governance issues if relevant, copyright and licensing, data retention, vendor risk, procurement concerns, research or IRB considerations when applicable, and examples of how universities manage similar risks. The final report should separate confirmed requirements from practical risk-management recommendations.",
+  },
+  {
+    id: "communications-landscape",
+    label: "Communications landscape",
+    description: "Audience, channels, examples, message strategy",
+    prompt:
+      "Research the communications landscape for [PROGRAM / INITIATIVE / EVENT / SERVICE / RESEARCH PROJECT] at a College of Education or university unit. Identify target audiences, comparable communication campaigns, successful messaging approaches, web and newsletter examples, social media strategies, visual communication patterns, accessibility considerations, stakeholder concerns, and metrics used to evaluate reach or engagement. The final report should help ETC create a stronger launch or awareness strategy.",
+  },
+  {
+    id: "implementation-roadmap-research",
+    label: "Implementation roadmap research",
+    description: "Phased rollout, staffing, support, risks",
+    prompt:
+      "Research implementation models and best practices for launching [TECHNOLOGY / SERVICE / COURSE MODEL / DIGITAL LEARNING INITIATIVE] in a university or College of Education context. Investigate staffing needs, training models, governance, technical dependencies, stakeholder engagement, rollout phases, support models, maintenance requirements, risks, and comparable examples. The final report should provide a phased roadmap that ETC leadership could use for planning, resourcing, and decision-making.",
   },
 ];
