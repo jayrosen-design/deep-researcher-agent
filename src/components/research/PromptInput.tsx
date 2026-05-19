@@ -66,7 +66,8 @@ export function PromptInput({
             rows={4}
             className="w-full resize-none rounded-2xl bg-transparent px-5 py-4 text-base text-foreground placeholder:text-muted-foreground/70 focus:outline-none"
           />
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-3 py-2">
+          <div className="flex flex-col gap-2 border-t border-border px-3 py-2">
+            {/* Row 1: model selectors */}
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="px-1">Investigator</span>
@@ -102,48 +103,55 @@ export function PromptInput({
                   ))}
                 </select>
               </label>
-              <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Max sources</span>
-                <select
-                  value={settings.maxSources}
-                  onChange={(e) =>
-                    persistDraft({ ...draft, maxSources: Number(e.target.value) })
-                  }
-                  className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+            </div>
+
+            {/* Row 2: max sources + templates + api keys, with submit on the right */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="px-1">Max sources</span>
+                  <select
+                    value={settings.maxSources}
+                    onChange={(e) =>
+                      persistDraft({ ...draft, maxSources: Number(e.target.value) })
+                    }
+                    className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                  >
+                    {SOURCE_COUNT_OPTIONS.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowTemplates((s) => !s)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
                 >
-                  {SOURCE_COUNT_OPTIONS.map((n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  <LayoutTemplate className="size-3.5" />
+                  Templates
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowSettings((s) => !s)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  <SettingsIcon className="size-3.5" />
+                  API keys
+                </button>
+              </div>
               <button
-                type="button"
-                onClick={() => setShowTemplates((s) => !s)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                type="submit"
+                disabled={!value.trim()}
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <LayoutTemplate className="size-3.5" />
-                Templates
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowSettings((s) => !s)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
-              >
-                <SettingsIcon className="size-3.5" />
-                API keys
+                Start research
+                <ArrowUp className="size-4" />
               </button>
             </div>
-            <button
-              type="submit"
-              disabled={!value.trim()}
-              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Start research
-              <ArrowUp className="size-4" />
-            </button>
           </div>
+
         </div>
       </form>
 
