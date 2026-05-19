@@ -361,23 +361,79 @@ function Index() {
               },
             });
             if (cancelled.current) return;
-            const { sanitizedMarkdown, hallucinatedUrls } = sanitizeReportCitations(
+            const { sanitizedMarkdown: draftSanitized, hallucinatedUrls } = sanitizeReportCitations(
               reportMd.trim(),
               collectedSources,
             );
-            setReport(sanitizedMarkdown);
-            updateLastStep(() => ({ kind: "finish", status: "done" }));
             if (hallucinatedUrls.length > 0) {
               console.warn("Hallucinated citations stripped:", hallucinatedUrls);
               appendStep({
                 kind: "error",
                 message: `Stripped ${hallucinatedUrls.length} hallucinated citation${
                   hallucinatedUrls.length === 1 ? "" : "s"
-                } from the report: ${hallucinatedUrls.slice(0, 5).join(", ")}${
+                } from the draft: ${hallucinatedUrls.slice(0, 5).join(", ")}${
                   hallucinatedUrls.length > 5 ? "…" : ""
                 }`,
               });
             }
+            updateLastStep(() => ({ kind: "finish", status: "done" }));
+
+            // Review pass: synthesizer polishes the draft and proposes follow-ups.
+            setReviewing(true);
+            appendStep({ kind: "thought", text: "Reviewing draft and identifying follow-up research…" });
+            let finalReport = draftSanitized;
+            try {
+              const { content: reviewRaw } = await navigatorChat({
+                data: {
+                  model: settings.synthesisModel,
+                  messages: [
+                    { role: "system", content: REVIEW_SYSTEM_PROMPT },
+                    {
+                      role: "user",
+                      content: buildReviewUserMessage(userQuery, approvedPlan ?? null, draftSanitized),
+                    },
+                  ],
+                  temperature: 0.3,
+                  maxTokens: 16000,
+                  responseFormat: "json_object",
+                  apiKey: navigatorKey,
+                },
+              });
+              if (cancelled.current) return;
+              const parsed = JSON.parse(stripFences(reviewRaw)) as {
+                revisedReport?: unknown;
+                followUps?: unknown;
+              };
+              if (typeof parsed.revisedReport === "string" && parsed.revisedReport.trim().length > 200) {
+                const { sanitizedMarkdown: revisedSanitized } = sanitizeReportCitations(
+                  parsed.revisedReport.trim(),
+                  collectedSources,
+                );
+                finalReport = revisedSanitized;
+              }
+              if (Array.isArray(parsed.followUps)) {
+                const cleaned: FollowUpSuggestion[] = parsed.followUps
+                  .filter(
+                    (f): f is { title: string; rationale: string; prompt: string } =>
+                      !!f &&
+                      typeof (f as { title?: unknown }).title === "string" &&
+                      typeof (f as { prompt?: unknown }).prompt === "string",
+                  )
+                  .map((f) => ({
+                    title: f.title.trim(),
+                    rationale: typeof f.rationale === "string" ? f.rationale.trim() : "",
+                    prompt: f.prompt.trim(),
+                  }))
+                  .slice(0, 3);
+                setFollowUps(cleaned);
+              }
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : String(e);
+              appendStep({ kind: "error", message: `Review pass failed — showing draft. (${msg})` });
+            } finally {
+              setReviewing(false);
+            }
+            setReport(finalReport);
 
 
             return;
