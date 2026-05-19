@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowUp, Settings as SettingsIcon, FileText, RotateCcw } from "lucide-react";
 
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
 import {
   DEFAULT_SETTINGS,
@@ -278,22 +284,26 @@ export function PromptInput({
       </div>
 
 
-      {showSettings && (
-        <div className="mt-4 w-full rounded-xl border border-border bg-card p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="text-sm font-medium text-foreground">Your API keys</div>
-            <button
-              type="button"
-              onClick={() => persistDraft(DEFAULT_SETTINGS)}
-              className="text-xs text-muted-foreground underline-offset-2 hover:underline"
-            >
-              Reset
-            </button>
-          </div>
-          <p className="mb-4 text-xs text-muted-foreground">
-            Stored only in your browser (localStorage) and sent with each request.
-            Leave blank to use the server's default keys.
-          </p>
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <DialogTitle>Your API keys</DialogTitle>
+                <DialogDescription>
+                  Stored only in your browser (localStorage) and sent with each request.
+                  Leave blank to use the server's default keys.
+                </DialogDescription>
+              </div>
+              <button
+                type="button"
+                onClick={() => persistDraft(DEFAULT_SETTINGS)}
+                className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+              >
+                Reset
+              </button>
+            </div>
+          </DialogHeader>
           <div className="space-y-3">
             <label className="block">
               <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
@@ -383,32 +393,36 @@ export function PromptInput({
               />
             </label>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
-      {showPrompts && (
-        <div className="mt-4 w-full rounded-xl border border-border bg-card p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="text-sm font-medium text-foreground">System prompts</div>
-            <button
-              type="button"
-              onClick={() =>
-                persistDraft({
-                  ...draft,
-                  planSystemPrompt: DEFAULT_SETTINGS.planSystemPrompt,
-                  agentSystemPrompt: DEFAULT_SETTINGS.agentSystemPrompt,
-                  synthesisSystemPrompt: DEFAULT_SETTINGS.synthesisSystemPrompt,
-                })
-              }
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline"
-            >
-              <RotateCcw className="size-3" />
-              Reset all
-            </button>
-          </div>
-          <p className="mb-4 text-xs text-muted-foreground">
-            Customize the system prompts for each agent role. Stored only in your browser.
-          </p>
+      <Dialog open={showPrompts} onOpenChange={setShowPrompts}>
+        <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <DialogTitle>System prompts</DialogTitle>
+                <DialogDescription>
+                  Customize the system prompts for each agent role. Stored only in your browser.
+                </DialogDescription>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  persistDraft({
+                    ...draft,
+                    planSystemPrompt: DEFAULT_SETTINGS.planSystemPrompt,
+                    agentSystemPrompt: DEFAULT_SETTINGS.agentSystemPrompt,
+                    synthesisSystemPrompt: DEFAULT_SETTINGS.synthesisSystemPrompt,
+                  })
+                }
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline"
+              >
+                <RotateCcw className="size-3" />
+                Reset all
+              </button>
+            </div>
+          </DialogHeader>
           <div className="space-y-4">
             {([
               {
@@ -458,8 +472,8 @@ export function PromptInput({
               );
             })}
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
