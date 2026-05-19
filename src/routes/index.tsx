@@ -521,6 +521,24 @@ function Index() {
     setSources([]);
     setFatalError(null);
     setRunning(false);
+    setActiveHistoryId(null);
+    savedReportRef.current = null;
+  }, []);
+
+  const handleSelectHistory = useCallback((entry: HistoryEntry) => {
+    cancelled.current = true;
+    setRunning(false);
+    setPlanLoading(false);
+    setPlanError(null);
+    setFatalError(null);
+    setTrace([]);
+    setPrompt(entry.prompt);
+    setPlan(entry.plan);
+    setSources(entry.sources);
+    setReport(entry.report);
+    savedReportRef.current = entry.report;
+    setActiveHistoryId(entry.id);
+    setPhase("research");
   }, []);
 
   const handleRetry = useCallback(() => {
