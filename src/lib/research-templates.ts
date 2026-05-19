@@ -73,6 +73,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research methods and measurement approaches used to study [TOPIC / PROGRAM / INTERVENTION]. Identify common research designs, validated instruments, outcome measures, data sources, sampling strategies, analysis methods, ethical concerns, and known validity or reliability issues. Recommend which approaches appear most appropriate for a new study or evaluation.",
       },
+      {
+        id: "research-replication-scan",
+        roleId: "researcher",
+        label: "Research replication scan",
+        description: "Replication, contradictions, stability",
+        prompt:
+          "Research whether [STUDY / INTERVENTION / FINDING] has been replicated or challenged. Prioritize peer-reviewed studies, systematic reviews, meta-analyses, and credible research syntheses. Identify original claims, replication attempts, contradictory findings, methodological differences, populations studied, effect sizes when available, and whether the evidence appears stable enough to inform practice or future research.",
+      },
+      {
+        id: "emerging-research-frontier-scan",
+        roleId: "researcher",
+        label: "Emerging research frontier scan",
+        description: "New questions, leaders, directions",
+        prompt:
+          "Map the emerging research frontier around [TOPIC / METHOD / TECHNOLOGY]. Focus on recent peer-reviewed work, preprints when clearly labeled, major conferences, funded projects, and research center outputs. Identify new questions, technical or methodological shifts, leading researchers or institutions, promising directions, unresolved debates, and implications for future studies.",
+      },
+      {
+        id: "research-to-practice-translation-brief",
+        roleId: "researcher",
+        label: "Research-to-practice translation brief",
+        description: "From findings to practical implementation",
+        prompt:
+          "Investigate how findings from [RESEARCH AREA] can be translated into practical use. Compare what the research supports, what practitioners need to implement it, where translation often fails, what resources or training are required, and what outcomes should be monitored. The report should distinguish evidence-based recommendations from reasonable but less-proven applications.",
+      },
     ],
   },
   {
@@ -104,6 +128,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         description: "Support strategies for specific learners",
         prompt:
           "Research support strategies for [STUDENT GROUP / LEARNING CHALLENGE / CLASSROOM NEED]. Prioritize credible education research, practitioner guidance, and examples from school settings. Identify what works, what conditions are needed, common mistakes, equity concerns, family communication considerations, and practical next steps a teacher could take.",
+      },
+      {
+        id: "lesson-strategy-evidence-scan",
+        roleId: "school-teacher",
+        label: "Lesson strategy evidence scan",
+        description: "Instructional moves and conditions for impact",
+        prompt:
+          "Research effective teaching strategies for helping students learn [CONCEPT / SKILL / STANDARD]. Prioritize classroom studies, practitioner guidance from credible education organizations, curriculum examples, and evidence syntheses. Identify instructional moves, example activities, differentiation options, common misconceptions, assessment ideas, and conditions that make the strategy more or less effective.",
+      },
+      {
+        id: "classroom-technology-use-case-review",
+        roleId: "school-teacher",
+        label: "Classroom technology use case review",
+        description: "Tool fit, workload, privacy, examples",
+        prompt:
+          "Research whether [DIGITAL TOOL / TECHNOLOGY CATEGORY] is useful for teaching [SUBJECT / GRADE BAND / SKILL]. Compare evidence of learning impact, classroom management needs, student accessibility, teacher workload, device or connectivity requirements, privacy concerns, and examples of successful classroom implementation.",
+      },
+      {
+        id: "family-engagement-research-brief",
+        roleId: "school-teacher",
+        label: "Family engagement research brief",
+        description: "Messages, channels, culturally responsive practices",
+        prompt:
+          "Research evidence-based ways to communicate with families about [STUDENT NEED / CLASSROOM INITIATIVE / LEARNING GOAL]. Identify what messages are most effective, what barriers families may face, culturally responsive communication practices, recommended channels, timing, examples from schools, and ways to measure whether communication improved participation or student support.",
       },
     ],
   },
@@ -137,6 +185,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research how generative artificial intelligence tools are being used in higher education teaching for [COURSE / DISCIPLINE / LEARNING GOAL]. Focus on instructional value, assignment design, student learning, academic integrity, bias, accessibility, privacy, policy examples, faculty workload, and assessment redesign. The final report should separate responsible uses from high-risk or poorly supported uses.",
       },
+      {
+        id: "student-engagement-strategy-scan",
+        roleId: "higher-education-instructor",
+        label: "Student engagement strategy scan",
+        description: "Active learning, discussion, feedback",
+        prompt:
+          "Research evidence-based ways to increase student engagement in [COURSE TYPE / DISCIPLINE / MODALITY]. Compare active learning, discussion, collaborative work, reflective assignments, formative feedback, attendance or participation structures, and digital tools. Evaluate evidence of impact, implementation difficulty, equity considerations, and student workload.",
+      },
+      {
+        id: "academic-integrity-landscape-review",
+        roleId: "higher-education-instructor",
+        label: "Academic integrity landscape review",
+        description: "Policy, assessment redesign, detection limits",
+        prompt:
+          "Research academic integrity challenges and responses related to [ASSIGNMENT TYPE / COURSE / TECHNOLOGY]. Focus on current higher education guidance, policy examples, assessment redesign, student motivation, detection limits, privacy concerns, and approaches that reduce misconduct while preserving meaningful learning.",
+      },
+      {
+        id: "discipline-teaching-benchmark",
+        roleId: "higher-education-instructor",
+        label: "Discipline-specific teaching benchmark",
+        description: "Pedagogical models and signature assignments",
+        prompt:
+          "Research how instructors teach [SUBJECT / DISCIPLINE / SKILL] across higher education. Identify common pedagogical models, signature assignments, assessment methods, lab or studio practices if relevant, common student difficulties, examples from universities, and emerging changes in the field.",
+      },
     ],
   },
   {
@@ -168,6 +240,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         description: "Quality standards and course improvement",
         prompt:
           "Research quality standards and best practices for improving [ONLINE COURSE / TRAINING PROGRAM / DIGITAL LEARNING EXPERIENCE]. Focus on course structure, learner navigation, instructor presence, interaction, assessment, multimedia, accessibility, student support, analytics, and evaluation. The final report should identify practical improvement priorities and examples of strong implementation.",
+      },
+      {
+        id: "modality-comparison",
+        roleId: "instructional-designer",
+        label: "Learning experience modality comparison",
+        description: "In-person, online, blended, simulation fit",
+        prompt:
+          "Research which modality is best suited for [LEARNING EXPERIENCE / TRAINING GOAL]: in-person, online asynchronous, online synchronous, blended, simulation, mobile, or self-paced. Compare evidence, learner needs, interaction requirements, accessibility, cost, development time, instructor workload, and assessment fit.",
+      },
+      {
+        id: "microlearning-research-brief",
+        roleId: "instructional-designer",
+        label: "Microlearning research brief",
+        description: "Retention, transfer, spacing, fit",
+        prompt:
+          "Research whether microlearning is appropriate for [TRAINING TOPIC / SKILL / AUDIENCE]. Examine evidence on retention, transfer, motivation, spacing, assessment, mobile access, workplace learning, limitations, and examples of effective design. Recommend when microlearning should be used alone, combined with other instruction, or avoided.",
+      },
+      {
+        id: "scenario-based-learning-scan",
+        roleId: "instructional-designer",
+        label: "Scenario-based learning design scan",
+        description: "Branching, feedback, assessment, examples",
+        prompt:
+          "Research scenario-based learning approaches for [SKILL / DECISION-MAKING CONTEXT / PROFESSIONAL PRACTICE]. Identify evidence of effectiveness, design patterns, branching complexity, feedback strategies, assessment methods, accessibility concerns, examples, and practical recommendations for building or revising a scenario-based experience.",
       },
     ],
   },
@@ -201,6 +297,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research policy, governance, and risk considerations for [TOOL / PROGRAM / INITIATIVE / WORKFLOW]. Focus on student privacy, data security, accessibility, procurement, copyright, artificial intelligence governance if relevant, implementation risks, stakeholder concerns, and examples of how similar organizations manage these issues. Separate confirmed requirements from recommended risk-management practices.",
       },
+      {
+        id: "innovation-readiness-scan",
+        roleId: "education-leader",
+        label: "Innovation readiness scan",
+        description: "Infrastructure, buy-in, go/no-go decision",
+        prompt:
+          "Research organizational readiness factors for adopting [PROGRAM / TECHNOLOGY / INITIATIVE]. Identify required infrastructure, staffing, training, stakeholder buy-in, governance, budget pressures, equity concerns, adoption risks, and examples of successful and unsuccessful implementations. The report should support a go, no-go, or phased pilot decision.",
+      },
+      {
+        id: "strategic-partnership-landscape",
+        roleId: "education-leader",
+        label: "Strategic partnership landscape",
+        description: "Models, governance, funding, sustainability",
+        prompt:
+          "Research potential partnership models for [PROGRAM AREA / SERVICE / INITIATIVE]. Compare partnerships with schools, universities, nonprofits, industry, government agencies, and community organizations. Identify benefits, risks, governance models, funding structures, evaluation expectations, sustainability issues, and examples worth adapting.",
+      },
+      {
+        id: "long-term-sustainability-review",
+        roleId: "education-leader",
+        label: "Long-term sustainability review",
+        description: "Funding, staffing, lifecycle, ownership",
+        prompt:
+          "Research sustainability models for [PROGRAM / TECHNOLOGY / SERVICE]. Investigate funding, staffing, maintenance, training, governance, stakeholder ownership, evaluation, and lifecycle planning. Identify why similar efforts persist, scale, stagnate, or fail, and recommend practical sustainability strategies.",
+      },
     ],
   },
   {
@@ -232,6 +352,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         description: "Journey, touchpoints, support model",
         prompt:
           "Research service design approaches for [SERVICE / PROGRAM / SUPPORT WORKFLOW]. Identify user journeys, stakeholder touchpoints, common failure points, support expectations, communication needs, accessibility issues, operational constraints, and examples from similar services. Recommend improvements to the end-to-end experience.",
+      },
+      {
+        id: "usability-research-benchmark",
+        roleId: "experience-designer",
+        label: "Usability research benchmark",
+        description: "Friction points, testing, trust signals",
+        prompt:
+          "Research usability best practices for [PRODUCT / WEBSITE / APPLICATION / DIGITAL SERVICE]. Compare navigation, onboarding, search, forms, dashboards, feedback, mobile use, accessibility, and trust signals. Identify examples, common friction points, testing methods, and design recommendations grounded in research or comparable implementations.",
+      },
+      {
+        id: "learner-journey-research",
+        roleId: "experience-designer",
+        label: "Learner journey research",
+        description: "Goals, barriers, drop-off, support needs",
+        prompt:
+          "Research the learner journey for [AUDIENCE / COURSE / PROGRAM / DIGITAL EXPERIENCE]. Identify user goals, emotions, barriers, decision points, support needs, accessibility needs, communication touchpoints, and drop-off risks. Recommend design changes that improve clarity, confidence, and completion.",
+      },
+      {
+        id: "information-architecture-scan",
+        roleId: "experience-designer",
+        label: "Information architecture scan",
+        description: "Navigation, taxonomy, search, metadata",
+        prompt:
+          "Research information architecture patterns for [WEBSITE / PORTAL / RESOURCE LIBRARY / KNOWLEDGE BASE]. Compare navigation models, taxonomy, search behavior, metadata, filtering, content grouping, accessibility, and examples from comparable organizations. Recommend a structure that helps users find high-value content quickly.",
       },
     ],
   },
@@ -265,6 +409,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research the current tooling landscape for [DEVELOPMENT TASK / FRAMEWORK / TECHNICAL WORKFLOW]. Prioritize official documentation, active repositories, release notes, technical benchmarks, security advisories, and credible engineering analysis. Identify mature options, emerging options, common pitfalls, compatibility constraints, and recommended next steps for prototyping.",
       },
+      {
+        id: "security-privacy-architecture-scan",
+        roleId: "software-developer",
+        label: "Security and privacy architecture scan",
+        description: "Auth, storage, encryption, threat models",
+        prompt:
+          "Research security and privacy considerations for building [APPLICATION / PLATFORM / FEATURE]. Focus on authentication, authorization, data storage, logging, encryption, third-party services, threat models, secure development practices, accessibility, compliance considerations, and examples of common failures to avoid.",
+      },
+      {
+        id: "api-integration-review",
+        roleId: "software-developer",
+        label: "API integration review",
+        description: "Auth, rate limits, reliability, risks",
+        prompt:
+          "Research integration options for connecting [SYSTEM A] with [SYSTEM B] or building around [SERVICE / APPLICATION PROGRAMMING INTERFACE]. Compare official documentation, authentication methods, rate limits, data formats, developer support, reliability, pricing when available, security concerns, and maintenance risks.",
+      },
+      {
+        id: "open-source-dependency-review",
+        roleId: "software-developer",
+        label: "Open-source dependency review",
+        description: "Maintenance, license, security, adoption",
+        prompt:
+          "Research open-source libraries or frameworks for [TECHNICAL TASK / FEATURE / WORKFLOW]. Prioritize official repositories, documentation, release history, issue activity, community adoption, license terms, security advisories, performance benchmarks, and long-term maintenance signals. Recommend mature options and identify risky dependencies.",
+      },
     ],
   },
   {
@@ -296,6 +464,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         description: "Website, newsletter, social, storytelling",
         prompt:
           "Research content strategy options for [ORGANIZATION / PROGRAM / TOPIC / AUDIENCE]. Focus on website structure, newsletter themes, social media formats, storytelling angles, search visibility, accessibility, editorial workflow, content governance, and examples from similar organizations. Recommend a content plan grounded in evidence and comparable examples.",
+      },
+      {
+        id: "brand-positioning-research",
+        roleId: "communications-marketing",
+        label: "Brand positioning research",
+        description: "Positioning, tone, differentiation",
+        prompt:
+          "Research how [ORGANIZATION / PROGRAM / SERVICE / PRODUCT] should be positioned for [AUDIENCE]. Analyze comparable organizations, audience needs, messaging patterns, value propositions, tone, visual identity cues, search visibility, trust signals, and differentiation opportunities. Recommend positioning themes supported by evidence and examples.",
+      },
+      {
+        id: "public-awareness-campaign-scan",
+        roleId: "communications-marketing",
+        label: "Public awareness campaign scan",
+        description: "Framing, channels, partnerships, outcomes",
+        prompt:
+          "Research public awareness campaigns related to [TOPIC / CAUSE / PROGRAM]. Compare audience targeting, message framing, channels, visuals, partnerships, calls to action, accessibility, evaluation metrics, and outcomes when available. Identify campaign strategies that could be adapted for a new initiative.",
+      },
+      {
+        id: "search-discoverability-review",
+        roleId: "communications-marketing",
+        label: "Search and content discoverability review",
+        description: "Search terms, gaps, metadata, structure",
+        prompt:
+          "Research how audiences search for information about [TOPIC / SERVICE / PROGRAM]. Identify common search terms, content gaps, competitor or peer content, frequently asked questions, effective page structures, metadata practices, accessibility considerations, and opportunities to improve discoverability.",
       },
     ],
   },
@@ -329,6 +521,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research interactive media approaches for [LEARNING TOPIC / TRAINING SCENARIO / AUDIENCE]. Compare branching video, interactive timelines, simulations, quizzes inside media, immersive media, and web-based interactives. Evaluate learning benefits, production complexity, accessibility, hosting requirements, analytics, and examples of strong implementations.",
       },
+      {
+        id: "short-form-educational-media-scan",
+        roleId: "video-media-producer",
+        label: "Short-form educational media scan",
+        description: "Length, pacing, captions, attention",
+        prompt:
+          "Research best practices for short-form educational video about [TOPIC / SKILL / CONCEPT]. Compare ideal length, pacing, scripting, visuals, captions, platform constraints, learner attention, accessibility, reuse potential, and examples of strong educational short-form media.",
+      },
+      {
+        id: "animation-vs-live-action-brief",
+        roleId: "video-media-producer",
+        label: "Animation versus live-action decision brief",
+        description: "Format choice for learning impact",
+        prompt:
+          "Research whether [TOPIC / LESSON / TRAINING SCENARIO] is better taught through animation, live-action video, screen recording, interview, demonstration, or mixed media. Compare learning impact, production effort, cost, clarity, accessibility, emotional tone, update burden, and examples from similar projects.",
+      },
+      {
+        id: "media-accessibility-production-review",
+        roleId: "video-media-producer",
+        label: "Media accessibility production review",
+        description: "Captions, transcripts, audio description, QC",
+        prompt:
+          "Research accessibility best practices for producing [VIDEO / AUDIO / MULTIMEDIA PROJECT]. Focus on captions, transcripts, audio description, visual contrast, cognitive load, language clarity, player accessibility, mobile viewing, file delivery, and quality-control workflows.",
+      },
     ],
   },
   {
@@ -361,6 +577,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Conduct a market landscape scan for [PRODUCT CATEGORY / SERVICE AREA / INDUSTRY]. Research major providers, customer segments, pricing patterns when available, recent product trends, adoption drivers, risks, market shifts, and credible forecasts. The final report should support planning, purchasing, partnership, or product strategy decisions.",
       },
+      {
+        id: "cost-benefit-research-brief",
+        roleId: "business-operations",
+        label: "Cost-benefit research brief",
+        description: "Direct, hidden costs and likely benefits",
+        prompt:
+          "Research the cost-benefit case for [TOOL / SERVICE / PROCESS CHANGE / INITIATIVE]. Identify direct costs, hidden costs, staff time, training needs, implementation risks, maintenance burden, likely benefits, comparable examples, and metrics that should be tracked to determine return on investment.",
+      },
+      {
+        id: "procurement-landscape-scan",
+        roleId: "business-operations",
+        label: "Procurement landscape scan",
+        description: "Vendors, pricing, contracts, decision criteria",
+        prompt:
+          "Research purchasing options for [PRODUCT / SERVICE / PLATFORM CATEGORY]. Compare vendors, pricing models when public, contract considerations, implementation requirements, support quality, accessibility, privacy and security posture, customer examples, and risks. Recommend a shortlist and decision criteria.",
+      },
+      {
+        id: "operational-risk-review",
+        roleId: "business-operations",
+        label: "Operational risk review",
+        description: "Failure points, dependencies, mitigation",
+        prompt:
+          "Research operational risks associated with [WORKFLOW / SERVICE / TECHNOLOGY / INITIATIVE]. Identify failure points, staffing dependencies, vendor risks, compliance concerns, data risks, user support needs, continuity planning, and mitigation strategies used by comparable organizations.",
+      },
     ],
   },
   {
@@ -392,6 +632,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         description: "Policy examples and implementation concerns",
         prompt:
           "Research workplace policy examples and implementation considerations for [POLICY AREA / WORKPLACE PRACTICE / STAFF PROCESS]. Focus on credible guidance, comparable organizations, legal or compliance considerations at a general level, equity and accessibility, communication needs, training needs, risks, and evaluation methods. The final report should identify policy options and practical rollout considerations.",
+      },
+      {
+        id: "professional-development-pathway-scan",
+        roleId: "human-resources",
+        label: "Professional development pathway scan",
+        description: "Certificates, workshops, coaching, mentoring",
+        prompt:
+          "Research professional development pathways for staff who need to build skills in [SKILL AREA / ROLE / TECHNOLOGY]. Compare certificates, workshops, communities of practice, mentoring, project-based learning, coaching, assessment methods, time requirements, and evidence of workforce impact.",
+      },
+      {
+        id: "change-management-research-brief",
+        roleId: "human-resources",
+        label: "Change management research brief",
+        description: "Adoption, communication, training, sentiment",
+        prompt:
+          "Research change management strategies for implementing [POLICY / TECHNOLOGY / WORKFLOW / ORGANIZATIONAL CHANGE]. Identify stakeholder concerns, communication strategies, training needs, leadership practices, adoption barriers, equity considerations, and methods for measuring adoption and sentiment.",
+      },
+      {
+        id: "hiring-market-role-design-scan",
+        roleId: "human-resources",
+        label: "Hiring market and role design scan",
+        description: "Titles, skills, salary, career ladders",
+        prompt:
+          "Research the hiring market and role design considerations for [POSITION / JOB FAMILY / TEAM NEED]. Compare job titles, responsibilities, required skills, emerging competencies, salary ranges when available, remote or hybrid norms, career ladders, and onboarding needs. Recommend how to structure the role for long-term success.",
       },
     ],
   },
