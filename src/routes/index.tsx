@@ -321,6 +321,65 @@ function Index() {
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
 
+  const phases = useMemo<Phase[]>(() => {
+    const hasSearch = trace.some((s) => s.kind === "search");
+    const searchDone = trace.filter((s) => s.kind === "search" && s.status === "done").length;
+    const hasRead = trace.some((s) => s.kind === "read");
+    const readDone = trace.filter((s) => s.kind === "read" && s.status === "done").length;
+    const finishStep = trace.find((s) => s.kind === "finish");
+    const finishDone = !!finishStep && finishStep.kind === "finish" && finishStep.status === "done";
+
+    const phase = (
+      key: string,
+      label: string,
+      isDoneCond: boolean,
+      isActiveCond: boolean,
+      detail?: string,
+    ): Phase => ({
+      key,
+      label,
+      status: isDoneCond
+        ? "done"
+        : isActiveCond
+          ? running
+            ? "active"
+            : fatalError
+              ? "error"
+              : "pending"
+          : "pending",
+      detail,
+    });
+
+    return [
+      phase(
+        "plan",
+        "Planning research",
+        hasSearch || hasRead || !!finishStep,
+        running && !hasSearch && !finishStep,
+      ),
+      phase(
+        "search",
+        "Searching the web",
+        hasRead || !!finishStep,
+        hasSearch && !hasRead && !finishStep,
+        hasSearch ? `${searchDone} ${searchDone === 1 ? "search" : "searches"} run` : undefined,
+      ),
+      phase(
+        "read",
+        "Reading sources",
+        !!finishStep,
+        hasRead && !finishStep,
+        hasRead ? `${readDone} ${readDone === 1 ? "page" : "pages"} read` : undefined,
+      ),
+      phase(
+        "write",
+        "Writing report",
+        finishDone,
+        !!finishStep && !finishDone,
+      ),
+    ];
+  }, [trace, running, fatalError]);
+
   if (!authed) {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
