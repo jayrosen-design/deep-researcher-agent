@@ -528,6 +528,7 @@ function Index() {
           <LogOut className="size-3.5" />
           Sign out
         </button>
+        <WorkflowStepper steps={workflowSteps} />
         <PromptInput
           onSubmit={handleStart}
           model={model}
