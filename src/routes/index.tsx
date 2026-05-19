@@ -396,7 +396,7 @@ function Index() {
         setRunning(false);
       }
     },
-    [model, settings, appendStep, updateLastStep],
+    [settings, appendStep, updateLastStep],
   );
 
   const generatePlan = useCallback(
@@ -413,7 +413,7 @@ function Index() {
             : buildPlanUserMessage(query);
         const { content } = await navigatorChat({
           data: {
-            model,
+            model: settings.synthesisModel,
             messages: [
               { role: "system", content: PLAN_SYSTEM_PROMPT },
               { role: "user", content: userMsg },
@@ -430,7 +430,7 @@ function Index() {
         setPlanLoading(false);
       }
     },
-    [model, settings.navigatorApiKey],
+    [settings.synthesisModel, settings.navigatorApiKey],
   );
 
   const handleStart = useCallback(
