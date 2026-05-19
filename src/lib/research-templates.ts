@@ -201,6 +201,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research policy, governance, and risk considerations for [TOOL / PROGRAM / INITIATIVE / WORKFLOW]. Focus on student privacy, data security, accessibility, procurement, copyright, artificial intelligence governance if relevant, implementation risks, stakeholder concerns, and examples of how similar organizations manage these issues. Separate confirmed requirements from recommended risk-management practices.",
       },
+      {
+        id: "innovation-readiness-scan",
+        roleId: "education-leader",
+        label: "Innovation readiness scan",
+        description: "Infrastructure, buy-in, go/no-go decision",
+        prompt:
+          "Research organizational readiness factors for adopting [PROGRAM / TECHNOLOGY / INITIATIVE]. Identify required infrastructure, staffing, training, stakeholder buy-in, governance, budget pressures, equity concerns, adoption risks, and examples of successful and unsuccessful implementations. The report should support a go, no-go, or phased pilot decision.",
+      },
+      {
+        id: "strategic-partnership-landscape",
+        roleId: "education-leader",
+        label: "Strategic partnership landscape",
+        description: "Models, governance, funding, sustainability",
+        prompt:
+          "Research potential partnership models for [PROGRAM AREA / SERVICE / INITIATIVE]. Compare partnerships with schools, universities, nonprofits, industry, government agencies, and community organizations. Identify benefits, risks, governance models, funding structures, evaluation expectations, sustainability issues, and examples worth adapting.",
+      },
+      {
+        id: "long-term-sustainability-review",
+        roleId: "education-leader",
+        label: "Long-term sustainability review",
+        description: "Funding, staffing, lifecycle, ownership",
+        prompt:
+          "Research sustainability models for [PROGRAM / TECHNOLOGY / SERVICE]. Investigate funding, staffing, maintenance, training, governance, stakeholder ownership, evaluation, and lifecycle planning. Identify why similar efforts persist, scale, stagnate, or fail, and recommend practical sustainability strategies.",
+      },
     ],
   },
   {
