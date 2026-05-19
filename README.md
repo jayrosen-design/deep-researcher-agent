@@ -167,13 +167,8 @@ All API keys stay server-side. Three TanStack Start server functions
   review-pass prompt + builder (`REVIEW_SYSTEM_PROMPT`,
   `buildReviewUserMessage`, `FollowUpSuggestion`).
 
-## Prompts
-
-- `plan-prompts.ts` — strategist system prompt + revision prompt.
-- `agent-prompts.ts` — investigator ReAct prompt, observation builders,
-  budget warnings, **and** the synthesizer prompt + context-block builder
-  (`SYNTHESIS_SYSTEM_PROMPT`, `buildSynthesisUserMessage`).
 - `research-templates.ts` — role-grouped starter prompts shown in the UI.
+
 
 ---
 
