@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
 
 import { PromptInput } from "@/components/research/PromptInput";
