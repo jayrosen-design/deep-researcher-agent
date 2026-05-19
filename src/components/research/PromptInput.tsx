@@ -123,7 +123,7 @@ export function PromptInput({
                   title="Smaller/faster model for the ReAct JSON loop"
                   className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
                 >
-                  {NAVIGATOR_MODELS.map((m) => (
+                  {modelOptions.map((m) => (
                     <option key={m} value={m}>
                       {m}
                     </option>
@@ -140,14 +140,24 @@ export function PromptInput({
                   title="Larger model for the final Markdown report"
                   className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
                 >
-                  {NAVIGATOR_MODELS.map((m) => (
+                  {modelOptions.map((m) => (
                     <option key={m} value={m}>
                       {m}
                     </option>
                   ))}
                 </select>
               </label>
+              <span className="text-[11px] text-muted-foreground/80">
+                {modelsLoading
+                  ? "Loading models…"
+                  : remoteModels
+                    ? `${remoteModels.length} models available for your key`
+                    : modelsError
+                      ? "Using bundled defaults (key has no model list)"
+                      : "Using bundled defaults"}
+              </span>
             </div>
+
 
             {/* Row 2: max sources + templates + api keys, with submit on the right */}
             <div className="flex flex-wrap items-center justify-between gap-2">
