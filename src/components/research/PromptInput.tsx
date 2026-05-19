@@ -10,7 +10,7 @@ import {
   saveSettings,
   type UserSettings,
 } from "@/lib/user-settings";
-import { RESEARCH_ROLE_GROUPS } from "@/lib/research-templates";
+import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates";
 import { listNavigatorModels } from "@/lib/navigator-models.functions";
 
 const RECOMMENDED_INVESTIGATOR = new Set<string>([
