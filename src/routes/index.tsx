@@ -435,7 +435,14 @@ function Index() {
             const url = turn.action.args.url;
             appendStep({ kind: "read", url, status: "active" });
             try {
-              const page = await readUrl({ data: { url, apiKey: tavilyKey } });
+              const page = await readUrl({
+                data: {
+                  url,
+                  provider: searchProvider,
+                  tavilyApiKey: tavilyKey,
+                  firecrawlApiKey: firecrawlKey,
+                },
+              });
               const matchedTitle =
                 collectedSources.find((s) => s.url === page.url || s.url === url)?.title ?? "";
               readPages.push({ url: page.url, title: matchedTitle, content: page.content });
