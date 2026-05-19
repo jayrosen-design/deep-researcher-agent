@@ -254,6 +254,8 @@ function Index() {
       const maxSteps = Math.max(8, Math.ceil(maxSources * 1.5));
       const navigatorKey = settings.navigatorApiKey || undefined;
       const tavilyKey = settings.tavilyApiKey || undefined;
+      const firecrawlKey = settings.firecrawlApiKey || undefined;
+      const searchProvider = settings.searchProvider;
 
       const initialUser = approvedPlan
         ? `${buildInitialUserMessage(userQuery, maxSteps)}\n\n${buildAgentPlanContext(approvedPlan)}`
@@ -385,7 +387,9 @@ function Index() {
               const { results } = await webSearch({
                 data: {
                   query,
-                  apiKey: tavilyKey,
+                  provider: searchProvider,
+                  tavilyApiKey: tavilyKey,
+                  firecrawlApiKey: firecrawlKey,
                   maxResults: requestSize,
                   ...(timeRange ? { timeRange } : {}),
                   ...(includeDomains && includeDomains.length > 0 ? { includeDomains } : {}),
@@ -431,7 +435,14 @@ function Index() {
             const url = turn.action.args.url;
             appendStep({ kind: "read", url, status: "active" });
             try {
-              const page = await readUrl({ data: { url, apiKey: tavilyKey } });
+              const page = await readUrl({
+                data: {
+                  url,
+                  provider: searchProvider,
+                  tavilyApiKey: tavilyKey,
+                  firecrawlApiKey: firecrawlKey,
+                },
+              });
               const matchedTitle =
                 collectedSources.find((s) => s.url === page.url || s.url === url)?.title ?? "";
               readPages.push({ url: page.url, title: matchedTitle, content: page.content });

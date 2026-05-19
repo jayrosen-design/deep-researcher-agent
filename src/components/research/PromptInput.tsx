@@ -301,6 +301,49 @@ export function PromptInput({
             </label>
             <label className="block">
               <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                <span>Search provider</span>
+                <span className="text-[10px] text-muted-foreground/70">
+                  Falls back to the other if the primary fails
+                </span>
+              </div>
+              <select
+                value={draft.searchProvider}
+                onChange={(e) =>
+                  persistDraft({
+                    ...draft,
+                    searchProvider: e.target.value as "firecrawl" | "tavily",
+                  })
+                }
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+              >
+                <option value="firecrawl">Firecrawl (default)</option>
+                <option value="tavily">Tavily</option>
+              </select>
+            </label>
+            <label className="block">
+              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                <span>Firecrawl API key</span>
+                <a
+                  href="https://www.firecrawl.dev/app/api-keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 underline-offset-2 hover:underline"
+                >
+                  Get key ↗
+                </a>
+              </div>
+              <input
+                type="password"
+                value={draft.firecrawlApiKey}
+                onChange={(e) =>
+                  persistDraft({ ...draft, firecrawlApiKey: e.target.value.trim() })
+                }
+                placeholder="fc-…"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+              />
+            </label>
+            <label className="block">
+              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                 <span>Tavily API key</span>
                 <a
                   href="https://www.tavily.com/"
