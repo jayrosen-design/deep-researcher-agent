@@ -870,6 +870,12 @@ function Index() {
                   </div>
                 </div>
                 <ProgressTracker phases={phases} />
+                {reviewing && (
+                  <div className="mt-4 flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
+                    <Loader2 className="size-3.5 animate-spin text-foreground" />
+                    Synthesizer is reviewing the draft and identifying follow-up research…
+                  </div>
+                )}
                 {fatalError && (
                   <div className="mt-6 border-t border-border pt-4">
                     <div className="text-sm text-destructive">{fatalError}</div>
