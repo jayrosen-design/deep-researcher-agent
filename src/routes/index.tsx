@@ -537,6 +537,7 @@ function Index() {
           settings={settings}
           onSettingsChange={setSettings}
         />
+        <Disclaimer />
       </div>
     );
   }
