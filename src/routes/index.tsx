@@ -598,8 +598,6 @@ function Index() {
         <WorkflowStepper steps={workflowSteps} />
         <PromptInput
           onSubmit={handleStart}
-          model={model}
-          onModelChange={setModel}
           settings={settings}
           onSettingsChange={setSettings}
         />
