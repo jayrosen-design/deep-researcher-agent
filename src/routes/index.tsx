@@ -307,7 +307,8 @@ function Index() {
               data: {
                 model: settings.synthesisModel,
                 messages: synthesisMessages,
-                temperature: 0.3,
+                temperature: 0.4,
+                maxTokens: 16000,
                 apiKey: navigatorKey,
               },
             });
