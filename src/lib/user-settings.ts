@@ -57,6 +57,11 @@ export function loadSettings(): UserSettings {
     return {
       navigatorApiKey: parsed.navigatorApiKey ?? "",
       tavilyApiKey: parsed.tavilyApiKey ?? "",
+      firecrawlApiKey: parsed.firecrawlApiKey ?? "",
+      searchProvider:
+        parsed.searchProvider === "tavily" || parsed.searchProvider === "firecrawl"
+          ? parsed.searchProvider
+          : DEFAULT_SETTINGS.searchProvider,
       maxSources:
         typeof parsed.maxSources === "number" &&
         SOURCE_COUNT_OPTIONS.includes(parsed.maxSources)
