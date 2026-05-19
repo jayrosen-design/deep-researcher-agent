@@ -265,7 +265,8 @@ function Index() {
             appendStep({ kind: "finish", status: "active" });
             setSources(collectedSources);
             const synthesisMessages: ChatMessage[] = [
-              { role: "system", content: SYNTHESIS_SYSTEM_PROMPT },
+              { role: "system", content: settings.synthesisSystemPrompt || SYNTHESIS_SYSTEM_PROMPT },
+
               {
                 role: "user",
                 content: buildSynthesisUserMessage(
