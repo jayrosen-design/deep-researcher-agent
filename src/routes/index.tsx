@@ -269,8 +269,8 @@ function Index() {
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       const readPages: SynthesisSource[] = [];
-      const failedSearches = new Set<string>();
-      const failedReads = new Set<string>();
+      const failedSearches = new Map<string, string>();
+      const failedReads = new Map<string, string>();
       let stepsUsed = 0;
       let sourceCapNotified = false;
 
@@ -383,10 +383,16 @@ function Index() {
           if (turn.action.tool === "web_search") {
             const { query, timeRange, includeDomains } = turn.action.args;
             if (failedSearches.has(query)) {
-              appendStep({ kind: "error", message: `Blocked repeated failed search: "${query}"` });
+              const prevError = failedSearches.get(query) ?? "previous attempt failed";
+              appendStep({
+                kind: "blocked",
+                tool: "web_search",
+                target: query,
+                reason: prevError,
+              });
               messages.push({
                 role: "user",
-                content: `System ERROR: You already attempted the search "${query}" and it failed. You MUST modify your search string or use a different tool.\n\n${buildBudgetWarning(remaining)}`,
+                content: `System ERROR: You already attempted the search "${query}" and it failed (${prevError}). You MUST modify your search string or use a different tool.\n\n${buildBudgetWarning(remaining)}`,
               });
               continue;
             }
@@ -435,7 +441,7 @@ function Index() {
               });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
-              failedSearches.add(query);
+              failedSearches.set(query, msg);
               updateLastStep(() => ({ kind: "search", query, status: "error", error: msg }));
               messages.push({
                 role: "user",
@@ -445,10 +451,16 @@ function Index() {
           } else if (turn.action.tool === "read_url") {
             const url = turn.action.args.url;
             if (failedReads.has(url)) {
-              appendStep({ kind: "error", message: `Blocked repeated failed read: ${url}` });
+              const prevError = failedReads.get(url) ?? "previous attempt failed";
+              appendStep({
+                kind: "blocked",
+                tool: "read_url",
+                target: url,
+                reason: prevError,
+              });
               messages.push({
                 role: "user",
-                content: `System ERROR: You already attempted to read ${url} and it failed. You MUST pick a different URL or use a different tool.\n\n${buildBudgetWarning(remaining)}`,
+                content: `System ERROR: You already attempted to read ${url} and it failed (${prevError}). You MUST pick a different URL or use a different tool.\n\n${buildBudgetWarning(remaining)}`,
               });
               continue;
             }
@@ -480,7 +492,7 @@ function Index() {
               });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
-              failedReads.add(url);
+              failedReads.set(url, msg);
               updateLastStep(() => ({ kind: "read", url, status: "error", error: msg }));
               messages.push({
                 role: "user",

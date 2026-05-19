@@ -1,10 +1,11 @@
-import { Loader2, Search, FileText, CheckCircle2, AlertCircle, Brain } from "lucide-react";
+import { Loader2, Search, FileText, CheckCircle2, AlertCircle, Brain, Ban } from "lucide-react";
 
 export type TraceStep =
   | { kind: "thought"; text: string }
   | { kind: "search"; query: string; resultCount?: number; resultUrls?: string[]; status: "active" | "done" | "error"; error?: string }
   | { kind: "read"; url: string; status: "active" | "done" | "error"; error?: string; chars?: number }
   | { kind: "finish"; status: "active" | "done" }
+  | { kind: "blocked"; tool: "web_search" | "read_url"; target: string; reason: string }
   | { kind: "error"; message: string };
 
 function faviconUrl(url: string): string {
@@ -34,6 +35,7 @@ export function AgentTrace({ steps }: { steps: TraceStep[] }) {
             {s.kind === "search" && (s.status === "active" ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />)}
             {s.kind === "read" && (s.status === "active" ? <Loader2 className="size-4 animate-spin" /> : <FileText className="size-4" />)}
             {s.kind === "finish" && (s.status === "active" ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4 text-foreground" />)}
+            {s.kind === "blocked" && <Ban className="size-4 text-amber-600 dark:text-amber-500" />}
             {s.kind === "error" && <AlertCircle className="size-4 text-destructive" />}
           </div>
           <div className="min-w-0 flex-1 text-sm">
@@ -115,6 +117,17 @@ export function AgentTrace({ steps }: { steps: TraceStep[] }) {
             {s.kind === "finish" && (
               <div className="text-foreground font-medium">
                 {s.status === "active" ? "Writing final report…" : "Report complete"}
+              </div>
+            )}
+            {s.kind === "blocked" && (
+              <div>
+                <div className="text-foreground">
+                  <span className="text-amber-600 dark:text-amber-500 font-medium">Skipped duplicate {s.tool === "web_search" ? "search" : "read"}:</span>{" "}
+                  <span className="font-medium break-all">{s.tool === "web_search" ? `"${s.target}"` : s.target}</span>
+                </div>
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  Previously failed — {s.reason}
+                </div>
               </div>
             )}
             {s.kind === "error" && (
