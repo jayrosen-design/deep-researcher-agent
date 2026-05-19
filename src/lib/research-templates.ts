@@ -73,6 +73,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research methods and measurement approaches used to study [TOPIC / PROGRAM / INTERVENTION]. Identify common research designs, validated instruments, outcome measures, data sources, sampling strategies, analysis methods, ethical concerns, and known validity or reliability issues. Recommend which approaches appear most appropriate for a new study or evaluation.",
       },
+      {
+        id: "research-replication-scan",
+        roleId: "researcher",
+        label: "Research replication scan",
+        description: "Replication, contradictions, stability",
+        prompt:
+          "Research whether [STUDY / INTERVENTION / FINDING] has been replicated or challenged. Prioritize peer-reviewed studies, systematic reviews, meta-analyses, and credible research syntheses. Identify original claims, replication attempts, contradictory findings, methodological differences, populations studied, effect sizes when available, and whether the evidence appears stable enough to inform practice or future research.",
+      },
+      {
+        id: "emerging-research-frontier-scan",
+        roleId: "researcher",
+        label: "Emerging research frontier scan",
+        description: "New questions, leaders, directions",
+        prompt:
+          "Map the emerging research frontier around [TOPIC / METHOD / TECHNOLOGY]. Focus on recent peer-reviewed work, preprints when clearly labeled, major conferences, funded projects, and research center outputs. Identify new questions, technical or methodological shifts, leading researchers or institutions, promising directions, unresolved debates, and implications for future studies.",
+      },
+      {
+        id: "research-to-practice-translation-brief",
+        roleId: "researcher",
+        label: "Research-to-practice translation brief",
+        description: "From findings to practical implementation",
+        prompt:
+          "Investigate how findings from [RESEARCH AREA] can be translated into practical use. Compare what the research supports, what practitioners need to implement it, where translation often fails, what resources or training are required, and what outcomes should be monitored. The report should distinguish evidence-based recommendations from reasonable but less-proven applications.",
+      },
     ],
   },
   {
