@@ -297,6 +297,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research content strategy options for [ORGANIZATION / PROGRAM / TOPIC / AUDIENCE]. Focus on website structure, newsletter themes, social media formats, storytelling angles, search visibility, accessibility, editorial workflow, content governance, and examples from similar organizations. Recommend a content plan grounded in evidence and comparable examples.",
       },
+      {
+        id: "brand-positioning-research",
+        roleId: "communications-marketing",
+        label: "Brand positioning research",
+        description: "Positioning, tone, differentiation",
+        prompt:
+          "Research how [ORGANIZATION / PROGRAM / SERVICE / PRODUCT] should be positioned for [AUDIENCE]. Analyze comparable organizations, audience needs, messaging patterns, value propositions, tone, visual identity cues, search visibility, trust signals, and differentiation opportunities. Recommend positioning themes supported by evidence and examples.",
+      },
+      {
+        id: "public-awareness-campaign-scan",
+        roleId: "communications-marketing",
+        label: "Public awareness campaign scan",
+        description: "Framing, channels, partnerships, outcomes",
+        prompt:
+          "Research public awareness campaigns related to [TOPIC / CAUSE / PROGRAM]. Compare audience targeting, message framing, channels, visuals, partnerships, calls to action, accessibility, evaluation metrics, and outcomes when available. Identify campaign strategies that could be adapted for a new initiative.",
+      },
+      {
+        id: "search-discoverability-review",
+        roleId: "communications-marketing",
+        label: "Search and content discoverability review",
+        description: "Search terms, gaps, metadata, structure",
+        prompt:
+          "Research how audiences search for information about [TOPIC / SERVICE / PROGRAM]. Identify common search terms, content gaps, competitor or peer content, frequently asked questions, effective page structures, metadata practices, accessibility considerations, and opportunities to improve discoverability.",
+      },
     ],
   },
   {
