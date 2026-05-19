@@ -114,7 +114,7 @@ export function PromptInput({
         What should we research?
       </h1>
       <p className="mt-3 text-center text-base text-muted-foreground">
-        I'll plan, search the web, and synthesize a cited report.
+        Multi-agents work together to plan, search the web, and synthesize a cited report.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-10 w-full">
