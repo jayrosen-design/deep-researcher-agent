@@ -292,7 +292,10 @@ function Index() {
               reportMd.trim(),
               collectedSources,
             );
+            setReport(sanitizedMarkdown);
+            updateLastStep(() => ({ kind: "finish", status: "done" }));
             if (hallucinatedUrls.length > 0) {
+              console.warn("Hallucinated citations stripped:", hallucinatedUrls);
               appendStep({
                 kind: "error",
                 message: `Stripped ${hallucinatedUrls.length} hallucinated citation${
@@ -302,8 +305,7 @@ function Index() {
                 }`,
               });
             }
-            setReport(sanitizedMarkdown);
-            updateLastStep(() => ({ kind: "finish", status: "done" }));
+
 
             return;
           }
