@@ -279,6 +279,7 @@ function Index() {
                 query,
                 status: "done",
                 resultCount: results.length,
+                resultUrls: results.map((r) => r.url),
               }));
               const capReached = collectedSources.length >= maxSources;
               const capMsg =
