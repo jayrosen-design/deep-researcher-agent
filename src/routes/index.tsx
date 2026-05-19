@@ -288,8 +288,23 @@ function Index() {
               },
             });
             if (cancelled.current) return;
-            setReport(reportMd.trim());
+            const { sanitizedMarkdown, hallucinatedUrls } = sanitizeReportCitations(
+              reportMd.trim(),
+              collectedSources,
+            );
+            if (hallucinatedUrls.length > 0) {
+              appendStep({
+                kind: "error",
+                message: `Stripped ${hallucinatedUrls.length} hallucinated citation${
+                  hallucinatedUrls.length === 1 ? "" : "s"
+                } from the report: ${hallucinatedUrls.slice(0, 5).join(", ")}${
+                  hallucinatedUrls.length > 5 ? "…" : ""
+                }`,
+              });
+            }
+            setReport(sanitizedMarkdown);
             updateLastStep(() => ({ kind: "finish", status: "done" }));
+
             return;
           }
 
