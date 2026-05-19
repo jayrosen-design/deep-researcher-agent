@@ -696,10 +696,9 @@ function Index() {
   const handleFollowUp = useCallback(
     (nextPrompt: string) => {
       handleReset();
-      // Defer to next tick so reset state is committed before starting.
-      setTimeout(() => handleStartRef.current?.(nextPrompt), 0);
+      setTimeout(() => handleStart(nextPrompt), 0);
     },
-    [handleReset],
+    [handleReset, handleStart],
   );
 
 
