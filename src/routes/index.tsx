@@ -479,7 +479,7 @@ function Index() {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
 
-  if (!prompt) {
+  if (phase === "input" || !prompt) {
     return (
       <div className="relative">
         <button
@@ -500,6 +500,22 @@ function Index() {
       </div>
     );
   }
+
+  if (phase === "plan") {
+    return (
+      <PlanReview
+        prompt={prompt}
+        plan={plan}
+        isGenerating={planLoading}
+        error={planError}
+        onAccept={handleAcceptPlan}
+        onRevise={handleRevisePlan}
+        onRegenerate={handleRegeneratePlan}
+        onCancel={handleReset}
+      />
+    );
+  }
+
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-10">
