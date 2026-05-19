@@ -15,10 +15,13 @@ import { webSearch, type SearchResult } from "@/lib/web-search.functions";
 import { readUrl } from "@/lib/read-url.functions";
 import {
   AGENT_SYSTEM_PROMPT,
+  SYNTHESIS_SYSTEM_PROMPT,
   buildBudgetWarning,
   buildInitialUserMessage,
   buildReadObservation,
   buildSearchObservation,
+  buildSynthesisUserMessage,
+  type SynthesisSource,
 } from "@/lib/agent-prompts";
 import {
   PLAN_SYSTEM_PROMPT,
