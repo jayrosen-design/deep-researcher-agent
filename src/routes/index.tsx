@@ -269,6 +269,8 @@ function Index() {
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       const readPages: SynthesisSource[] = [];
+      const failedSearches = new Set<string>();
+      const failedReads = new Set<string>();
       let stepsUsed = 0;
       let sourceCapNotified = false;
 
@@ -380,6 +382,14 @@ function Index() {
 
           if (turn.action.tool === "web_search") {
             const { query, timeRange, includeDomains } = turn.action.args;
+            if (failedSearches.has(query)) {
+              appendStep({ kind: "error", message: `Blocked repeated failed search: "${query}"` });
+              messages.push({
+                role: "user",
+                content: `System ERROR: You already attempted the search "${query}" and it failed. You MUST modify your search string or use a different tool.\n\n${buildBudgetWarning(remaining)}`,
+              });
+              continue;
+            }
             appendStep({ kind: "search", query, status: "active" });
             try {
               const remainingCap = Math.max(1, maxSources - collectedSources.length);
@@ -425,14 +435,23 @@ function Index() {
               });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
+              failedSearches.add(query);
               updateLastStep(() => ({ kind: "search", query, status: "error", error: msg }));
               messages.push({
                 role: "user",
-                content: `Observation (web_search "${query}"): ERROR — ${msg}\n\n${buildBudgetWarning(remaining)}`,
+                content: `Observation (web_search "${query}"): ERROR — ${msg}\nDo NOT repeat this exact search query.\n\n${buildBudgetWarning(remaining)}`,
               });
             }
           } else if (turn.action.tool === "read_url") {
             const url = turn.action.args.url;
+            if (failedReads.has(url)) {
+              appendStep({ kind: "error", message: `Blocked repeated failed read: ${url}` });
+              messages.push({
+                role: "user",
+                content: `System ERROR: You already attempted to read ${url} and it failed. You MUST pick a different URL or use a different tool.\n\n${buildBudgetWarning(remaining)}`,
+              });
+              continue;
+            }
             appendStep({ kind: "read", url, status: "active" });
             try {
               const page = await readUrl({
@@ -461,10 +480,11 @@ function Index() {
               });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
+              failedReads.add(url);
               updateLastStep(() => ({ kind: "read", url, status: "error", error: msg }));
               messages.push({
                 role: "user",
-                content: `Observation (read_url ${url}): ERROR — ${msg}\n\n${buildBudgetWarning(remaining)}`,
+                content: `Observation (read_url ${url}): ERROR — ${msg}\nDo NOT retry this exact URL.\n\n${buildBudgetWarning(remaining)}`,
               });
             }
           }
