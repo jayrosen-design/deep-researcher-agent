@@ -153,10 +153,19 @@ All API keys stay server-side. Three TanStack Start server functions
 (`createServerFn`) wrap the providers:
 
 - `navigator-chat.functions.ts` — proxies the UF NaviGator chat completions
-  endpoint. Called three times per research run: planner, investigator
-  turns (JSON mode), and synthesizer (raw Markdown).
+  endpoint. Called four times per research run: planner, investigator turns
+  (JSON mode), synthesizer (raw Markdown), and reviewer (JSON mode).
 - `web-search.functions.ts` — proxies Tavily web search.
 - `read-url.functions.ts` — proxies Tavily page extraction.
+
+## Prompts
+
+- `plan-prompts.ts` — strategist system prompt + revision prompt.
+- `agent-prompts.ts` — investigator ReAct prompt, observation builders,
+  budget warnings, the synthesizer prompt + context-block builder
+  (`SYNTHESIS_SYSTEM_PROMPT`, `buildSynthesisUserMessage`), **and** the
+  review-pass prompt + builder (`REVIEW_SYSTEM_PROMPT`,
+  `buildReviewUserMessage`, `FollowUpSuggestion`).
 
 ## Prompts
 
