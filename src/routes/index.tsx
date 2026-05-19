@@ -294,13 +294,19 @@ function Index() {
           const remaining = maxSteps - stepsUsed;
 
           if (turn.action.tool === "web_search") {
-            const query = turn.action.args.query;
+            const { query, timeRange, includeDomains } = turn.action.args;
             appendStep({ kind: "search", query, status: "active" });
             try {
               const remainingCap = Math.max(1, maxSources - collectedSources.length);
               const requestSize = Math.min(10, Math.max(3, remainingCap));
               const { results } = await webSearch({
-                data: { query, apiKey: tavilyKey, maxResults: requestSize },
+                data: {
+                  query,
+                  apiKey: tavilyKey,
+                  maxResults: requestSize,
+                  ...(timeRange ? { timeRange } : {}),
+                  ...(includeDomains && includeDomains.length > 0 ? { includeDomains } : {}),
+                },
               });
               for (const r of results) {
                 if (collectedSources.length >= maxSources) break;
