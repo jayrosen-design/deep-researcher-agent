@@ -25,8 +25,12 @@ export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-md flex-col items-center justify-center px-6">
+    <div className="relative mx-auto flex min-h-[80vh] w-full max-w-md flex-col items-center justify-center px-6">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+
         <Lock className="size-3.5" />
         Restricted access
       </div>
