@@ -77,7 +77,7 @@ export function PlanReview({
 
         {plan && (
           <div className="space-y-4">
-            <div className="prose prose-sm max-w-none prose-headings:font-semibold prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-foreground">
+            <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-foreground prose-code:text-foreground prose-blockquote:text-foreground">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{plan}</ReactMarkdown>
             </div>
             {isGenerating && (
