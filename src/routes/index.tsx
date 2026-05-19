@@ -6,6 +6,7 @@ import { PasswordGate } from "@/components/research/PasswordGate";
 import { PlanReview } from "@/components/research/PlanReview";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
+import { WorkflowStepper, type WorkflowStep } from "@/components/research/WorkflowStepper";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { navigatorChat } from "@/lib/navigator-chat.functions";
@@ -475,6 +476,43 @@ function Index() {
     ];
   }, [trace, running, fatalError]);
 
+  const workflowSteps = useMemo<WorkflowStep[]>(() => {
+    const hasResearchActivity = trace.length > 0;
+    const reportReady = !!report;
+    const onInput = phase === "input";
+    const onPlan = phase === "plan";
+    const onResearch = phase === "research";
+
+    return [
+      {
+        key: "topic",
+        label: "Topic",
+        status: onInput ? "active" : "done",
+      },
+      {
+        key: "plan",
+        label: "Plan",
+        status: onInput ? "pending" : onPlan ? "active" : "done",
+      },
+      {
+        key: "searching",
+        label: "Searching",
+        status: !onResearch
+          ? "pending"
+          : reportReady
+            ? "done"
+            : hasResearchActivity || running
+              ? "active"
+              : "pending",
+      },
+      {
+        key: "report",
+        label: "Report",
+        status: reportReady ? "done" : onResearch && running ? "active" : "pending",
+      },
+    ];
+  }, [phase, trace.length, report, running]);
+
   if (!authed) {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
@@ -503,22 +541,27 @@ function Index() {
 
   if (phase === "plan") {
     return (
-      <PlanReview
-        prompt={prompt}
-        plan={plan}
-        isGenerating={planLoading}
-        error={planError}
-        onAccept={handleAcceptPlan}
-        onRevise={handleRevisePlan}
-        onRegenerate={handleRegeneratePlan}
-        onCancel={handleReset}
-      />
+      <div>
+        <WorkflowStepper steps={workflowSteps} />
+        <PlanReview
+          prompt={prompt}
+          plan={plan}
+          isGenerating={planLoading}
+          error={planError}
+          onAccept={handleAcceptPlan}
+          onRevise={handleRevisePlan}
+          onRegenerate={handleRegeneratePlan}
+          onCancel={handleReset}
+        />
+      </div>
     );
   }
 
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-6 py-10">
+    <div>
+      <WorkflowStepper steps={workflowSteps} />
+      <div className="mx-auto w-full max-w-4xl px-6 py-10">
       <header className="mb-8 flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -630,6 +673,7 @@ function Index() {
           <SourcesPanel sources={sources} />
         </div>
       )}
+      </div>
     </div>
   );
 }
