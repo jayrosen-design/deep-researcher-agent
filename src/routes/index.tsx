@@ -173,6 +173,7 @@ function Index() {
       ];
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
+      const readPages: SynthesisSource[] = [];
       let stepsUsed = 0;
       let sourceCapNotified = false;
 
