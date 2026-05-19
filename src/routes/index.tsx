@@ -331,17 +331,77 @@ function Index() {
     [model, settings, appendStep, updateLastStep, trace],
   );
 
+  const generatePlan = useCallback(
+    async (
+      query: string,
+      opts?: { currentPlan?: string; edits?: string },
+    ) => {
+      setPlanLoading(true);
+      setPlanError(null);
+      try {
+        const userMsg =
+          opts?.currentPlan && opts?.edits
+            ? buildPlanRevisionMessage(query, opts.currentPlan, opts.edits)
+            : buildPlanUserMessage(query);
+        const { content } = await navigatorChat({
+          data: {
+            model,
+            messages: [
+              { role: "system", content: PLAN_SYSTEM_PROMPT },
+              { role: "user", content: userMsg },
+            ],
+            temperature: 0.4,
+            apiKey: settings.navigatorApiKey || undefined,
+          },
+        });
+        setPlan(content.trim());
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setPlanError(msg);
+      } finally {
+        setPlanLoading(false);
+      }
+    },
+    [model, settings.navigatorApiKey],
+  );
+
   const handleStart = useCallback(
     (q: string) => {
       setPrompt(q);
-      void runAgent(q);
+      setPhase("plan");
+      setPlan(null);
+      setPlanError(null);
+      void generatePlan(q);
     },
-    [runAgent],
+    [generatePlan],
   );
+
+  const handleRevisePlan = useCallback(
+    (edits: string) => {
+      if (!prompt || !plan) return;
+      void generatePlan(prompt, { currentPlan: plan, edits });
+    },
+    [prompt, plan, generatePlan],
+  );
+
+  const handleRegeneratePlan = useCallback(() => {
+    if (!prompt) return;
+    void generatePlan(prompt);
+  }, [prompt, generatePlan]);
+
+  const handleAcceptPlan = useCallback(() => {
+    if (!prompt) return;
+    setPhase("research");
+    void runAgent(prompt, plan);
+  }, [prompt, plan, runAgent]);
 
   const handleReset = useCallback(() => {
     cancelled.current = true;
     setPrompt(null);
+    setPhase("input");
+    setPlan(null);
+    setPlanError(null);
+    setPlanLoading(false);
     setTrace([]);
     setReport(null);
     setSources([]);
@@ -350,8 +410,9 @@ function Index() {
   }, []);
 
   const handleRetry = useCallback(() => {
-    if (prompt) void runAgent(prompt);
-  }, [prompt, runAgent]);
+    if (prompt) void runAgent(prompt, plan);
+  }, [prompt, plan, runAgent]);
+
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
 
