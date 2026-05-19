@@ -19,6 +19,7 @@ export const webSearch = createServerFn({ method: "POST" })
     const apiKey = data.apiKey || process.env.TAVILY_API_KEY;
     if (!apiKey) throw new Error("Tavily API key not configured. Add one in Settings.");
 
+    const maxResults = data.maxResults ?? 5;
     const res = await fetch("https://api.tavily.com/search", {
       method: "POST",
       headers: {
@@ -27,7 +28,7 @@ export const webSearch = createServerFn({ method: "POST" })
       },
       body: JSON.stringify({
         query: data.query,
-        max_results: 5,
+        max_results: maxResults,
         search_depth: "advanced",
       }),
     });
@@ -42,7 +43,7 @@ export const webSearch = createServerFn({ method: "POST" })
     };
 
     const results: SearchResult[] = (json.results ?? [])
-      .slice(0, 5)
+      .slice(0, maxResults)
       .map((r) => ({
         url: r.url ?? "",
         title: r.title ?? r.url ?? "Untitled",
