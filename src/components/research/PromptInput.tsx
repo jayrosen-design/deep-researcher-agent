@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowUp, Settings as SettingsIcon, LayoutTemplate, FileText, RotateCcw } from "lucide-react";
 
 
@@ -11,6 +11,8 @@ import {
   type UserSettings,
 } from "@/lib/user-settings";
 import { RESEARCH_TEMPLATES } from "@/lib/research-templates";
+import { listNavigatorModels } from "@/lib/navigator-models.functions";
+
 
 
 export function PromptInput({
