@@ -678,6 +678,7 @@ function Index() {
         </div>
       )}
       </div>
+      <Disclaimer />
     </div>
   );
 }
