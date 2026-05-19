@@ -329,6 +329,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research interactive media approaches for [LEARNING TOPIC / TRAINING SCENARIO / AUDIENCE]. Compare branching video, interactive timelines, simulations, quizzes inside media, immersive media, and web-based interactives. Evaluate learning benefits, production complexity, accessibility, hosting requirements, analytics, and examples of strong implementations.",
       },
+      {
+        id: "short-form-educational-media-scan",
+        roleId: "video-media-producer",
+        label: "Short-form educational media scan",
+        description: "Length, pacing, captions, attention",
+        prompt:
+          "Research best practices for short-form educational video about [TOPIC / SKILL / CONCEPT]. Compare ideal length, pacing, scripting, visuals, captions, platform constraints, learner attention, accessibility, reuse potential, and examples of strong educational short-form media.",
+      },
+      {
+        id: "animation-vs-live-action-brief",
+        roleId: "video-media-producer",
+        label: "Animation versus live-action decision brief",
+        description: "Format choice for learning impact",
+        prompt:
+          "Research whether [TOPIC / LESSON / TRAINING SCENARIO] is better taught through animation, live-action video, screen recording, interview, demonstration, or mixed media. Compare learning impact, production effort, cost, clarity, accessibility, emotional tone, update burden, and examples from similar projects.",
+      },
+      {
+        id: "media-accessibility-production-review",
+        roleId: "video-media-producer",
+        label: "Media accessibility production review",
+        description: "Captions, transcripts, audio description, QC",
+        prompt:
+          "Research accessibility best practices for producing [VIDEO / AUDIO / MULTIMEDIA PROJECT]. Focus on captions, transcripts, audio description, visual contrast, cognitive load, language clarity, player accessibility, mobile viewing, file delivery, and quality-control workflows.",
+      },
     ],
   },
   {
