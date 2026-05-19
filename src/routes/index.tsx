@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LogOut, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
 import { PromptInput } from "@/components/research/PromptInput";
 import { PasswordGate } from "@/components/research/PasswordGate";
+import { PlanReview } from "@/components/research/PlanReview";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
 import { ReportView } from "@/components/research/ReportView";
@@ -17,6 +18,12 @@ import {
   buildReadObservation,
   buildSearchObservation,
 } from "@/lib/agent-prompts";
+import {
+  PLAN_SYSTEM_PROMPT,
+  buildAgentPlanContext,
+  buildPlanRevisionMessage,
+  buildPlanUserMessage,
+} from "@/lib/plan-prompts";
 import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
 import { isAuthed, setAuthed } from "@/lib/auth";
 import {
@@ -96,6 +103,10 @@ function Index() {
   }, []);
 
   const [prompt, setPrompt] = useState<string | null>(null);
+  const [phase, setPhase] = useState<"input" | "plan" | "research">("input");
+  const [plan, setPlan] = useState<string | null>(null);
+  const [planLoading, setPlanLoading] = useState(false);
+  const [planError, setPlanError] = useState<string | null>(null);
   const [model, setModel] = useState<NavigatorModel>(DEFAULT_MODEL);
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [report, setReport] = useState<string | null>(null);
@@ -109,6 +120,10 @@ function Index() {
     setAuthed(false);
     setAuthedState(false);
     setPrompt(null);
+    setPhase("input");
+    setPlan(null);
+    setPlanError(null);
+    setPlanLoading(false);
     setTrace([]);
     setReport(null);
     setSources([]);
@@ -130,7 +145,7 @@ function Index() {
   }, []);
 
   const runAgent = useCallback(
-    async (userQuery: string) => {
+    async (userQuery: string, approvedPlan?: string | null) => {
       cancelled.current = false;
       setRunning(true);
       setFatalError(null);
@@ -144,9 +159,13 @@ function Index() {
       const navigatorKey = settings.navigatorApiKey || undefined;
       const tavilyKey = settings.tavilyApiKey || undefined;
 
+      const initialUser = approvedPlan
+        ? `${buildInitialUserMessage(userQuery, maxSteps)}\n\n${buildAgentPlanContext(approvedPlan)}`
+        : buildInitialUserMessage(userQuery, maxSteps);
+
       const messages: ChatMessage[] = [
         { role: "system", content: AGENT_SYSTEM_PROMPT },
-        { role: "user", content: buildInitialUserMessage(userQuery, maxSteps) },
+        { role: "user", content: initialUser },
       ];
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
@@ -312,17 +331,77 @@ function Index() {
     [model, settings, appendStep, updateLastStep, trace],
   );
 
+  const generatePlan = useCallback(
+    async (
+      query: string,
+      opts?: { currentPlan?: string; edits?: string },
+    ) => {
+      setPlanLoading(true);
+      setPlanError(null);
+      try {
+        const userMsg =
+          opts?.currentPlan && opts?.edits
+            ? buildPlanRevisionMessage(query, opts.currentPlan, opts.edits)
+            : buildPlanUserMessage(query);
+        const { content } = await navigatorChat({
+          data: {
+            model,
+            messages: [
+              { role: "system", content: PLAN_SYSTEM_PROMPT },
+              { role: "user", content: userMsg },
+            ],
+            temperature: 0.4,
+            apiKey: settings.navigatorApiKey || undefined,
+          },
+        });
+        setPlan(content.trim());
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setPlanError(msg);
+      } finally {
+        setPlanLoading(false);
+      }
+    },
+    [model, settings.navigatorApiKey],
+  );
+
   const handleStart = useCallback(
     (q: string) => {
       setPrompt(q);
-      void runAgent(q);
+      setPhase("plan");
+      setPlan(null);
+      setPlanError(null);
+      void generatePlan(q);
     },
-    [runAgent],
+    [generatePlan],
   );
+
+  const handleRevisePlan = useCallback(
+    (edits: string) => {
+      if (!prompt || !plan) return;
+      void generatePlan(prompt, { currentPlan: plan, edits });
+    },
+    [prompt, plan, generatePlan],
+  );
+
+  const handleRegeneratePlan = useCallback(() => {
+    if (!prompt) return;
+    void generatePlan(prompt);
+  }, [prompt, generatePlan]);
+
+  const handleAcceptPlan = useCallback(() => {
+    if (!prompt) return;
+    setPhase("research");
+    void runAgent(prompt, plan);
+  }, [prompt, plan, runAgent]);
 
   const handleReset = useCallback(() => {
     cancelled.current = true;
     setPrompt(null);
+    setPhase("input");
+    setPlan(null);
+    setPlanError(null);
+    setPlanLoading(false);
     setTrace([]);
     setReport(null);
     setSources([]);
@@ -331,8 +410,9 @@ function Index() {
   }, []);
 
   const handleRetry = useCallback(() => {
-    if (prompt) void runAgent(prompt);
-  }, [prompt, runAgent]);
+    if (prompt) void runAgent(prompt, plan);
+  }, [prompt, plan, runAgent]);
+
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
 
@@ -399,7 +479,7 @@ function Index() {
     return <PasswordGate onSuccess={() => setAuthedState(true)} />;
   }
 
-  if (!prompt) {
+  if (phase === "input" || !prompt) {
     return (
       <div className="relative">
         <button
@@ -420,6 +500,22 @@ function Index() {
       </div>
     );
   }
+
+  if (phase === "plan") {
+    return (
+      <PlanReview
+        prompt={prompt}
+        plan={plan}
+        isGenerating={planLoading}
+        error={planError}
+        onAccept={handleAcceptPlan}
+        onRevise={handleRevisePlan}
+        onRegenerate={handleRegeneratePlan}
+        onCancel={handleReset}
+      />
+    );
+  }
+
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-10">
