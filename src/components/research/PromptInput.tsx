@@ -202,6 +202,14 @@ export function PromptInput({
                 </label>
                 <button
                   type="button"
+                  onClick={() => setShowTemplates((s) => !s)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  <LayoutTemplate className="size-3.5" />
+                  Templates
+                </button>
+                <button
+                  type="button"
                   onClick={() => setShowSettings((s) => !s)}
                   className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
                 >
