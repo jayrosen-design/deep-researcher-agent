@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import { Lock } from "lucide-react";
 import { setAuthed, verifyPassword } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
+import { BrandLockup } from "./BrandLockup";
+
 
 
 export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
