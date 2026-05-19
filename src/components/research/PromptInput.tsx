@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { NAVIGATOR_MODELS, type NavigatorModel } from "@/lib/models";
 import {
   DEFAULT_SETTINGS,
@@ -240,59 +241,61 @@ export function PromptInput({
         </div>
       </form>
 
-      {showTemplates && (
-      <div className="mt-6 w-full">
-        <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
-          {RESEARCH_ROLE_GROUPS.map((role) => {
-            const RoleIcon = role.icon;
-            const isActive = role.id === activeRoleId;
-            return (
-              <button
-                key={role.id}
-                type="button"
-                onClick={() => setActiveRoleId(role.id)}
-                className={
-                  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition " +
-                  (isActive
-                    ? "border-foreground/40 bg-foreground text-background"
-                    : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground")
-                }
-              >
-                <RoleIcon className="size-3.5" />
-                {role.label}
-              </button>
-            );
-          })}
-        </div>
-        {(() => {
-          const activeRole =
-            RESEARCH_ROLE_GROUPS.find((r) => r.id === activeRoleId) ?? RESEARCH_ROLE_GROUPS[0];
-          return (
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="mb-3">
-                <div className="text-sm font-semibold text-foreground">{activeRole.label} templates</div>
-                <div className="text-xs text-muted-foreground">
-                  {activeRole.description}. Click one to load it, then replace [PLACEHOLDERS] with your specifics.
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {activeRole.templates.map((template) => (
+      <Collapsible open={showTemplates} onOpenChange={setShowTemplates} className="w-full">
+        <CollapsibleContent className="collapsible-content">
+          <div className="mt-6 w-full">
+            <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
+              {RESEARCH_ROLE_GROUPS.map((role) => {
+                const RoleIcon = role.icon;
+                const isActive = role.id === activeRoleId;
+                return (
                   <button
-                    key={template.id}
+                    key={role.id}
                     type="button"
-                    onClick={() => setValue(template.prompt)}
-                    className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
+                    onClick={() => setActiveRoleId(role.id)}
+                    className={
+                      "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition " +
+                      (isActive
+                        ? "border-foreground/40 bg-foreground text-background"
+                        : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground")
+                    }
                   >
-                    <div className="text-sm font-medium text-foreground">{template.label}</div>
-                    <div className="text-xs text-muted-foreground">{template.description}</div>
+                    <RoleIcon className="size-3.5" />
+                    {role.label}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
-          );
-        })()}
-      </div>
-      )}
+            {(() => {
+              const activeRole =
+                RESEARCH_ROLE_GROUPS.find((r) => r.id === activeRoleId) ?? RESEARCH_ROLE_GROUPS[0];
+              return (
+                <div className="rounded-xl border border-border bg-card p-5">
+                  <div className="mb-3">
+                    <div className="text-sm font-semibold text-foreground">{activeRole.label} templates</div>
+                    <div className="text-xs text-muted-foreground">
+                      {activeRole.description}. Click one to load it, then replace [PLACEHOLDERS] with your specifics.
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {activeRole.templates.map((template) => (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => setValue(template.prompt)}
+                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
+                      >
+                        <div className="text-sm font-medium text-foreground">{template.label}</div>
+                        <div className="text-xs text-muted-foreground">{template.description}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
 
 
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
