@@ -138,7 +138,9 @@ function Index() {
       setSources([]);
       setTrace([]);
 
-      const maxSteps = settings.maxSources;
+      const maxSources = settings.maxSources;
+      // Step budget scales with desired source count but stays reasonable.
+      const maxSteps = Math.max(8, Math.ceil(maxSources * 1.5));
       const navigatorKey = settings.navigatorApiKey || undefined;
       const tavilyKey = settings.tavilyApiKey || undefined;
 
@@ -149,6 +151,7 @@ function Index() {
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       let stepsUsed = 0;
+      let sourceCapNotified = false;
 
       try {
         for (let i = 0; i < maxSteps + 1; i++) {
@@ -217,8 +220,13 @@ function Index() {
             const query = turn.action.args.query;
             appendStep({ kind: "search", query, status: "active" });
             try {
-              const { results } = await webSearch({ data: { query, apiKey: tavilyKey } });
+              const remainingCap = Math.max(1, maxSources - collectedSources.length);
+              const requestSize = Math.min(10, Math.max(3, remainingCap));
+              const { results } = await webSearch({
+                data: { query, apiKey: tavilyKey, maxResults: requestSize },
+              });
               for (const r of results) {
+                if (collectedSources.length >= maxSources) break;
                 if (!seenUrls.has(r.url)) {
                   seenUrls.add(r.url);
                   collectedSources.push(r);
@@ -230,12 +238,19 @@ function Index() {
                 status: "done",
                 resultCount: results.length,
               }));
+              const capReached = collectedSources.length >= maxSources;
+              const capMsg =
+                capReached && !sourceCapNotified
+                  ? `\n\nSystem: You have reached the user's max-sources cap of ${maxSources}. Do not run more web_search calls. You may still read_url on already-collected sources, then call finish.`
+                  : "";
+              if (capReached) sourceCapNotified = true;
               messages.push({
                 role: "user",
                 content:
                   buildSearchObservation(query, results) +
                   "\n\n" +
-                  buildBudgetWarning(remaining),
+                  buildBudgetWarning(remaining) +
+                  capMsg,
               });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
@@ -432,7 +447,7 @@ function Index() {
                 Progress
               </div>
               <div className="text-xs text-muted-foreground">
-                {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · max {settings.maxSources} steps
+                {running ? "Working…" : fatalError ? "Stopped" : "Idle"} · up to {settings.maxSources} sources
               </div>
             </div>
             <ProgressTracker phases={phases} />
