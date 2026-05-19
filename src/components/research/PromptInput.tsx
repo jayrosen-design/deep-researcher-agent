@@ -241,21 +241,37 @@ export function PromptInput({
               Click one to load it. Replace [PLACEHOLDERS] with your specifics.
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {RESEARCH_TEMPLATES.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => {
-                  setValue(t.prompt);
-                  setShowTemplates(false);
-                }}
-                className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
-              >
-                <div className="text-sm font-medium text-foreground">{t.label}</div>
-                <div className="text-xs text-muted-foreground">{t.description}</div>
-              </button>
-            ))}
+          <div className="space-y-5">
+            {RESEARCH_ROLE_GROUPS.map((role) => {
+              const RoleIcon = role.icon;
+              return (
+                <section key={role.id}>
+                  <div className="mb-2 flex items-start gap-2">
+                    <RoleIcon className="mt-0.5 size-4 text-foreground" />
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">{role.label}</div>
+                      <div className="text-xs text-muted-foreground">{role.description}</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {role.templates.map((template) => (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => {
+                          setValue(template.prompt);
+                          setShowTemplates(false);
+                        }}
+                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
+                      >
+                        <div className="text-sm font-medium text-foreground">{template.label}</div>
+                        <div className="text-xs text-muted-foreground">{template.description}</div>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
           </div>
         </div>
       )}
