@@ -145,7 +145,7 @@ function Index() {
   }, []);
 
   const runAgent = useCallback(
-    async (userQuery: string) => {
+    async (userQuery: string, approvedPlan?: string | null) => {
       cancelled.current = false;
       setRunning(true);
       setFatalError(null);
@@ -159,9 +159,13 @@ function Index() {
       const navigatorKey = settings.navigatorApiKey || undefined;
       const tavilyKey = settings.tavilyApiKey || undefined;
 
+      const initialUser = approvedPlan
+        ? `${buildInitialUserMessage(userQuery, maxSteps)}\n\n${buildAgentPlanContext(approvedPlan)}`
+        : buildInitialUserMessage(userQuery, maxSteps);
+
       const messages: ChatMessage[] = [
         { role: "system", content: AGENT_SYSTEM_PROMPT },
-        { role: "user", content: buildInitialUserMessage(userQuery, maxSteps) },
+        { role: "user", content: initialUser },
       ];
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
