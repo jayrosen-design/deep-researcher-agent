@@ -46,7 +46,7 @@ export function PromptInput({
   };
 
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-2xl flex-col items-center justify-center px-6">
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-4xl flex-col items-center justify-center px-6">
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
         <Sparkles className="size-3.5" />
         Deep Researcher AI
