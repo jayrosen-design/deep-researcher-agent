@@ -492,7 +492,7 @@ function Index() {
               });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
-              failedReads.add(url);
+              failedReads.set(url, msg);
               updateLastStep(() => ({ kind: "read", url, status: "error", error: msg }));
               messages.push({
                 role: "user",
