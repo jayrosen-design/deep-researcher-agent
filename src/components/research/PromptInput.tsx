@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowUp, Settings as SettingsIcon, LayoutTemplate, FileText, RotateCcw } from "lucide-react";
 
 
@@ -11,6 +11,8 @@ import {
   type UserSettings,
 } from "@/lib/user-settings";
 import { RESEARCH_TEMPLATES } from "@/lib/research-templates";
+import { listNavigatorModels } from "@/lib/navigator-models.functions";
+
 
 
 export function PromptInput({
@@ -27,11 +29,47 @@ export function PromptInput({
   const [showTemplates, setShowTemplates] = useState(false);
   const [showPrompts, setShowPrompts] = useState(false);
   const [draft, setDraft] = useState<UserSettings>(settings);
+  const [remoteModels, setRemoteModels] = useState<string[] | null>(null);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
 
 
   useEffect(() => {
     setDraft(settings);
   }, [settings]);
+
+  // Fetch the list of models actually available to this API key.
+  useEffect(() => {
+    let cancelled = false;
+    setModelsError(null);
+    setModelsLoading(true);
+    listNavigatorModels({ data: { apiKey: settings.navigatorApiKey || undefined } })
+      .then((res) => {
+        if (cancelled) return;
+        setRemoteModels(res.models.length > 0 ? res.models : null);
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setRemoteModels(null);
+        setModelsError(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        if (!cancelled) setModelsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [settings.navigatorApiKey]);
+
+  // Merge remote list with bundled defaults so the current selection is
+  // always pickable even if the API doesn't list it.
+  const modelOptions = useMemo(() => {
+    const base = remoteModels ?? (NAVIGATOR_MODELS as readonly string[]);
+    const merged = new Set<string>(base);
+    merged.add(settings.investigatorModel);
+    merged.add(settings.synthesisModel);
+    return Array.from(merged).sort();
+  }, [remoteModels, settings.investigatorModel, settings.synthesisModel]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +123,7 @@ export function PromptInput({
                   title="Smaller/faster model for the ReAct JSON loop"
                   className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
                 >
-                  {NAVIGATOR_MODELS.map((m) => (
+                  {modelOptions.map((m) => (
                     <option key={m} value={m}>
                       {m}
                     </option>
@@ -102,14 +140,24 @@ export function PromptInput({
                   title="Larger model for the final Markdown report"
                   className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
                 >
-                  {NAVIGATOR_MODELS.map((m) => (
+                  {modelOptions.map((m) => (
                     <option key={m} value={m}>
                       {m}
                     </option>
                   ))}
                 </select>
               </label>
+              <span className="text-[11px] text-muted-foreground/80">
+                {modelsLoading
+                  ? "Loading models…"
+                  : remoteModels
+                    ? `${remoteModels.length} models available for your key`
+                    : modelsError
+                      ? "Using bundled defaults (key has no model list)"
+                      : "Using bundled defaults"}
+              </span>
             </div>
+
 
             {/* Row 2: max sources + templates + api keys, with submit on the right */}
             <div className="flex flex-wrap items-center justify-between gap-2">

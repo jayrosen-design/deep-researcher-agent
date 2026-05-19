@@ -150,9 +150,30 @@ function HowItWorks() {
               <li>Open the <em>API Keys</em> page from the left nav.</li>
               <li>Create a new key and copy it (starts with <code>sk-</code>).</li>
               <li>
-                Paste it into <em>API keys → NaviGator API key</em> on the home
-                page.
+                When NaviGator asks which models to attach to the key, select
+                at least one fast model for the Investigator and one strong
+                model for the Synthesizer. Suggested picks:
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  <li>
+                    <strong className="text-foreground">Investigator (fast, JSON loop):</strong>{" "}
+                    <code>llama-3.1-8b-instruct</code>,{" "}
+                    <code>gpt-oss-20b</code>, or{" "}
+                    <code>llama-3.1-nemotron-nano-8B-v1</code>.
+                  </li>
+                  <li>
+                    <strong className="text-foreground">Synthesizer (long-form report):</strong>{" "}
+                    <code>gpt-oss-120b</code>,{" "}
+                    <code>llama-3.3-70b-instruct</code>, or{" "}
+                    <code>nemotron-3-super-120b-a12b</code>.
+                  </li>
+                </ul>
               </li>
+              <li>
+                Paste the key into <em>API keys → NaviGator API key</em> on
+                the home page. The Investigator and Synthesizer dropdowns will
+                auto-populate with exactly the models your key has access to.
+              </li>
+
             </ol>
           </div>
 

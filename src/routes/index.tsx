@@ -617,7 +617,6 @@ function Index() {
         <BrandLockup className="absolute left-4 top-4" />
 
         <div className="absolute right-4 top-4 inline-flex items-center gap-2">
-          <ThemeToggle />
           <Link
             to="/how-it-works"
             className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -626,6 +625,8 @@ function Index() {
             <HelpCircle className="size-3.5" />
             How it Works
           </Link>
+          <ThemeToggle />
+
 
           <button
             onClick={handleSignOut}
