@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
+import { RotateCcw, ChevronDown, ChevronRight, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 
 import { PromptInput } from "@/components/research/PromptInput";
 import { PasswordGate } from "@/components/research/PasswordGate";
@@ -21,13 +21,16 @@ import { webSearch, type SearchResult } from "@/lib/web-search.functions";
 import { readUrl } from "@/lib/read-url.functions";
 import {
   AGENT_SYSTEM_PROMPT,
+  REVIEW_SYSTEM_PROMPT,
   SYNTHESIS_SYSTEM_PROMPT,
   buildBudgetWarning,
   buildInitialUserMessage,
   buildReadObservation,
+  buildReviewUserMessage,
   buildSearchObservation,
   buildStepCounter,
   buildSynthesisUserMessage,
+  type FollowUpSuggestion,
   type SynthesisSource,
 } from "@/lib/agent-prompts";
 import {
@@ -155,6 +158,8 @@ function Index() {
   const [running, setRunning] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
   const [traceOpen, setTraceOpen] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
+  const [followUps, setFollowUps] = useState<FollowUpSuggestion[]>([]);
   const cancelled = useRef(false);
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [historyRefresh, setHistoryRefresh] = useState(0);
@@ -248,6 +253,8 @@ function Index() {
       setReport(null);
       setSources([]);
       setTrace([]);
+      setFollowUps([]);
+      setReviewing(false);
 
       const maxSources = settings.maxSources;
       // Step budget scales with desired source count but stays reasonable.
@@ -354,23 +361,79 @@ function Index() {
               },
             });
             if (cancelled.current) return;
-            const { sanitizedMarkdown, hallucinatedUrls } = sanitizeReportCitations(
+            const { sanitizedMarkdown: draftSanitized, hallucinatedUrls } = sanitizeReportCitations(
               reportMd.trim(),
               collectedSources,
             );
-            setReport(sanitizedMarkdown);
-            updateLastStep(() => ({ kind: "finish", status: "done" }));
             if (hallucinatedUrls.length > 0) {
               console.warn("Hallucinated citations stripped:", hallucinatedUrls);
               appendStep({
                 kind: "error",
                 message: `Stripped ${hallucinatedUrls.length} hallucinated citation${
                   hallucinatedUrls.length === 1 ? "" : "s"
-                } from the report: ${hallucinatedUrls.slice(0, 5).join(", ")}${
+                } from the draft: ${hallucinatedUrls.slice(0, 5).join(", ")}${
                   hallucinatedUrls.length > 5 ? "…" : ""
                 }`,
               });
             }
+            updateLastStep(() => ({ kind: "finish", status: "done" }));
+
+            // Review pass: synthesizer polishes the draft and proposes follow-ups.
+            setReviewing(true);
+            appendStep({ kind: "thought", text: "Reviewing draft and identifying follow-up research…" });
+            let finalReport = draftSanitized;
+            try {
+              const { content: reviewRaw } = await navigatorChat({
+                data: {
+                  model: settings.synthesisModel,
+                  messages: [
+                    { role: "system", content: REVIEW_SYSTEM_PROMPT },
+                    {
+                      role: "user",
+                      content: buildReviewUserMessage(userQuery, approvedPlan ?? null, draftSanitized),
+                    },
+                  ],
+                  temperature: 0.3,
+                  maxTokens: 16000,
+                  responseFormat: "json_object",
+                  apiKey: navigatorKey,
+                },
+              });
+              if (cancelled.current) return;
+              const parsed = JSON.parse(stripFences(reviewRaw)) as {
+                revisedReport?: unknown;
+                followUps?: unknown;
+              };
+              if (typeof parsed.revisedReport === "string" && parsed.revisedReport.trim().length > 200) {
+                const { sanitizedMarkdown: revisedSanitized } = sanitizeReportCitations(
+                  parsed.revisedReport.trim(),
+                  collectedSources,
+                );
+                finalReport = revisedSanitized;
+              }
+              if (Array.isArray(parsed.followUps)) {
+                const cleaned: FollowUpSuggestion[] = parsed.followUps
+                  .filter(
+                    (f): f is { title: string; rationale: string; prompt: string } =>
+                      !!f &&
+                      typeof (f as { title?: unknown }).title === "string" &&
+                      typeof (f as { prompt?: unknown }).prompt === "string",
+                  )
+                  .map((f) => ({
+                    title: f.title.trim(),
+                    rationale: typeof f.rationale === "string" ? f.rationale.trim() : "",
+                    prompt: f.prompt.trim(),
+                  }))
+                  .slice(0, 3);
+                setFollowUps(cleaned);
+              }
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : String(e);
+              appendStep({ kind: "error", message: `Review pass failed — showing draft. (${msg})` });
+            } finally {
+              setReviewing(false);
+            }
+            setReport(finalReport);
 
 
             return;
@@ -604,6 +667,8 @@ function Index() {
     setRunning(false);
     setActiveHistoryId(null);
     savedReportRef.current = null;
+    setFollowUps([]);
+    setReviewing(false);
   }, []);
 
   const handleSelectHistory = useCallback((entry: HistoryEntry) => {
@@ -619,12 +684,22 @@ function Index() {
     setReport(entry.report);
     savedReportRef.current = entry.report;
     setActiveHistoryId(entry.id);
+    setFollowUps([]);
+    setReviewing(false);
     setPhase("research");
   }, []);
 
   const handleRetry = useCallback(() => {
     if (prompt) void runAgent(prompt, plan);
   }, [prompt, plan, runAgent]);
+
+  const handleFollowUp = useCallback(
+    (nextPrompt: string) => {
+      handleReset();
+      setTimeout(() => handleStart(nextPrompt), 0);
+    },
+    [handleReset, handleStart],
+  );
 
 
   const isDone = useMemo(() => !running && !!report, [running, report]);
@@ -795,6 +870,12 @@ function Index() {
                   </div>
                 </div>
                 <ProgressTracker phases={phases} />
+                {reviewing && (
+                  <div className="mt-4 flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
+                    <Loader2 className="size-3.5 animate-spin text-foreground" />
+                    Synthesizer is reviewing the draft and identifying follow-up research…
+                  </div>
+                )}
                 {fatalError && (
                   <div className="mt-6 border-t border-border pt-4">
                     <div className="text-sm text-destructive">{fatalError}</div>
@@ -846,6 +927,47 @@ function Index() {
               <section className="rounded-xl border border-border bg-card p-8">
                 <ReportView markdown={report} sources={sources} prompt={prompt} />
               </section>
+
+              {followUps.length > 0 && (
+                <section className="rounded-xl border border-border bg-card p-6">
+                  <div className="mb-4 flex items-center gap-2">
+                    <Sparkles className="size-4 text-foreground" />
+                    <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                      Continue the research
+                    </h2>
+                  </div>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    The synthesizer reviewed the report and identified these gaps. Each suggestion
+                    is a ready-to-run research prompt.
+                  </p>
+                  <ul className="space-y-3">
+                    {followUps.map((f, i) => (
+                      <li
+                        key={i}
+                        className="rounded-lg border border-border bg-background p-4"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-foreground">{f.title}</div>
+                            {f.rationale && (
+                              <div className="mt-1 text-xs text-muted-foreground">{f.rationale}</div>
+                            )}
+                            <div className="mt-2 text-sm text-foreground/90">{f.prompt}</div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleFollowUp(f.prompt)}
+                            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:opacity-90"
+                          >
+                            Start research
+                            <ArrowRight className="size-3.5" />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
               {trace.length > 0 && (
                 <section className="rounded-xl border border-border bg-card">
                   <button

@@ -145,3 +145,56 @@ ${readBlock}
 
 Take a deep breath and synthesize the report now.`;
 }
+
+// ----------------------------------------------------------------------------
+// Review pass: synthesizer reviews its own draft, polishes it, and proposes
+// follow-up research directions.
+// ----------------------------------------------------------------------------
+
+export const REVIEW_SYSTEM_PROMPT = `You are the same expert research analyst returning for a final review pass over your own draft report.
+
+Do TWO things:
+
+1. Polish the report. Fix awkward prose, tighten transitions, remove redundancy, correct obvious factual or citation inconsistencies, and ensure the section headers from the plan are honored. Do NOT invent new facts or citations — you may only use URLs that already appear in the draft. Keep the report's overall length and depth; this is an editing pass, not a rewrite.
+
+2. Identify gaps. Based on the original question, the plan, and what the draft actually covers, propose 3 high-value follow-up research prompts that would fill the most important missing pieces. Each follow-up must be a complete, standalone research prompt (1–3 sentences, in the same voice as the original question) that another researcher could submit as-is.
+
+Respond with ONLY a single valid JSON object — no markdown fences, no preamble:
+
+{
+  "revisedReport": "<full revised Markdown report, same structure and citation style as the draft>",
+  "followUps": [
+    { "title": "<6–10 word label>", "rationale": "<1 sentence on the gap this fills>", "prompt": "<the ready-to-submit research prompt>" },
+    { "title": "...", "rationale": "...", "prompt": "..." },
+    { "title": "...", "rationale": "...", "prompt": "..." }
+  ]
+}
+
+Start with \`{\` and end with \`}\`. No other text.`;
+
+export function buildReviewUserMessage(
+  query: string,
+  plan: string | null,
+  draftReport: string,
+): string {
+  const planBlock = plan ?? "(no plan provided)";
+  return `<original_question>
+${query}
+</original_question>
+
+<plan>
+${planBlock}
+</plan>
+
+<draft_report>
+${draftReport}
+</draft_report>
+
+Polish the draft and propose 3 follow-up research prompts. Respond with the JSON object only.`;
+}
+
+export type FollowUpSuggestion = {
+  title: string;
+  rationale: string;
+  prompt: string;
+};
