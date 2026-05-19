@@ -138,7 +138,9 @@ function Index() {
       setSources([]);
       setTrace([]);
 
-      const maxSteps = settings.maxSources;
+      const maxSources = settings.maxSources;
+      // Step budget scales with desired source count but stays reasonable.
+      const maxSteps = Math.max(8, Math.ceil(maxSources * 1.5));
       const navigatorKey = settings.navigatorApiKey || undefined;
       const tavilyKey = settings.tavilyApiKey || undefined;
 
@@ -149,6 +151,7 @@ function Index() {
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       let stepsUsed = 0;
+      let sourceCapNotified = false;
 
       try {
         for (let i = 0; i < maxSteps + 1; i++) {
