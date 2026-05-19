@@ -673,6 +673,7 @@ function Index() {
           <SourcesPanel sources={sources} />
         </div>
       )}
+      </div>
     </div>
   );
 }
