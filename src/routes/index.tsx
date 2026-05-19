@@ -56,7 +56,7 @@ type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 type AgentAction =
   | { tool: "web_search"; args: { query: string } }
   | { tool: "read_url"; args: { url: string } }
-  | { tool: "finish"; args: { report: string } };
+  | { tool: "finish"; args: Record<string, unknown> };
 
 type AgentTurn = { thought: string; action: AgentAction };
 
@@ -68,7 +68,6 @@ function stripFences(s: string): string {
 
 function parseTurn(raw: string): AgentTurn {
   const text = stripFences(raw);
-  // Try direct parse; fall back to extracting first {...} block.
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -90,8 +89,8 @@ function parseTurn(raw: string): AgentTurn {
   if (action.tool === "read_url" && typeof args.url === "string") {
     return { thought, action: { tool: "read_url", args: { url: args.url } } };
   }
-  if (action.tool === "finish" && typeof args.report === "string") {
-    return { thought, action: { tool: "finish", args: { report: args.report } } };
+  if (action.tool === "finish") {
+    return { thought, action: { tool: "finish", args } };
   }
   throw new Error(`Unknown or invalid tool: ${action.tool}`);
 }
