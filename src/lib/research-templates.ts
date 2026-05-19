@@ -169,6 +169,30 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         prompt:
           "Research quality standards and best practices for improving [ONLINE COURSE / TRAINING PROGRAM / DIGITAL LEARNING EXPERIENCE]. Focus on course structure, learner navigation, instructor presence, interaction, assessment, multimedia, accessibility, student support, analytics, and evaluation. The final report should identify practical improvement priorities and examples of strong implementation.",
       },
+      {
+        id: "modality-comparison",
+        roleId: "instructional-designer",
+        label: "Learning experience modality comparison",
+        description: "In-person, online, blended, simulation fit",
+        prompt:
+          "Research which modality is best suited for [LEARNING EXPERIENCE / TRAINING GOAL]: in-person, online asynchronous, online synchronous, blended, simulation, mobile, or self-paced. Compare evidence, learner needs, interaction requirements, accessibility, cost, development time, instructor workload, and assessment fit.",
+      },
+      {
+        id: "microlearning-research-brief",
+        roleId: "instructional-designer",
+        label: "Microlearning research brief",
+        description: "Retention, transfer, spacing, fit",
+        prompt:
+          "Research whether microlearning is appropriate for [TRAINING TOPIC / SKILL / AUDIENCE]. Examine evidence on retention, transfer, motivation, spacing, assessment, mobile access, workplace learning, limitations, and examples of effective design. Recommend when microlearning should be used alone, combined with other instruction, or avoided.",
+      },
+      {
+        id: "scenario-based-learning-scan",
+        roleId: "instructional-designer",
+        label: "Scenario-based learning design scan",
+        description: "Branching, feedback, assessment, examples",
+        prompt:
+          "Research scenario-based learning approaches for [SKILL / DECISION-MAKING CONTEXT / PROFESSIONAL PRACTICE]. Identify evidence of effectiveness, design patterns, branching complexity, feedback strategies, assessment methods, accessibility concerns, examples, and practical recommendations for building or revising a scenario-based experience.",
+      },
     ],
   },
   {
