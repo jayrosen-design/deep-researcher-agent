@@ -7,6 +7,7 @@ import { PlanReview } from "@/components/research/PlanReview";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
 import { WorkflowStepper, type WorkflowStep } from "@/components/research/WorkflowStepper";
+import { Disclaimer } from "@/components/research/Disclaimer";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { navigatorChat } from "@/lib/navigator-chat.functions";
