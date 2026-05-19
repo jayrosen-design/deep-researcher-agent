@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LogOut, RotateCcw } from "lucide-react";
+import { LogOut, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
 import { PromptInput } from "@/components/research/PromptInput";
 import { PasswordGate } from "@/components/research/PasswordGate";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
+import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
 import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { navigatorChat } from "@/lib/navigator-chat.functions";
