@@ -667,6 +667,8 @@ function Index() {
     setRunning(false);
     setActiveHistoryId(null);
     savedReportRef.current = null;
+    setFollowUps([]);
+    setReviewing(false);
   }, []);
 
   const handleSelectHistory = useCallback((entry: HistoryEntry) => {
