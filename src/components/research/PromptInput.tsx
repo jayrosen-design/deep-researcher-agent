@@ -29,11 +29,47 @@ export function PromptInput({
   const [showTemplates, setShowTemplates] = useState(false);
   const [showPrompts, setShowPrompts] = useState(false);
   const [draft, setDraft] = useState<UserSettings>(settings);
+  const [remoteModels, setRemoteModels] = useState<string[] | null>(null);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
 
 
   useEffect(() => {
     setDraft(settings);
   }, [settings]);
+
+  // Fetch the list of models actually available to this API key.
+  useEffect(() => {
+    let cancelled = false;
+    setModelsError(null);
+    setModelsLoading(true);
+    listNavigatorModels({ data: { apiKey: settings.navigatorApiKey || undefined } })
+      .then((res) => {
+        if (cancelled) return;
+        setRemoteModels(res.models.length > 0 ? res.models : null);
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setRemoteModels(null);
+        setModelsError(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        if (!cancelled) setModelsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [settings.navigatorApiKey]);
+
+  // Merge remote list with bundled defaults so the current selection is
+  // always pickable even if the API doesn't list it.
+  const modelOptions = useMemo(() => {
+    const base = remoteModels ?? (NAVIGATOR_MODELS as readonly string[]);
+    const merged = new Set<string>(base);
+    merged.add(settings.investigatorModel);
+    merged.add(settings.synthesisModel);
+    return Array.from(merged).sort();
+  }, [remoteModels, settings.investigatorModel, settings.synthesisModel]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
