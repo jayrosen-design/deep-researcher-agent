@@ -7,87 +7,108 @@ export type ResearchTemplate = {
 
 export const RESEARCH_TEMPLATES: ResearchTemplate[] = [
   {
-    id: "market-analysis",
-    label: "Market analysis",
-    description: "Size, growth, segments, key players",
+    id: "instructional-design-brief",
+    label: "Instructional design brief",
+    description: "Learning goals, audience, activities, assessment",
     prompt:
-      "Conduct a comprehensive market analysis of [INDUSTRY/PRODUCT]. Cover market size and growth rate (last 3 years + 5-year forecast), key segments, leading companies and their market share, recent M&A activity, regulatory landscape, and major trends or disruptors shaping the market.",
+      "Create an instructional design brief for [COURSE/PROGRAM/TRAINING TOPIC] at the University of Florida College of Education. Identify the target learners, learning objectives, prerequisite knowledge, recommended instructional strategies, activity ideas, assessment approaches, accessibility considerations, and evidence-based design principles. Include examples from higher education, teacher education, or professional learning when available.",
   },
   {
-    id: "competitor-deep-dive",
-    label: "Competitor deep dive",
-    description: "Products, pricing, positioning, strategy",
+    id: "edtech-tool-evaluation",
+    label: "EdTech tool evaluation",
+    description: "Features, evidence, cost, risks, fit",
     prompt:
-      "Provide a deep competitive analysis of [COMPANY]. Include: product/service lineup, pricing models, target customers, go-to-market strategy, recent funding or financials, leadership team, strengths and weaknesses vs competitors, recent news (last 12 months), and strategic direction.",
+      "Evaluate [EDTECH TOOL/PLATFORM] for use by UF College of Education faculty, staff, or students. Cover core features, pedagogical use cases, evidence of effectiveness, accessibility, FERPA/privacy considerations, integrations with Canvas or common university systems, licensing or cost model, implementation effort, support needs, risks, and a recommendation for whether ETC should pilot, adopt, avoid, or monitor it.",
   },
   {
-    id: "academic-literature",
-    label: "Academic literature review",
-    description: "Peer-reviewed findings on a topic",
+    id: "ai-teaching-learning",
+    label: "AI in teaching & learning",
+    description: "Use cases, risks, policy, implementation",
     prompt:
-      "Conduct an academic-style literature review on [TOPIC]. Focus on peer-reviewed sources, summarize key theories and findings, identify points of consensus and ongoing debate, highlight seminal papers and recent (last 3 years) advances, and note open research questions.",
+      "Research how [AI TOOL/AI APPROACH] can support teaching, learning, research, or staff workflows in a College of Education context. Include practical use cases, benefits, limitations, ethical risks, privacy and data governance concerns, accessibility issues, faculty/staff training needs, student impact, examples from peer institutions, and a responsible implementation plan.",
   },
   {
-    id: "technical-deep-dive",
-    label: "Technical deep dive",
-    description: "Architecture, tradeoffs, implementations",
+    id: "xr-learning-experience",
+    label: "XR learning experience",
+    description: "AR/VR use case, design, feasibility",
     prompt:
-      "Do a technical deep dive on [TECHNOLOGY/SYSTEM]. Explain how it works under the hood, its architecture, key design tradeoffs, real-world implementations and benchmarks, common pitfalls, comparisons to alternatives, and current state of the ecosystem.",
+      "Develop a research-informed concept brief for an AR, VR, mixed reality, or simulation-based learning experience about [TOPIC/SKILL]. Focus on learning objectives, learner audience, interaction design, hardware/software requirements, accessibility and motion comfort, assessment strategy, development complexity, relevant examples, and whether the experience should be built as AR, VR, WebXR, Unity, mobile, or a lower-cost alternative.",
   },
   {
-    id: "news-recap",
-    label: "Recent news recap",
-    description: "What happened recently and why it matters",
+    id: "literature-review-education",
+    label: "Education literature review",
+    description: "Research base for programs and proposals",
     prompt:
-      "Summarize the most important recent news (last 30 days) about [TOPIC/COMPANY/PERSON]. For each major story include what happened, when, who's involved, and why it matters. Cite primary news sources and flag any conflicting reports.",
+      "Conduct an academic literature review on [EDUCATION TOPIC/INTERVENTION]. Prioritize peer-reviewed research, major reports, and recent findings from the last 5 years. Summarize key theories, evidence of effectiveness, target populations, implementation conditions, measurement approaches, gaps in the literature, and implications for UF College of Education projects, grants, or instructional design.",
   },
   {
-    id: "product-comparison",
-    label: "Product comparison",
-    description: "Side-by-side evaluation of options",
+    id: "grant-landscape-scan",
+    label: "Grant landscape scan",
+    description: "Funders, priorities, fit, next steps",
     prompt:
-      "Compare [PRODUCT A], [PRODUCT B], and [PRODUCT C] for [USE CASE]. Include feature matrix, pricing, performance, integrations, user reviews and ratings, pros and cons of each, and a clear recommendation for different user profiles.",
+      "Research the grant and funding landscape for [PROJECT IDEA/RESEARCH AREA] related to education, learning technology, literacy, AI, workforce development, or digital learning. Identify relevant federal, foundation, state, and university funding opportunities; summarize funder priorities, eligibility, award size, deadlines, required partners, evaluation expectations, and how UF College of Education or ETC could position a competitive proposal.",
   },
   {
-    id: "investment-research",
-    label: "Investment research",
-    description: "Financials, thesis, risks, valuation",
+    id: "accessibility-udl-review",
+    label: "Accessibility & UDL review",
+    description: "WCAG, UDL, inclusive learning design",
     prompt:
-      "Produce investment research on [COMPANY/TICKER]. Cover business model, recent financial performance (revenue, margins, growth), competitive moat, bull case, bear case, key risks, recent analyst views, insider activity, and a fair-value perspective with supporting data.",
+      "Review [COURSE/WEBSITE/APP/LEARNING MATERIAL/TOOL] through accessibility, Universal Design for Learning, and inclusive design lenses. Identify likely barriers for learners with disabilities, multilingual learners, mobile users, and users with limited bandwidth or technology access. Include WCAG-related considerations, UDL recommendations, media captioning/transcript needs, usability improvements, testing methods, and a prioritized remediation checklist.",
   },
   {
-    id: "person-profile",
-    label: "Person / executive profile",
-    description: "Background, work, public statements",
+    id: "communications-strategy",
+    label: "Communications strategy",
+    description: "Audience, messaging, channels, rollout",
     prompt:
-      "Create an in-depth profile of [PERSON]. Include background and education, career history, current role, notable accomplishments, public statements and interviews, philanthropic or political activity, and recent news mentions. Cite reputable sources only.",
+      "Create a communications strategy for [PROGRAM/INITIATIVE/RESEARCH PROJECT/EVENT] at UF College of Education. Identify key audiences, stakeholder needs, core messages, tone, recommended channels, content calendar ideas, website/newsletter/social media angles, visual asset needs, success metrics, risks, and a concise launch plan for ETC support.",
   },
   {
-    id: "policy-regulation",
-    label: "Policy & regulation",
-    description: "Laws, agencies, compliance impact",
+    id: "program-evaluation-plan",
+    label: "Program evaluation plan",
+    description: "Metrics, data, instruments, reporting",
     prompt:
-      "Research the current regulatory landscape for [INDUSTRY/TOPIC] in [JURISDICTION]. Cover key laws and agencies, recent rulings or proposed legislation, compliance requirements, enforcement trends, and likely impact on businesses and consumers.",
+      "Design a practical evaluation plan for [PROGRAM/COURSE/APP/TRAINING/INTERVENTION]. Define the logic model, evaluation questions, success metrics, data sources, collection instruments, timeline, analysis approach, equity/accessibility considerations, reporting format, and recommendations for communicating findings to faculty, administrators, funders, or community partners.",
   },
   {
-    id: "how-to-guide",
-    label: "How-to guide",
-    description: "Practical step-by-step from best sources",
+    id: "implementation-roadmap",
+    label: "Implementation roadmap",
+    description: "Timeline, roles, risks, deliverables",
     prompt:
-      "Build a practical how-to guide for [TASK/GOAL]. Synthesize the best advice from experts, tutorials, and documentation into a clear step-by-step approach. Include prerequisites, common mistakes to avoid, recommended tools, and links to the highest-quality reference material.",
+      "Create an implementation roadmap for [PROJECT/TOOL/COURSE REDESIGN/TECHNOLOGY INITIATIVE]. Include phases, timeline, key milestones, roles and responsibilities, technical requirements, training needs, stakeholder communication, risk register, dependencies, support model, maintenance plan, and decision points for leadership approval.",
   },
   {
-    id: "trend-forecast",
-    label: "Trend & future outlook",
-    description: "Where things are heading and why",
+    id: "policy-compliance-scan",
+    label: "Policy & compliance scan",
+    description: "FERPA, privacy, AI, procurement, accessibility",
     prompt:
-      "Analyze emerging trends and the 3–5 year outlook for [TOPIC/INDUSTRY]. Identify the most credible predictions from analysts and experts, the data and signals behind them, contrarian views, and the implications for stakeholders.",
+      "Research the policy and compliance considerations for [TOOL/PROJECT/WORKFLOW] in a public university education setting. Cover FERPA, student privacy, data security, accessibility, AI governance, copyright, procurement, records retention, research/IRB considerations if relevant, vendor risk, and practical questions ETC should resolve before adoption or launch.",
   },
   {
-    id: "historical-background",
-    label: "Historical background",
-    description: "Origins, key events, lasting impact",
+    id: "peer-institution-scan",
+    label: "Peer institution scan",
+    description: "Comparable programs and best practices",
     prompt:
-      "Provide a well-sourced historical background on [TOPIC/EVENT]. Cover origins, timeline of key events, principal figures and their roles, primary causes and consequences, differing historical interpretations, and the lasting impact.",
+      "Find and compare how peer universities or Colleges of Education are approaching [TOPIC/PROGRAM/TECHNOLOGY]. Identify 5 to 10 strong examples, summarize their goals, audiences, technologies, staffing models, funding, public outcomes, strengths, gaps, and lessons UF College of Education or ETC could adapt.",
+  },
+  {
+    id: "learning-analytics-report",
+    label: "Learning analytics report",
+    description: "Data sources, metrics, dashboards, insights",
+    prompt:
+      "Research best practices for using learning analytics to evaluate [COURSE/PROGRAM/APP/ONLINE LEARNING EXPERIENCE]. Include relevant metrics, data sources, dashboard examples, student success indicators, privacy and ethics considerations, interpretation pitfalls, recommended visualizations, and a practical reporting format for faculty, staff, and leadership.",
+  },
+  {
+    id: "staff-workflow-automation",
+    label: "Staff workflow automation",
+    description: "Process, tools, risks, ROI",
+    prompt:
+      "Analyze how ETC could improve or automate the workflow for [ADMINISTRATIVE/COMMUNICATIONS/E-LEARNING/TECH SUPPORT PROCESS]. Map the current process, identify pain points, compare potential tools or automation approaches, estimate time savings, note risks and compliance issues, and recommend a phased implementation plan with human review points.",
+  },
+  {
+    id: "stakeholder-brief",
+    label: "Leadership stakeholder brief",
+    description: "Concise decision memo for leaders",
+    prompt:
+      "Prepare a concise leadership brief on [TOPIC/DECISION/PROJECT IDEA] for UF College of Education stakeholders. Include the issue, why it matters now, evidence summary, options, costs or resource needs, risks, equity/accessibility implications, recommended action, and next steps. Write it in a clear format suitable for a dean, director, PI, or department leadership meeting.",
   },
 ];
