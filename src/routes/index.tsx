@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LogOut, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
+import { LogOut, RotateCcw, ChevronDown, ChevronRight, HelpCircle } from "lucide-react";
+
 import { PromptInput } from "@/components/research/PromptInput";
 import { PasswordGate } from "@/components/research/PasswordGate";
 import { PlanReview } from "@/components/research/PlanReview";
