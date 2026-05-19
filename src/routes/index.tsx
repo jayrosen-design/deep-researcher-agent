@@ -541,22 +541,27 @@ function Index() {
 
   if (phase === "plan") {
     return (
-      <PlanReview
-        prompt={prompt}
-        plan={plan}
-        isGenerating={planLoading}
-        error={planError}
-        onAccept={handleAcceptPlan}
-        onRevise={handleRevisePlan}
-        onRegenerate={handleRegeneratePlan}
-        onCancel={handleReset}
-      />
+      <div>
+        <WorkflowStepper steps={workflowSteps} />
+        <PlanReview
+          prompt={prompt}
+          plan={plan}
+          isGenerating={planLoading}
+          error={planError}
+          onAccept={handleAcceptPlan}
+          onRevise={handleRevisePlan}
+          onRegenerate={handleRegeneratePlan}
+          onCancel={handleReset}
+        />
+      </div>
     );
   }
 
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-6 py-10">
+    <div>
+      <WorkflowStepper steps={workflowSteps} />
+      <div className="mx-auto w-full max-w-4xl px-6 py-10">
       <header className="mb-8 flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
