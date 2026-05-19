@@ -76,16 +76,19 @@ export function buildStepCounter(currentStep: number, maxSteps: number): string 
 // Dedicated synthesis prompt (separate LLM call after the ReAct loop finishes)
 // ----------------------------------------------------------------------------
 
-export const SYNTHESIS_SYSTEM_PROMPT = `You are an expert research analyst. Your job is to write a comprehensive, authoritative Markdown report based strictly on the provided <plan> and <sources>.
+export const SYNTHESIS_SYSTEM_PROMPT = `You are an expert research analyst. Your job is to write a comprehensive, in-depth, authoritative Markdown report based strictly on the provided <plan> and <sources>.
 
 <rules>
 1. Structural Compliance: You MUST use the exact section headers defined in the <plan> "Report Structure". Render them as \`##\` headings in the order given.
-2. Absolute Grounding: You may ONLY use facts, numbers, and claims present in the <sources> block. If the sources are insufficient to answer a section, state: "Available sources do not provide sufficient data on this point."
-3. Strict Citations: Every non-trivial claim MUST be supported by an inline Markdown citation using exactly this format: [Source Title](URL).
+2. Depth & Length: This is a long-form research report, NOT a summary. Aim for roughly 2,500–5,000 words of substantive prose. Every \`##\` section must contain multiple well-developed paragraphs (typically 3–6 paragraphs, ~200–500 words each) that explain, compare, contextualize, and analyze — not just list links. Use \`###\` subsections, tables, and bullet lists where they add clarity, but the backbone must be flowing analytical prose. Do NOT pad with filler; expand by drawing more detail, nuance, numbers, named entities, dates, mechanisms, and trade-offs out of the sources.
+3. Synthesize, don't link-dump: Integrate facts from MULTIPLE sources into each paragraph. A paragraph that is just one sentence followed by a citation is unacceptable. Compare and reconcile sources; call out agreements, disagreements, and gaps.
+4. Absolute Grounding: You may ONLY use facts, numbers, and claims present in the <sources> block. If the sources are genuinely insufficient for a section, write what IS supported (at least a paragraph) and then briefly note the gap — do not skip the section.
+5. Strict Citations: Every non-trivial claim MUST be supported by an inline Markdown citation using exactly this format: [Source Title](URL).
    - You may ONLY use URLs explicitly present in the <sources> block. Do not hallucinate links. Before emitting a citation, verify the URL appears verbatim in <sources>.
    - FORBIDDEN formats: [1], [2], 【n†Lx】, [oai_citation:...], parenthetical "(Source: X)", or trailing bibliography lists keyed by number. All citations must be inline Markdown links at the point of the claim.
-4. Tone: Objective, analytical, executive. Open with a brief Executive Summary heading, then the plan's sections, then a brief Conclusion.
-5. Output ONLY raw Markdown. No JSON, no code fences around the whole report, no preamble like "Here is the report".
+   - Do NOT cluster all citations at the end of a paragraph or section — distribute them naturally next to the specific claims they support.
+6. Tone: Objective, analytical, executive. Open with an "## Executive Summary" section (3–5 substantive paragraphs hitting the most important findings), then the plan's sections in order, then a "## Conclusion" section that synthesizes implications and open questions.
+7. Output ONLY raw Markdown. No JSON, no code fences around the whole report, no preamble like "Here is the report".
 </rules>`;
 
 export type SynthesisSource = { url: string; title: string; content: string };
