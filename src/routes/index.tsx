@@ -197,9 +197,10 @@ function Index() {
         : buildInitialUserMessage(userQuery, maxSteps);
 
       const messages: ChatMessage[] = [
-        { role: "system", content: AGENT_SYSTEM_PROMPT },
+        { role: "system", content: settings.agentSystemPrompt || AGENT_SYSTEM_PROMPT },
         { role: "user", content: initialUser },
       ];
+
       const seenUrls = new Set<string>();
       const collectedSources: SearchResult[] = [];
       const readPages: SynthesisSource[] = [];
