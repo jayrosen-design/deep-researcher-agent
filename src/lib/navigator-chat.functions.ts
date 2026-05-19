@@ -12,6 +12,7 @@ const inputSchema = z.object({
   temperature: z.number().min(0).max(2).optional(),
   responseFormat: z.enum(["text", "json_object"]).optional(),
   apiKey: z.string().min(1).max(500).optional(),
+  maxTokens: z.number().int().min(1).max(32000).optional(),
 });
 
 export const navigatorChat = createServerFn({ method: "POST" })
@@ -25,6 +26,7 @@ export const navigatorChat = createServerFn({ method: "POST" })
       messages: data.messages,
       temperature: data.temperature ?? 0.3,
     };
+    if (data.maxTokens) body.max_tokens = data.maxTokens;
     if (data.responseFormat === "json_object") {
       body.response_format = { type: "json_object" };
     }
