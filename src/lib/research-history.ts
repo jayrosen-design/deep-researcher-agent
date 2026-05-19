@@ -9,6 +9,7 @@ const MAX_ENTRIES = 100;
 export type HistoryEntry = {
   id: string;
   prompt: string;
+  title?: string;
   plan: string | null;
   report: string;
   sources: SearchResult[];
