@@ -12,14 +12,10 @@ import { RESEARCH_TEMPLATES } from "@/lib/research-templates";
 
 export function PromptInput({
   onSubmit,
-  model,
-  onModelChange,
   settings,
   onSettingsChange,
 }: {
   onSubmit: (prompt: string) => void;
-  model: NavigatorModel;
-  onModelChange: (m: NavigatorModel) => void;
   settings: UserSettings;
   onSettingsChange: (s: UserSettings) => void;
 }) {
@@ -73,10 +69,30 @@ export function PromptInput({
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-3 py-2">
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Model</span>
+                <span className="px-1">Investigator</span>
                 <select
-                  value={model}
-                  onChange={(e) => onModelChange(e.target.value as NavigatorModel)}
+                  value={settings.investigatorModel}
+                  onChange={(e) =>
+                    persistDraft({ ...draft, investigatorModel: e.target.value as NavigatorModel })
+                  }
+                  title="Smaller/faster model for the ReAct JSON loop"
+                  className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                >
+                  {NAVIGATOR_MODELS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="px-1">Synthesizer</span>
+                <select
+                  value={settings.synthesisModel}
+                  onChange={(e) =>
+                    persistDraft({ ...draft, synthesisModel: e.target.value as NavigatorModel })
+                  }
+                  title="Larger model for the final Markdown report"
                   className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
                 >
                   {NAVIGATOR_MODELS.map((m) => (
