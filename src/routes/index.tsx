@@ -354,7 +354,7 @@ function Index() {
         setRunning(false);
       }
     },
-    [model, settings, appendStep, updateLastStep, trace],
+    [model, settings, appendStep, updateLastStep],
   );
 
   const generatePlan = useCallback(
