@@ -37,6 +37,8 @@ import {
   loadSettings,
   type UserSettings,
 } from "@/lib/user-settings";
+import { sanitizeReportCitations } from "@/lib/citation-validator";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
