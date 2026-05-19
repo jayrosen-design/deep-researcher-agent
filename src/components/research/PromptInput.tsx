@@ -292,6 +292,7 @@ export function PromptInput({
           );
         })()}
       </div>
+      )}
 
 
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
