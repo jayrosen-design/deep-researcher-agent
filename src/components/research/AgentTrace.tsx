@@ -35,6 +35,7 @@ export function AgentTrace({ steps }: { steps: TraceStep[] }) {
             {s.kind === "search" && (s.status === "active" ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />)}
             {s.kind === "read" && (s.status === "active" ? <Loader2 className="size-4 animate-spin" /> : <FileText className="size-4" />)}
             {s.kind === "finish" && (s.status === "active" ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4 text-foreground" />)}
+            {s.kind === "blocked" && <Ban className="size-4 text-amber-600 dark:text-amber-500" />}
             {s.kind === "error" && <AlertCircle className="size-4 text-destructive" />}
           </div>
           <div className="min-w-0 flex-1 text-sm">
