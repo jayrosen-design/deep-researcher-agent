@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LogOut, RotateCcw, ChevronDown, ChevronRight } from "lucide-react";
 import { PromptInput } from "@/components/research/PromptInput";
 import { PasswordGate } from "@/components/research/PasswordGate";
+import { PlanReview } from "@/components/research/PlanReview";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
 import { ReportView } from "@/components/research/ReportView";
@@ -17,6 +18,12 @@ import {
   buildReadObservation,
   buildSearchObservation,
 } from "@/lib/agent-prompts";
+import {
+  PLAN_SYSTEM_PROMPT,
+  buildAgentPlanContext,
+  buildPlanRevisionMessage,
+  buildPlanUserMessage,
+} from "@/lib/plan-prompts";
 import { DEFAULT_MODEL, type NavigatorModel } from "@/lib/models";
 import { isAuthed, setAuthed } from "@/lib/auth";
 import {
