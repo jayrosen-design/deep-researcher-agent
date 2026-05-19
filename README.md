@@ -1,68 +1,84 @@
 # Deep Researcher Agent
 
-An autonomous AI research assistant. Give it a topic and it will plan, search
-the web, read sources, and synthesize a fully cited Markdown report — all in
-your browser.
+An autonomous AI research assistant for the UF College of Education. Pick a
+role, enter a topic (or start from a role-specific template), and the app
+will plan, search the web, read sources, and synthesize a fully cited
+Markdown report — all from the browser.
 
-> **Experimental.** AI responses may be inaccurate; always double-check.
+> **Experimental.** AI responses may be inaccurate; always double-check
+> citations and claims.
 
 ---
 
 ## Features
 
-- **Guided workflow**: Topic → Plan → Searching → Report stepper at the top
-  so you always know where you are.
-- **Plan-first**: A strategist LLM drafts an actionable research plan
+- **Role-based prompt library** — 11 user roles (Researcher, School Teacher,
+  Higher-Ed Instructor, Instructional Designer, Education Leader, Experience
+  Designer, Software Developer, Communications & Marketing, Video & Media
+  Producer, Business & Operations, Human Resources). Each role exposes 6
+  curated starter prompts tuned to its day-to-day work.
+- **Role chips below the chatbox** — every role is a one-click chip with a
+  Lucide icon. Researcher is selected by default; switching chips swaps in
+  that role's template grid only.
+- **Guided workflow** — Topic → Plan → Searching → Report stepper so you
+  always know where the agent is.
+- **Plan-first** — A strategist LLM drafts an actionable research plan
   (objective, key questions, suggested queries, target sources, pitfalls,
-  report structure) and lets you approve, edit, or regenerate it before any
+  report structure). You can approve, edit, or regenerate it before any
   searches run.
-- **Two-agent architecture**: A ReAct **investigator** gathers evidence,
+- **Multi-agent architecture** — A ReAct **investigator** gathers evidence,
   then a dedicated **synthesizer** writes the final report. Splitting these
   roles avoids JSON-escaping crashes on large Markdown and produces
   higher-quality, fully-cited prose.
-- **Prompt templates**: Curated starter prompts for common research patterns.
-- **Live trace**: Collapsible view of every thought, search (with site
+- **Live trace** — Collapsible view of every thought, search (with site
   favicons), and page read.
-- **Cited Markdown report**: Inline links back to every source.
-- **Bring-your-own keys**: Optional client-side override of the NaviGator
+- **Cited Markdown report** — Inline links back to every source, validated
+  against the gathered URL set.
+- **Bring-your-own keys** — Optional client-side override of the NaviGator
   (LLM) and Tavily (web search) API keys.
 
 ---
 
-## How it works
+## How the multi-agent process works
 
 The app uses three specialized LLM roles instead of one monolithic prompt:
 
-1. **Strategist** drafts the research plan from the user's topic.
-2. **Investigator** (ReAct loop) iteratively searches and reads sources
-   until it has enough evidence. Its `finish` tool just signals readiness —
-   it does **not** write the report.
+1. **Strategist** drafts the research plan from the user's topic (and any
+   role-specific template prompt they started from).
+2. **Investigator** (ReAct loop) iteratively calls `web_search` and
+   `read_url` until it has enough evidence. Its `finish` tool just signals
+   readiness — it does **not** write the report.
 3. **Synthesizer** receives the original question, the approved plan, the
    collected search snippets, and the full-text read pages, and writes the
-   final cited Markdown report in a single raw-text (non-JSON) call.
+   final cited Markdown report in a single raw-text (non-JSON) call. A
+   citation validator then checks every link against the gathered sources.
 
 ```mermaid
 flowchart TD
-    A[User enters topic] --> B[Strategist LLM<br/>drafts research plan]
-    B --> C{User approves?}
-    C -->|Edit / regenerate| B
-    C -->|Accept| D[Investigator: ReAct Agent Loop]
+    U[User enters topic] --> R{Select role<br/>Researcher, Teacher,<br/>Designer, etc.}
+    R --> T[Pick a role-specific<br/>prompt template<br/>optional]
+    T --> S[Strategist LLM<br/>drafts Research Plan]
+    U --> S
+    S --> P{User reviews plan}
+    P -->|Edit / Regenerate| S
+    P -->|Approve| I[Investigator Agent<br/>ReAct loop, JSON only]
 
-    subgraph Loop [ReAct loop - JSON only]
-      D --> E[Thought]
-      E --> F{Choose tool}
-      F -->|web_search| G[Tavily search]
-      F -->|read_url| H[Tavily extract<br/>full page text]
-      G --> J[Observation +<br/>budget warning]
-      H --> J
-      J --> K{Enough evidence?<br/>budget left?}
-      K -->|Keep going| E
-      K -->|finish: ready=true| M[Exit loop]
+    subgraph LOOP [ReAct investigation loop]
+      I --> TH[Thought + budget check]
+      TH --> AC{Choose tool}
+      AC -->|web_search| WS[Tavily search]
+      AC -->|read_url| RU[Tavily extract<br/>full page text]
+      WS --> OB[Observation +<br/>step counter]
+      RU --> OB
+      OB --> DEC{Enough evidence<br/>or budget = 0?}
+      DEC -->|No| TH
+      DEC -->|Yes| FIN[finish: ready = true]
     end
 
-    M --> N[Build context block:<br/>plan + snippets + read pages]
-    N --> O[Synthesizer LLM<br/>raw Markdown, no JSON]
-    O --> P[Cited report +<br/>sources panel]
+    FIN --> CTX[Build synthesis context:<br/>question + plan +<br/>snippets + read pages]
+    CTX --> SY[Synthesizer LLM<br/>raw Markdown, no JSON]
+    SY --> CV[Citation validator]
+    CV --> OUT[Cited report +<br/>Sources panel +<br/>Agent trace]
 ```
 
 ### Why split the agent?
@@ -74,17 +90,53 @@ flowchart TD
 | Context | Cluttered with prior thoughts and tool errors. | Clean: question + plan + sources only. |
 | Latency / cost | Slightly faster, fewer tokens. | One extra call, but dramatically better output. |
 
-### Components
+---
 
-- **PromptInput** — topic entry, templates, model + max-sources settings.
+## Role-based prompt library
+
+Templates live in `src/lib/research-templates.ts` as `RESEARCH_ROLE_GROUPS`,
+a flat list of role groups. Each group has an `id`, `label`, `description`,
+a Lucide `icon`, and a `templates` array. A flattened
+`RESEARCH_TEMPLATES` export is derived via `flatMap` for any consumer that
+needs the full list.
+
+Current roles (each with 6 templates):
+
+| Role | Icon | Example templates |
+| --- | --- | --- |
+| Researcher | `Microscope` | Evidence map, Research replication scan, Literature gap analysis |
+| School Teacher | `GraduationCap` | Classroom strategy scan, Standards alignment, Family communication research |
+| Higher-Ed Instructor | `BookOpen` | Course redesign scan, Assessment innovations, Student engagement research |
+| Instructional Designer | `PencilRuler` | Instructional design brief, Modality comparison, Accessibility audit research |
+| Education Leader | `Compass` | Leadership brief, Strategic initiative scan, Policy landscape review |
+| Experience Designer | `Palette` | UX pattern scan, Service blueprint research, Accessibility & inclusion scan |
+| Software Developer | `Code2` | Tech stack comparison, Security & privacy architecture scan, Integration feasibility |
+| Communications & Marketing | `Megaphone` | Messaging landscape, Channel & audience scan, Campaign benchmark research |
+| Video & Media Producer | `Video` | Production workflow scan, Format & distribution research, Accessibility for media |
+| Business & Operations | `Briefcase` | Process improvement scan, Vendor & tooling comparison, Risk & compliance research |
+| Human Resources | `Users` | Change management research brief, Hiring market and role design scan, L&D program research |
+
+The UI (`src/components/research/PromptInput.tsx`) renders one chip per
+role below the main chatbox. Clicking a chip swaps in only that role's
+template grid; clicking a template fills the textarea with the prompt so
+the user can edit the bracketed placeholders before submitting.
+
+---
+
+## Components
+
+- **PromptInput** — topic entry, role chips, role-scoped template grid,
+  model + max-sources settings.
 - **PlanReview** — renders the plan and accepts free-form edits or full
   regeneration before research starts.
-- **WorkflowStepper** — horizontal Topic / Plan / Searching / Report indicator.
+- **WorkflowStepper** — horizontal Topic / Plan / Searching / Report
+  indicator.
 - **AgentTrace** — collapsible thought / search / read / finish trace with
   per-result favicon thumbnails.
-- **ReportView + SourcesPanel** — final cited Markdown + deduplicated source list.
+- **ReportView + SourcesPanel** — final cited Markdown + deduplicated
+  source list.
 
-### Server functions
+## Server functions
 
 All API keys stay server-side. Three TanStack Start server functions
 (`createServerFn`) wrap the providers:
@@ -95,20 +147,22 @@ All API keys stay server-side. Three TanStack Start server functions
 - `web-search.functions.ts` — proxies Tavily web search.
 - `read-url.functions.ts` — proxies Tavily page extraction.
 
-### Prompts
+## Prompts
 
 - `plan-prompts.ts` — strategist system prompt + revision prompt.
 - `agent-prompts.ts` — investigator ReAct prompt, observation builders,
   budget warnings, **and** the synthesizer prompt + context-block builder
   (`SYNTHESIS_SYSTEM_PROMPT`, `buildSynthesisUserMessage`).
+- `research-templates.ts` — role-grouped starter prompts shown in the UI.
 
 ---
 
 ## Tech stack
 
-- **TanStack Start** (React 19, Vite 7, SSR-ready, Cloudflare Workers target)
+- **TanStack Start** (React 19, Vite 7, SSR-ready, Cloudflare Workers
+  target)
 - **Tailwind CSS v4** with semantic design tokens in `src/styles.css`
-- **shadcn/ui** primitives
+- **shadcn/ui** primitives + **Lucide** icons
 - **Zod** input validation on every server function
 - **react-markdown** + **remark-gfm** for report rendering
 
@@ -145,9 +199,10 @@ src/
 │   ├── navigator-chat.functions.ts   # LLM server fn
 │   ├── web-search.functions.ts       # Tavily search server fn
 │   ├── read-url.functions.ts         # Tavily extract server fn
-│   ├── agent-prompts.ts              # ReAct system + observation prompts
+│   ├── agent-prompts.ts              # ReAct + synthesis prompts
 │   ├── plan-prompts.ts               # Plan + revision prompts
-│   ├── research-templates.ts         # Curated prompt templates
+│   ├── research-templates.ts         # Role-grouped prompt templates
+│   ├── citation-validator.ts         # Verifies report links vs sources
 │   ├── models.ts                     # NaviGator model list
 │   └── user-settings.ts              # localStorage settings
 └── styles.css              # Design tokens (oklch)
