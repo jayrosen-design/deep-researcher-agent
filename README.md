@@ -27,13 +27,17 @@ Markdown report — all from the browser.
   report structure). You can approve, edit, or regenerate it before any
   searches run.
 - **Multi-agent architecture** — A ReAct **investigator** gathers evidence,
-  then a dedicated **synthesizer** writes the final report. Splitting these
-  roles avoids JSON-escaping crashes on large Markdown and produces
-  higher-quality, fully-cited prose.
+  a dedicated **synthesizer** writes the final report, then the synthesizer
+  returns for a **review pass** to polish the draft and propose follow-up
+  research prompts. Splitting these roles avoids JSON-escaping crashes on
+  large Markdown and produces higher-quality, fully-cited prose.
 - **Live trace** — Collapsible view of every thought, search (with site
   favicons), and page read.
 - **Cited Markdown report** — Inline links back to every source, validated
   against the gathered URL set.
+- **Continue the research** — After the review pass, the app surfaces 3
+  suggested follow-up prompts that fill the most important gaps in the
+  report. One click starts a new research run pre-filled with that prompt.
 - **Bring-your-own keys** — Optional client-side override of the NaviGator
   (LLM) and Tavily (web search) API keys.
 
@@ -41,7 +45,7 @@ Markdown report — all from the browser.
 
 ## How the multi-agent process works
 
-The app uses three specialized LLM roles instead of one monolithic prompt:
+The app uses specialized LLM roles instead of one monolithic prompt:
 
 1. **Strategist** drafts the research plan from the user's topic (and any
    role-specific template prompt they started from).
@@ -52,6 +56,9 @@ The app uses three specialized LLM roles instead of one monolithic prompt:
    collected search snippets, and the full-text read pages, and writes the
    final cited Markdown report in a single raw-text (non-JSON) call. A
    citation validator then checks every link against the gathered sources.
+4. **Reviewer** (the synthesizer returning in JSON mode) polishes the draft
+   in place and proposes 3 follow-up research prompts targeting the gaps
+   it identified. Each follow-up is a one-click launch into a new run.
 
 ```mermaid
 flowchart TD
@@ -78,8 +85,12 @@ flowchart TD
     FIN --> CTX[Build synthesis context:<br/>question + plan +<br/>snippets + read pages]
     CTX --> SY[Synthesizer LLM<br/>raw Markdown, no JSON]
     SY --> CV[Citation validator]
-    CV --> OUT[Cited report +<br/>Sources panel +<br/>Agent trace]
+    CV --> RV[Reviewer LLM<br/>JSON: revisedReport + followUps]
+    RV --> OUT[Polished report +<br/>Sources panel +<br/>Agent trace]
+    RV --> FU[Continue the research<br/>3 follow-up prompt buttons]
+    FU -->|User clicks one| S
 ```
+
 
 ### Why split the agent?
 
@@ -142,8 +153,8 @@ All API keys stay server-side. Three TanStack Start server functions
 (`createServerFn`) wrap the providers:
 
 - `navigator-chat.functions.ts` — proxies the UF NaviGator chat completions
-  endpoint. Called three times per research run: planner, investigator
-  turns (JSON mode), and synthesizer (raw Markdown).
+  endpoint. Called four times per research run: planner, investigator turns
+  (JSON mode), synthesizer (raw Markdown), and reviewer (JSON mode).
 - `web-search.functions.ts` — proxies Tavily web search.
 - `read-url.functions.ts` — proxies Tavily page extraction.
 
@@ -151,9 +162,13 @@ All API keys stay server-side. Three TanStack Start server functions
 
 - `plan-prompts.ts` — strategist system prompt + revision prompt.
 - `agent-prompts.ts` — investigator ReAct prompt, observation builders,
-  budget warnings, **and** the synthesizer prompt + context-block builder
-  (`SYNTHESIS_SYSTEM_PROMPT`, `buildSynthesisUserMessage`).
+  budget warnings, the synthesizer prompt + context-block builder
+  (`SYNTHESIS_SYSTEM_PROMPT`, `buildSynthesisUserMessage`), **and** the
+  review-pass prompt + builder (`REVIEW_SYSTEM_PROMPT`,
+  `buildReviewUserMessage`, `FollowUpSuggestion`).
+
 - `research-templates.ts` — role-grouped starter prompts shown in the UI.
+
 
 ---
 
