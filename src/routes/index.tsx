@@ -861,7 +861,8 @@ function Index() {
 
           {!isDone && (
             <div className="space-y-6">
-              <section className="rounded-xl border border-border bg-card p-6">
+              <section className="rounded-xl border border-border bg-card p-4 sm:p-6">
+
                 <div className="mb-4 flex items-center justify-between">
                   <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Progress
