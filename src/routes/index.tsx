@@ -798,11 +798,6 @@ function Index() {
         label: "Report",
         status: reportReady ? "done" : onResearch && running ? "active" : "pending",
       },
-      {
-        key: "chat",
-        label: "Chat",
-        status: reportReady ? "active" : "pending",
-      },
     ];
   }, [phase, trace.length, report, running]);
 
