@@ -334,6 +334,7 @@ export function ResearchChat({ currentDoc, settings }: Props) {
           Send
         </button>
       </div>
-    </section>
+      </div>
+    </div>
   );
 }
