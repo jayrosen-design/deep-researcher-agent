@@ -20,6 +20,7 @@ import { saveEntry, updateEntry, type HistoryEntry } from "@/lib/research-histor
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { webSearch, type SearchResult } from "@/lib/web-search.functions";
 import { readUrl } from "@/lib/read-url.functions";
+import { condensePage } from "@/lib/condense-page.functions";
 import {
   AGENT_SYSTEM_PROMPT,
   REVIEW_SYSTEM_PROMPT,
@@ -561,7 +562,32 @@ function Index() {
               });
               const matchedTitle =
                 collectedSources.find((s) => s.url === page.url || s.url === url)?.title ?? "";
-              readPages.push({ url: page.url, title: matchedTitle, content: page.content });
+
+              // For very large pages, chunk + extract relevant facts via
+              // map-reduce so the synthesizer (and any future re-read) stays
+              // under the model's context window without losing data.
+              let storedContent = page.content;
+              let condenseNote = "";
+              try {
+                const { condensed, chunkCount, wasCondensed } = await condensePage({
+                  data: {
+                    url: page.url,
+                    title: matchedTitle,
+                    content: page.content,
+                    question: userQuery,
+                    model: settings.investigatorModel,
+                    apiKey: navigatorKey,
+                  },
+                });
+                storedContent = condensed;
+                if (wasCondensed) {
+                  condenseNote = `\n\n[Page was ${page.content.length.toLocaleString()} chars — chunked into ${chunkCount} parts and condensed to ${condensed.length.toLocaleString()} chars of relevant facts for the report.]`;
+                }
+              } catch (e) {
+                console.warn("condensePage failed; using raw content", e);
+              }
+
+              readPages.push({ url: page.url, title: matchedTitle, content: storedContent });
               updateLastStep(() => ({
                 kind: "read",
                 url,
@@ -571,10 +597,12 @@ function Index() {
               messages.push({
                 role: "user",
                 content:
-                  buildReadObservation(page.url, page.content) +
+                  buildReadObservation(page.url, storedContent) +
+                  condenseNote +
                   "\n\n" +
                   buildBudgetWarning(remaining),
               });
+
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
               failedReads.set(url, msg);
