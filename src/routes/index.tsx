@@ -20,6 +20,7 @@ import { saveEntry, updateEntry, type HistoryEntry } from "@/lib/research-histor
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { webSearch, type SearchResult } from "@/lib/web-search.functions";
 import { readUrl } from "@/lib/read-url.functions";
+import { condensePage } from "@/lib/condense-page.functions";
 import {
   AGENT_SYSTEM_PROMPT,
   REVIEW_SYSTEM_PROMPT,
