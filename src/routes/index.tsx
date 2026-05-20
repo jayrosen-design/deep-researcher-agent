@@ -292,15 +292,36 @@ function Index() {
             content: buildStepCounter(stepsUsed + 1, maxSteps),
           };
 
+          // Compact older observations to stay under the investigator model's
+          // context window (some models cap at 32k tokens). Keep system + the
+          // initial user task + the most recent turns intact; replace older
+          // observation bodies with a short placeholder.
+          const RECENT_TURNS_TO_KEEP = 6;
+          const MAX_OLDER_OBSERVATION_CHARS = 400;
+          const compacted: ChatMessage[] = messages.map((m, idx) => {
+            const isSystem = m.role === "system";
+            const isInitialUser = idx === 1; // first user message = research task
+            const isRecent = idx >= messages.length - RECENT_TURNS_TO_KEEP;
+            if (isSystem || isInitialUser || isRecent) return m;
+            if (m.content.length <= MAX_OLDER_OBSERVATION_CHARS) return m;
+            return {
+              ...m,
+              content:
+                m.content.slice(0, MAX_OLDER_OBSERVATION_CHARS) +
+                `\n\n[…older context truncated to save space; full sources retained for final report]`,
+            };
+          });
+
           const { content } = await navigatorChat({
             data: {
               model: settings.investigatorModel,
-              messages: [...messages, counterMsg],
+              messages: [...compacted, counterMsg],
               temperature: 0.2,
               responseFormat: "json_object",
               apiKey: navigatorKey,
             },
           });
+
 
           let turn: AgentTurn;
           try {
