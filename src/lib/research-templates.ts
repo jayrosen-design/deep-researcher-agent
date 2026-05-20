@@ -20,9 +20,7 @@ export type UserRoleId =
   | "experience-designer"
   | "software-developer"
   | "communications-marketing"
-  | "video-media-producer"
-  | "business-operations"
-  | "human-resources";
+  | "business-operations";
 
 export type ResearchTemplate = {
   id: string;
