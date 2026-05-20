@@ -1015,7 +1015,9 @@ function Index() {
         onSelect={handleSelectHistory}
         onNew={handleReset}
         refreshKey={historyRefresh}
+        onSignOut={handleSignOut}
       />
+
       <div className="min-w-0 flex-1">{content}</div>
       {isDone && report && prompt && (
         <ResearchChat
