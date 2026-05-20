@@ -433,7 +433,7 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
   },
   {
     id: "communications-marketing",
-    label: "Communications and Marketing",
+    label: "Communications & Marketing",
     description: "Audience research, campaigns, messaging, channels, analytics",
     icon: Megaphone,
     templates: [
