@@ -71,9 +71,29 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         >
           <Plus className="size-4" />
         </button>
+        <div className="mt-auto flex flex-col items-center gap-2 md:hidden">
+          <Link
+            to="/how-it-works"
+            className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+            title="How it Works"
+          >
+            <HelpCircle className="size-4" />
+          </Link>
+          {onSignOut && (
+            <button
+              type="button"
+              onClick={onSignOut}
+              className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+              title="Sign out"
+            >
+              <LogOut className="size-4" />
+            </button>
+          )}
+        </div>
       </aside>
     );
   }
+
 
   return (
     <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-card">
