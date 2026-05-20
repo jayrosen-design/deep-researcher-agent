@@ -13,6 +13,7 @@ import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { Navbar } from "@/components/research/Navbar";
 import { HistorySidebar } from "@/components/research/HistorySidebar";
+import { ResearchChat } from "@/components/research/ResearchChat";
 import { saveEntry, updateEntry, type HistoryEntry } from "@/lib/research-history";
 
 
@@ -797,6 +798,11 @@ function Index() {
         label: "Report",
         status: reportReady ? "done" : onResearch && running ? "active" : "pending",
       },
+      {
+        key: "chat",
+        label: "Chat",
+        status: reportReady ? "active" : "pending",
+      },
     ];
   }, [phase, trace.length, report, running]);
 
@@ -997,6 +1003,16 @@ function Index() {
                   )}
                 </section>
               )}
+              <ResearchChat
+                currentDoc={{
+                  id: activeHistoryId ?? "current",
+                  title: prompt,
+                  prompt,
+                  report,
+                  sources,
+                }}
+                settings={settings}
+              />
               <SourcesPanel sources={sources} />
             </div>
           )}
