@@ -599,62 +599,8 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
       },
     ],
   },
-  {
-    id: "human-resources",
-    label: "Human Resources",
-    description: "Training, roles, hiring, workplace policy, professional growth",
-    icon: Users,
-    templates: [
-      {
-        id: "workforce-training-research",
-        roleId: "human-resources",
-        label: "Workforce training research",
-        description: "Training needs, formats, outcomes",
-        prompt:
-          "Research best practices for workforce training on [SKILL / POLICY / TOOL / WORKPLACE NEED]. Compare training formats, adult learning principles, competency models, assessment approaches, accessibility, learner motivation, time requirements, reinforcement strategies, and evaluation methods. The final report should recommend a practical training model.",
-      },
-      {
-        id: "role-competency-benchmark",
-        roleId: "human-resources",
-        label: "Role and competency benchmark",
-        description: "Job roles, skills, career paths",
-        prompt:
-          "Benchmark roles, responsibilities, and competency expectations for [JOB FAMILY / POSITION / TEAM FUNCTION]. Research job descriptions, professional frameworks, salary or labor-market information when available, required skills, emerging competencies, career progression, training needs, and examples from similar organizations. The final report should support role design, hiring, promotion, or professional development planning.",
-      },
-      {
-        id: "workplace-policy-scan",
-        roleId: "human-resources",
-        label: "Workplace policy scan",
-        description: "Policy examples and implementation concerns",
-        prompt:
-          "Research workplace policy examples and implementation considerations for [POLICY AREA / WORKPLACE PRACTICE / STAFF PROCESS]. Focus on credible guidance, comparable organizations, legal or compliance considerations at a general level, equity and accessibility, communication needs, training needs, risks, and evaluation methods. The final report should identify policy options and practical rollout considerations.",
-      },
-      {
-        id: "professional-development-pathway-scan",
-        roleId: "human-resources",
-        label: "Professional development pathway scan",
-        description: "Certificates, workshops, coaching, mentoring",
-        prompt:
-          "Research professional development pathways for staff who need to build skills in [SKILL AREA / ROLE / TECHNOLOGY]. Compare certificates, workshops, communities of practice, mentoring, project-based learning, coaching, assessment methods, time requirements, and evidence of workforce impact.",
-      },
-      {
-        id: "change-management-research-brief",
-        roleId: "human-resources",
-        label: "Change management research brief",
-        description: "Adoption, communication, training, sentiment",
-        prompt:
-          "Research change management strategies for implementing [POLICY / TECHNOLOGY / WORKFLOW / ORGANIZATIONAL CHANGE]. Identify stakeholder concerns, communication strategies, training needs, leadership practices, adoption barriers, equity considerations, and methods for measuring adoption and sentiment.",
-      },
-      {
-        id: "hiring-market-role-design-scan",
-        roleId: "human-resources",
-        label: "Hiring market and role design scan",
-        description: "Titles, skills, salary, career ladders",
-        prompt:
-          "Research the hiring market and role design considerations for [POSITION / JOB FAMILY / TEAM NEED]. Compare job titles, responsibilities, required skills, emerging competencies, salary ranges when available, remote or hybrid norms, career ladders, and onboarding needs. Recommend how to structure the role for long-term success.",
-      },
-    ],
-  },
+  ],
+}; // placeholder
 ];
 
 export const RESEARCH_TEMPLATES: ResearchTemplate[] = RESEARCH_ROLE_GROUPS.flatMap(
