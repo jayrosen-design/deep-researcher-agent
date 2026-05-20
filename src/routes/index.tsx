@@ -1003,6 +1003,16 @@ function Index() {
                   )}
                 </section>
               )}
+              <ResearchChat
+                currentDoc={{
+                  id: activeHistoryId ?? "current",
+                  title: prompt,
+                  prompt,
+                  report,
+                  sources,
+                }}
+                settings={settings}
+              />
               <SourcesPanel sources={sources} />
             </div>
           )}
