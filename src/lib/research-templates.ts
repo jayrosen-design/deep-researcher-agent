@@ -8,9 +8,7 @@ import {
   Palette,
   Code2,
   Megaphone,
-  Video,
   Briefcase,
-  Users,
 } from "lucide-react";
 
 export type UserRoleId =
