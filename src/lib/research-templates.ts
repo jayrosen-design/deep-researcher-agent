@@ -599,8 +599,6 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
       },
     ],
   },
-  ],
-}; // placeholder
 ];
 
 export const RESEARCH_TEMPLATES: ResearchTemplate[] = RESEARCH_ROLE_GROUPS.flatMap(
