@@ -6,6 +6,7 @@ import {
   loadHistory,
   type HistoryEntry,
 } from "@/lib/research-history";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Props = {
   activeId: string | null;
@@ -29,7 +30,13 @@ function formatDate(ts: number): string {
 
 export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+
+  // Auto-collapse on mobile so the sidebar doesn't eat the screen.
+  useEffect(() => {
+    if (isMobile) setCollapsed(true);
+  }, [isMobile]);
 
   useEffect(() => {
     setEntries(loadHistory());
@@ -39,6 +46,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props)
     e.stopPropagation();
     setEntries(deleteEntry(id));
   };
+
 
   if (collapsed) {
     return (

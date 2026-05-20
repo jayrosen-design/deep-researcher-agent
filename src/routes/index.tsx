@@ -842,7 +842,7 @@ function Index() {
       <>
         <Navbar onSignOut={handleSignOut} />
         <WorkflowStepper steps={workflowSteps} />
-        <div className="mx-auto w-full max-w-4xl px-6 py-10">
+        <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
           <header className="mb-8 flex items-start justify-between gap-4">
             <div className="min-w-0">
               <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -861,7 +861,8 @@ function Index() {
 
           {!isDone && (
             <div className="space-y-6">
-              <section className="rounded-xl border border-border bg-card p-6">
+              <section className="rounded-xl border border-border bg-card p-4 sm:p-6">
+
                 <div className="mb-4 flex items-center justify-between">
                   <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Progress
@@ -925,7 +926,7 @@ function Index() {
 
           {isDone && report && (
             <div className="space-y-8">
-              <section className="rounded-xl border border-border bg-card p-8">
+              <section className="rounded-xl border border-border bg-card p-4 sm:p-8">
                 <ReportView markdown={report} sources={sources} prompt={prompt} />
               </section>
 

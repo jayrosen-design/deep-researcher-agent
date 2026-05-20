@@ -8,9 +8,7 @@ import {
   Palette,
   Code2,
   Megaphone,
-  Video,
   Briefcase,
-  Users,
 } from "lucide-react";
 
 export type UserRoleId =
@@ -22,9 +20,7 @@ export type UserRoleId =
   | "experience-designer"
   | "software-developer"
   | "communications-marketing"
-  | "video-media-producer"
-  | "business-operations"
-  | "human-resources";
+  | "business-operations";
 
 export type ResearchTemplate = {
   id: string;
@@ -437,7 +433,7 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
   },
   {
     id: "communications-marketing",
-    label: "Communications and Marketing",
+    label: "Communications & Marketing",
     description: "Audience research, campaigns, messaging, channels, analytics",
     icon: Megaphone,
     templates: [
@@ -488,62 +484,6 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         description: "Search terms, gaps, metadata, structure",
         prompt:
           "Research how audiences search for information about [TOPIC / SERVICE / PROGRAM]. Identify common search terms, content gaps, competitor or peer content, frequently asked questions, effective page structures, metadata practices, accessibility considerations, and opportunities to improve discoverability.",
-      },
-    ],
-  },
-  {
-    id: "video-media-producer",
-    label: "Video and Media Producer",
-    description: "Educational media, production models, formats, accessibility",
-    icon: Video,
-    templates: [
-      {
-        id: "educational-video-format-review",
-        roleId: "video-media-producer",
-        label: "Educational video format review",
-        description: "Video types and learning impact",
-        prompt:
-          "Research effective video and media formats for teaching [TOPIC / SKILL / CONCEPT]. Compare lecture video, demonstration, interview, animation, screen recording, scenario-based video, short-form clips, and interactive media where relevant. Evaluate evidence on learning impact, attention, accessibility, production effort, reuse value, and recommended format choices.",
-      },
-      {
-        id: "media-production-workflow",
-        roleId: "video-media-producer",
-        label: "Media production workflow",
-        description: "Planning, tools, roles, timeline, delivery",
-        prompt:
-          "Research production workflows for [VIDEO / PODCAST / MULTIMEDIA / ONLINE COURSE MEDIA PROJECT]. Identify planning steps, scripting practices, recording approaches, editing workflows, accessibility requirements, captioning and transcript practices, file delivery standards, quality-control methods, staffing needs, and examples from education or training media teams.",
-      },
-      {
-        id: "interactive-media-scan",
-        roleId: "video-media-producer",
-        label: "Interactive media scan",
-        description: "Interactive video, branching, simulations",
-        prompt:
-          "Research interactive media approaches for [LEARNING TOPIC / TRAINING SCENARIO / AUDIENCE]. Compare branching video, interactive timelines, simulations, quizzes inside media, immersive media, and web-based interactives. Evaluate learning benefits, production complexity, accessibility, hosting requirements, analytics, and examples of strong implementations.",
-      },
-      {
-        id: "short-form-educational-media-scan",
-        roleId: "video-media-producer",
-        label: "Short-form educational media scan",
-        description: "Length, pacing, captions, attention",
-        prompt:
-          "Research best practices for short-form educational video about [TOPIC / SKILL / CONCEPT]. Compare ideal length, pacing, scripting, visuals, captions, platform constraints, learner attention, accessibility, reuse potential, and examples of strong educational short-form media.",
-      },
-      {
-        id: "animation-vs-live-action-brief",
-        roleId: "video-media-producer",
-        label: "Animation versus live-action decision brief",
-        description: "Format choice for learning impact",
-        prompt:
-          "Research whether [TOPIC / LESSON / TRAINING SCENARIO] is better taught through animation, live-action video, screen recording, interview, demonstration, or mixed media. Compare learning impact, production effort, cost, clarity, accessibility, emotional tone, update burden, and examples from similar projects.",
-      },
-      {
-        id: "media-accessibility-production-review",
-        roleId: "video-media-producer",
-        label: "Media accessibility production review",
-        description: "Captions, transcripts, audio description, QC",
-        prompt:
-          "Research accessibility best practices for producing [VIDEO / AUDIO / MULTIMEDIA PROJECT]. Focus on captions, transcripts, audio description, visual contrast, cognitive load, language clarity, player accessibility, mobile viewing, file delivery, and quality-control workflows.",
       },
     ],
   },
@@ -600,62 +540,6 @@ export const RESEARCH_ROLE_GROUPS: ResearchRoleGroup[] = [
         description: "Failure points, dependencies, mitigation",
         prompt:
           "Research operational risks associated with [WORKFLOW / SERVICE / TECHNOLOGY / INITIATIVE]. Identify failure points, staffing dependencies, vendor risks, compliance concerns, data risks, user support needs, continuity planning, and mitigation strategies used by comparable organizations.",
-      },
-    ],
-  },
-  {
-    id: "human-resources",
-    label: "Human Resources",
-    description: "Training, roles, hiring, workplace policy, professional growth",
-    icon: Users,
-    templates: [
-      {
-        id: "workforce-training-research",
-        roleId: "human-resources",
-        label: "Workforce training research",
-        description: "Training needs, formats, outcomes",
-        prompt:
-          "Research best practices for workforce training on [SKILL / POLICY / TOOL / WORKPLACE NEED]. Compare training formats, adult learning principles, competency models, assessment approaches, accessibility, learner motivation, time requirements, reinforcement strategies, and evaluation methods. The final report should recommend a practical training model.",
-      },
-      {
-        id: "role-competency-benchmark",
-        roleId: "human-resources",
-        label: "Role and competency benchmark",
-        description: "Job roles, skills, career paths",
-        prompt:
-          "Benchmark roles, responsibilities, and competency expectations for [JOB FAMILY / POSITION / TEAM FUNCTION]. Research job descriptions, professional frameworks, salary or labor-market information when available, required skills, emerging competencies, career progression, training needs, and examples from similar organizations. The final report should support role design, hiring, promotion, or professional development planning.",
-      },
-      {
-        id: "workplace-policy-scan",
-        roleId: "human-resources",
-        label: "Workplace policy scan",
-        description: "Policy examples and implementation concerns",
-        prompt:
-          "Research workplace policy examples and implementation considerations for [POLICY AREA / WORKPLACE PRACTICE / STAFF PROCESS]. Focus on credible guidance, comparable organizations, legal or compliance considerations at a general level, equity and accessibility, communication needs, training needs, risks, and evaluation methods. The final report should identify policy options and practical rollout considerations.",
-      },
-      {
-        id: "professional-development-pathway-scan",
-        roleId: "human-resources",
-        label: "Professional development pathway scan",
-        description: "Certificates, workshops, coaching, mentoring",
-        prompt:
-          "Research professional development pathways for staff who need to build skills in [SKILL AREA / ROLE / TECHNOLOGY]. Compare certificates, workshops, communities of practice, mentoring, project-based learning, coaching, assessment methods, time requirements, and evidence of workforce impact.",
-      },
-      {
-        id: "change-management-research-brief",
-        roleId: "human-resources",
-        label: "Change management research brief",
-        description: "Adoption, communication, training, sentiment",
-        prompt:
-          "Research change management strategies for implementing [POLICY / TECHNOLOGY / WORKFLOW / ORGANIZATIONAL CHANGE]. Identify stakeholder concerns, communication strategies, training needs, leadership practices, adoption barriers, equity considerations, and methods for measuring adoption and sentiment.",
-      },
-      {
-        id: "hiring-market-role-design-scan",
-        roleId: "human-resources",
-        label: "Hiring market and role design scan",
-        description: "Titles, skills, salary, career ladders",
-        prompt:
-          "Research the hiring market and role design considerations for [POSITION / JOB FAMILY / TEAM NEED]. Compare job titles, responsibilities, required skills, emerging competencies, salary ranges when available, remote or hybrid norms, career ladders, and onboarding needs. Recommend how to structure the role for long-term success.",
       },
     ],
   },
