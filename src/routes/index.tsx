@@ -1016,6 +1016,18 @@ function Index() {
         refreshKey={historyRefresh}
       />
       <div className="min-w-0 flex-1">{content}</div>
+      {isDone && report && prompt && (
+        <ResearchChat
+          currentDoc={{
+            id: activeHistoryId ?? "current",
+            title: prompt,
+            prompt,
+            report,
+            sources,
+          }}
+          settings={settings}
+        />
+      )}
     </div>
   );
 }
