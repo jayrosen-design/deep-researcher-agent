@@ -172,9 +172,30 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
           </ul>
         )}
       </div>
+      <div className="flex flex-col gap-2 border-t border-border px-3 py-2 md:hidden">
+        <Link
+          to="/how-it-works"
+          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+        >
+          <HelpCircle className="size-3.5" />
+          How it Works
+        </Link>
+        <ThemeToggle />
+        {onSignOut && (
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+          >
+            <LogOut className="size-3.5" />
+            Sign out
+          </button>
+        )}
+      </div>
       <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
         Saved locally on this device only.
       </div>
+
     </aside>
   );
 }
