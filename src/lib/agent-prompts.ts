@@ -57,8 +57,19 @@ export function buildSearchObservation(
   return `Observation (web_search "${query}"):\n\n${formatted}`;
 }
 
+// Cap per-observation size so the rolling ReAct message history doesn't blow
+// past the investigator model's context window (e.g. llama-3.1-8b has 32k).
+// The full page content is still stored in `readPages` and handed to the
+// synthesizer separately — this only trims what the investigator re-sees.
+const READ_OBSERVATION_CHAR_LIMIT = 4000;
+
 export function buildReadObservation(url: string, content: string): string {
-  return `Observation (read_url ${url}):\n\n${content}`;
+  const trimmed =
+    content.length > READ_OBSERVATION_CHAR_LIMIT
+      ? content.slice(0, READ_OBSERVATION_CHAR_LIMIT) +
+        `\n\n[…truncated ${content.length - READ_OBSERVATION_CHAR_LIMIT} chars — full text saved for the final report]`
+      : content;
+  return `Observation (read_url ${url}):\n\n${trimmed}`;
 }
 
 export function buildBudgetWarning(remaining: number): string {
