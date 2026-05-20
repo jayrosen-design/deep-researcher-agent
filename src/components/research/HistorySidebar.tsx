@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { History, Plus, Trash2, PanelLeftClose, PanelLeft } from "lucide-react";
+import { History, Plus, Trash2, PanelLeftClose, PanelLeft, HelpCircle, LogOut } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 import {
   deleteEntry,
@@ -7,13 +8,16 @@ import {
   type HistoryEntry,
 } from "@/lib/research-history";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ThemeToggle } from "./ThemeToggle";
 
 type Props = {
   activeId: string | null;
   onSelect: (entry: HistoryEntry) => void;
   onNew: () => void;
   refreshKey?: number;
+  onSignOut?: () => void;
 };
+
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
