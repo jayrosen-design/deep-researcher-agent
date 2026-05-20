@@ -32,7 +32,7 @@ function formatDate(ts: number): string {
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props) {
+export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOut }: Props) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
