@@ -798,11 +798,6 @@ function Index() {
         label: "Report",
         status: reportReady ? "done" : onResearch && running ? "active" : "pending",
       },
-      {
-        key: "chat",
-        label: "Chat",
-        status: reportReady ? "active" : "pending",
-      },
     ];
   }, [phase, trace.length, report, running]);
 
@@ -1003,16 +998,6 @@ function Index() {
                   )}
                 </section>
               )}
-              <ResearchChat
-                currentDoc={{
-                  id: activeHistoryId ?? "current",
-                  title: prompt,
-                  prompt,
-                  report,
-                  sources,
-                }}
-                settings={settings}
-              />
               <SourcesPanel sources={sources} />
             </div>
           )}
@@ -1031,6 +1016,18 @@ function Index() {
         refreshKey={historyRefresh}
       />
       <div className="min-w-0 flex-1">{content}</div>
+      {isDone && report && prompt && (
+        <ResearchChat
+          currentDoc={{
+            id: activeHistoryId ?? "current",
+            title: prompt,
+            prompt,
+            report,
+            sources,
+          }}
+          settings={settings}
+        />
+      )}
     </div>
   );
 }
