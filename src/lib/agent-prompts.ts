@@ -37,8 +37,20 @@ Mandatory Protocol:
 
 Output ONLY valid JSON. Start with \`{\` and end with \`}\`.`;
 
+export function extractUrls(text: string): string[] {
+  const matches = text.match(/https?:\/\/[^\s<>"')]+/gi) ?? [];
+  // de-dupe, strip trailing punctuation
+  const cleaned = matches.map((u) => u.replace(/[.,;:!?)\]]+$/, ""));
+  return Array.from(new Set(cleaned));
+}
+
 export function buildInitialUserMessage(query: string, maxSteps: number): string {
-  return `Research question:\n${query}\n\nYou have a maximum of ${maxSteps} tool steps before you must call finish. Begin.`;
+  const urls = extractUrls(query);
+  const urlDirective =
+    urls.length > 0
+      ? `\n\nThe user's question contains ${urls.length === 1 ? "a URL" : "URLs"}. Your FIRST action MUST be to \`read_url\` ${urls.length === 1 ? "that URL" : "each of those URLs (one per step)"} before running any web_search. URLs to read first:\n${urls.map((u) => `- ${u}`).join("\n")}`
+      : "";
+  return `Research question:\n${query}\n\nYou have a maximum of ${maxSteps} tool steps before you must call finish.${urlDirective}\n\nBegin.`;
 }
 
 export function buildSearchObservation(
