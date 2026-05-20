@@ -100,10 +100,17 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props)
               const isActive = e.id === activeId;
               return (
                 <li key={e.id}>
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => onSelect(e)}
-                    className={`group flex w-full items-start gap-2 rounded-md border px-2 py-2 text-left transition ${
+                    onKeyDown={(ev) => {
+                      if (ev.key === "Enter" || ev.key === " ") {
+                        ev.preventDefault();
+                        onSelect(e);
+                      }
+                    }}
+                    className={`group flex w-full cursor-pointer items-start gap-2 rounded-md border px-2 py-2 text-left transition ${
                       isActive
                         ? "border-foreground/30 bg-accent"
                         : "border-transparent hover:border-border hover:bg-accent"
@@ -126,7 +133,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props)
                     >
                       <Trash2 className="size-3.5" />
                     </button>
-                  </button>
+                  </div>
                 </li>
               );
             })}
