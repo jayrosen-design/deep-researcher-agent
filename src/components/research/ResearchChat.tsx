@@ -266,7 +266,7 @@ export function ResearchChat({ currentDoc, settings }: Props) {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="mb-4 max-h-[420px] min-h-[180px] overflow-y-auto rounded-lg border border-border bg-background p-4"
+        className="mb-3 min-h-0 flex-1 overflow-y-auto rounded-lg border border-border bg-background p-3"
       >
         {messages.length === 0 && !sending && (
           <div className="py-8 text-center text-sm text-muted-foreground">
