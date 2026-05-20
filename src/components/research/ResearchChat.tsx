@@ -157,18 +157,43 @@ export function ResearchChat({ currentDoc, settings }: Props) {
     }
   };
 
+  const [open, setOpen] = useState(true);
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition hover:opacity-90"
+        aria-label="Open chat"
+      >
+        <MessageSquare className="size-4" />
+        Chat with research
+      </button>
+    );
+  }
+
   return (
-    <section className="rounded-xl border border-border bg-card p-6">
-      <div className="mb-4 flex items-center gap-2">
-        <MessageSquare className="size-4 text-foreground" />
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-          Chat with this research
-        </h2>
+    <div className="fixed bottom-6 right-6 z-40 flex h-[min(620px,calc(100vh-3rem))] w-[min(420px,calc(100vw-3rem))] flex-col rounded-xl border border-border bg-card shadow-2xl">
+      <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
+        <div className="flex items-center gap-2">
+          <MessageSquare className="size-4 text-foreground" />
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground">
+            Chat with research
+          </h2>
+        </div>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+          aria-label="Minimize chat"
+        >
+          <Minus className="size-4" />
+        </button>
       </div>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Ask questions grounded in the report and its sources. Add other past researches
-        to chat across multiple reports.
-      </p>
+
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4">
+
 
       {/* Document chips */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
