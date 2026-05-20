@@ -86,10 +86,10 @@ export function PromptInput({
   const modelOptions = useMemo(() => {
     const base = remoteModels ?? (NAVIGATOR_MODELS as readonly string[]);
     const merged = new Set<string>(base);
-    merged.add(settings.investigatorModel);
+    merged.add(settings.searcherModel);
     merged.add(settings.synthesisModel);
     return Array.from(merged).sort();
-  }, [remoteModels, settings.investigatorModel, settings.synthesisModel]);
+  }, [remoteModels, settings.searcherModel, settings.synthesisModel]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,11 +134,11 @@ export function PromptInput({
             {/* Row 1: model selectors */}
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Investigator</span>
+                <span className="px-1">Searcher</span>
                 <select
-                  value={settings.investigatorModel}
+                  value={settings.searcherModel}
                   onChange={(e) =>
-                    persistDraft({ ...draft, investigatorModel: e.target.value as NavigatorModel })
+                    persistDraft({ ...draft, searcherModel: e.target.value as NavigatorModel })
                   }
                   title="Smaller/faster model for the ReAct JSON loop"
                   className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
@@ -152,7 +152,7 @@ export function PromptInput({
                 </select>
               </label>
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Synthesizer</span>
+                <span className="px-1">Writer</span>
                 <select
                   value={settings.synthesisModel}
                   onChange={(e) =>
@@ -447,13 +447,13 @@ export function PromptInput({
               },
               {
                 key: "agentSystemPrompt",
-                label: "Investigator (ReAct loop)",
+                label: "Searcher (ReAct loop)",
                 hint: "JSON-only tool-calling loop. Edit with care.",
                 defaultValue: DEFAULT_SETTINGS.agentSystemPrompt,
               },
               {
                 key: "synthesisSystemPrompt",
-                label: "Synthesizer (final report)",
+                label: "Writer (final report)",
                 hint: "Writes the final Markdown report from gathered sources.",
                 defaultValue: DEFAULT_SETTINGS.synthesisSystemPrompt,
               },
