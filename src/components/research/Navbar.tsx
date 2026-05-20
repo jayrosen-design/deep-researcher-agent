@@ -11,7 +11,7 @@ export function Navbar({ onSignOut }: Props) {
   return (
     <div className="relative h-14">
       <BrandLockup className="absolute left-4 top-4" />
-      <div className="absolute right-4 top-4 inline-flex items-center gap-2">
+      <div className="absolute right-4 top-4 hidden md:inline-flex items-center gap-2">
         <Link
           to="/how-it-works"
           className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"

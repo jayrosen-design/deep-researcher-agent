@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { History, Plus, Trash2, PanelLeftClose, PanelLeft } from "lucide-react";
+import { History, Plus, Trash2, PanelLeftClose, PanelLeft, HelpCircle, LogOut } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 import {
   deleteEntry,
@@ -7,13 +8,16 @@ import {
   type HistoryEntry,
 } from "@/lib/research-history";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ThemeToggle } from "./ThemeToggle";
 
 type Props = {
   activeId: string | null;
   onSelect: (entry: HistoryEntry) => void;
   onNew: () => void;
   refreshKey?: number;
+  onSignOut?: () => void;
 };
+
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -28,7 +32,7 @@ function formatDate(ts: number): string {
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props) {
+export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOut }: Props) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
@@ -67,9 +71,29 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props)
         >
           <Plus className="size-4" />
         </button>
+        <div className="mt-auto flex flex-col items-center gap-2 md:hidden">
+          <Link
+            to="/how-it-works"
+            className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+            title="How it Works"
+          >
+            <HelpCircle className="size-4" />
+          </Link>
+          {onSignOut && (
+            <button
+              type="button"
+              onClick={onSignOut}
+              className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+              title="Sign out"
+            >
+              <LogOut className="size-4" />
+            </button>
+          )}
+        </div>
       </aside>
     );
   }
+
 
   return (
     <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-card">
@@ -148,9 +172,30 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props)
           </ul>
         )}
       </div>
+      <div className="flex flex-col gap-2 border-t border-border px-3 py-2 md:hidden">
+        <Link
+          to="/how-it-works"
+          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+        >
+          <HelpCircle className="size-3.5" />
+          How it Works
+        </Link>
+        <ThemeToggle />
+        {onSignOut && (
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+          >
+            <LogOut className="size-3.5" />
+            Sign out
+          </button>
+        )}
+      </div>
       <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
         Saved locally on this device only.
       </div>
+
     </aside>
   );
 }
