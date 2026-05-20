@@ -16,7 +16,7 @@ export const Route = createFileRoute("/how-it-works")({
       {
         property: "og:description",
         content:
-          "Three-role autonomous agent (Strategist, Investigator, Synthesizer) explained, with API key setup steps.",
+          "Three-role autonomous agent (Strategist, Searcher, Writer) explained, with API key setup steps.",
       },
     ],
   }),
@@ -68,7 +68,7 @@ function HowItWorks() {
           </div>
           <div className="rounded-xl border border-border bg-card p-5">
             <div className="text-sm font-semibold text-foreground">
-              2. Investigator
+              2. Searcher
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
               Runs a strict ReAct loop. On every turn it emits a single JSON
@@ -81,7 +81,7 @@ function HowItWorks() {
           </div>
           <div className="rounded-xl border border-border bg-card p-5">
             <div className="text-sm font-semibold text-foreground">
-              3. Synthesizer
+              3. Writer
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
               A separate call that receives the plan and all gathered sources,
@@ -102,8 +102,8 @@ function HowItWorks() {
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
           <li>
             <strong className="text-foreground">Models</strong> — pick a fast
-            model for the Investigator's JSON loop and a stronger model for the
-            Synthesizer's long-form report.
+            model for the Searcher's JSON loop and a stronger model for the
+            Writer's long-form report.
           </li>
           <li>
             <strong className="text-foreground">Max sources</strong> — caps how
@@ -151,17 +151,17 @@ function HowItWorks() {
               <li>Create a new key and copy it (starts with <code>sk-</code>).</li>
               <li>
                 When NaviGator asks which models to attach to the key, select
-                at least one fast model for the Investigator and one strong
-                model for the Synthesizer. Suggested picks:
+                at least one fast model for the Searcher and one strong
+                model for the Writer. Suggested picks:
                 <ul className="mt-2 list-disc space-y-1 pl-5">
                   <li>
-                    <strong className="text-foreground">Investigator (fast, JSON loop):</strong>{" "}
+                    <strong className="text-foreground">Searcher (fast, JSON loop):</strong>{" "}
                     <code>llama-3.1-8b-instruct</code>,{" "}
                     <code>gpt-oss-20b</code>, or{" "}
                     <code>llama-3.1-nemotron-nano-8B-v1</code>.
                   </li>
                   <li>
-                    <strong className="text-foreground">Synthesizer (long-form report):</strong>{" "}
+                    <strong className="text-foreground">Writer (long-form report):</strong>{" "}
                     <code>gpt-oss-120b</code>,{" "}
                     <code>llama-3.3-70b-instruct</code>, or{" "}
                     <code>nemotron-3-super-120b-a12b</code>.
@@ -170,7 +170,7 @@ function HowItWorks() {
               </li>
               <li>
                 Paste the key into <em>API keys → NaviGator API key</em> on
-                the home page. The Investigator and Synthesizer dropdowns will
+                the home page. The Searcher and Writer dropdowns will
                 auto-populate with exactly the models your key has access to.
               </li>
 

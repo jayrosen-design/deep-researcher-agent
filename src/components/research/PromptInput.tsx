@@ -134,7 +134,7 @@ export function PromptInput({
             {/* Row 1: model selectors */}
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Investigator</span>
+                <span className="px-1">Searcher</span>
                 <select
                   value={settings.investigatorModel}
                   onChange={(e) =>
@@ -152,7 +152,7 @@ export function PromptInput({
                 </select>
               </label>
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Synthesizer</span>
+                <span className="px-1">Writer</span>
                 <select
                   value={settings.synthesisModel}
                   onChange={(e) =>
@@ -447,13 +447,13 @@ export function PromptInput({
               },
               {
                 key: "agentSystemPrompt",
-                label: "Investigator (ReAct loop)",
+                label: "Searcher (ReAct loop)",
                 hint: "JSON-only tool-calling loop. Edit with care.",
                 defaultValue: DEFAULT_SETTINGS.agentSystemPrompt,
               },
               {
                 key: "synthesisSystemPrompt",
-                label: "Synthesizer (final report)",
+                label: "Writer (final report)",
                 hint: "Writes the final Markdown report from gathered sources.",
                 defaultValue: DEFAULT_SETTINGS.synthesisSystemPrompt,
               },

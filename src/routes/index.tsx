@@ -152,7 +152,7 @@ function Index() {
   const [plan, setPlan] = useState<string | null>(null);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
-  // Investigator + synthesizer models come from settings (split-model).
+  // Searcher + writer models come from settings (split-model).
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [report, setReport] = useState<string | null>(null);
   const [sources, setSources] = useState<SearchResult[]>([]);
@@ -879,7 +879,7 @@ function Index() {
                 {reviewing && (
                   <div className="mt-4 flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
                     <Loader2 className="size-3.5 animate-spin text-foreground" />
-                    Synthesizer is reviewing the draft and identifying follow-up research…
+                    Writer is reviewing the draft and identifying follow-up research…
                   </div>
                 )}
                 {fatalError && (

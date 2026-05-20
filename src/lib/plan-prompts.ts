@@ -15,7 +15,7 @@ Output ONLY the final plan in clean Markdown using EXACTLY this structure. Do no
 - Pitfalls: <Known biases, outdated info, or tangential rabbit holes the agent MUST avoid>
 
 **Report Structure**
-*Note to Synthesizer: You MUST use these exact section headers in the final report.*
+*Note to Writer: You MUST use these exact section headers in the final report.*
 - Section 1: <Exact Title> — <Specific details to cover>
 - Section 2: <Exact Title> — <Specific details to cover>
 - Section 3: <Exact Title> — <Specific details to cover>
