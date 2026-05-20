@@ -86,10 +86,10 @@ export function PromptInput({
   const modelOptions = useMemo(() => {
     const base = remoteModels ?? (NAVIGATOR_MODELS as readonly string[]);
     const merged = new Set<string>(base);
-    merged.add(settings.searcherModel);
+    merged.add(settings.investigatorModel);
     merged.add(settings.synthesisModel);
     return Array.from(merged).sort();
-  }, [remoteModels, settings.searcherModel, settings.synthesisModel]);
+  }, [remoteModels, settings.investigatorModel, settings.synthesisModel]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,9 +136,9 @@ export function PromptInput({
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="px-1">Searcher</span>
                 <select
-                  value={settings.searcherModel}
+                  value={settings.investigatorModel}
                   onChange={(e) =>
-                    persistDraft({ ...draft, searcherModel: e.target.value as NavigatorModel })
+                    persistDraft({ ...draft, investigatorModel: e.target.value as NavigatorModel })
                   }
                   title="Smaller/faster model for the ReAct JSON loop"
                   className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
