@@ -175,7 +175,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
       <div className="flex flex-col gap-2 border-t border-border px-3 py-2 md:hidden">
         <Link
           to="/how-it-works"
-          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
         >
           <HelpCircle className="size-3.5" />
           How it Works
@@ -185,7 +185,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
           <button
             type="button"
             onClick={onSignOut}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
           >
             <LogOut className="size-3.5" />
             Sign out
