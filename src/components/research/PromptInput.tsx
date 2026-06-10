@@ -382,20 +382,30 @@ export function PromptInput({
               <div>
                 <DialogTitle>System prompts</DialogTitle>
                 <DialogDescription>
-                  Customize the system prompts for each agent role. Stored only in your browser.
+                  Customize the system prompts for each agent and persona. Stored only in your browser.
                 </DialogDescription>
               </div>
               <button
                 type="button"
-                onClick={() =>
-                  persistDraft({
-                    ...draft,
-                    planModel: DEFAULT_SETTINGS.planModel,
-                    planSystemPrompt: DEFAULT_SETTINGS.planSystemPrompt,
-                    agentSystemPrompt: DEFAULT_SETTINGS.agentSystemPrompt,
-                    synthesisSystemPrompt: DEFAULT_SETTINGS.synthesisSystemPrompt,
-                  })
-                }
+                onClick={() => {
+                  if (promptsTab === "research") {
+                    persistDraft({
+                      ...draft,
+                      planModel: DEFAULT_SETTINGS.planModel,
+                      investigatorModel: DEFAULT_SETTINGS.investigatorModel,
+                      synthesisModel: DEFAULT_SETTINGS.synthesisModel,
+                      planSystemPrompt: DEFAULT_SETTINGS.planSystemPrompt,
+                      agentSystemPrompt: DEFAULT_SETTINGS.agentSystemPrompt,
+                      synthesisSystemPrompt: DEFAULT_SETTINGS.synthesisSystemPrompt,
+                    });
+                  } else {
+                    persistDraft({
+                      ...draft,
+                      personaChatBasePrompt: PERSONA_CHAT_BASE_SYSTEM_PROMPT,
+                      personaChat: DEFAULT_SETTINGS.personaChat,
+                    });
+                  }
+                }}
                 className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline"
               >
                 <RotateCcw className="size-3" />
@@ -403,6 +413,32 @@ export function PromptInput({
               </button>
             </div>
           </DialogHeader>
+
+          {/* Tab toggle */}
+          <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 text-xs">
+            {([
+              { id: "research", label: "Deep Research" },
+              { id: "chat", label: "Chat" },
+            ] as const).map((tab) => {
+              const active = promptsTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setPromptsTab(tab.id)}
+                  className={
+                    "rounded-full px-3 py-1.5 transition " +
+                    (active
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground")
+                  }
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
           <div className="space-y-4">
             <div className="text-[11px] text-muted-foreground/80">
               {modelsLoading
@@ -413,54 +449,55 @@ export function PromptInput({
                     ? "Using bundled defaults (key has no model list)"
                     : "Using bundled defaults"}
             </div>
-            {([
-              {
-                key: "planSystemPrompt",
-                label: "Strategist (plan)",
-                hint: "Drafts the structured research plan.",
-                defaultValue: DEFAULT_SETTINGS.planSystemPrompt,
-                image: AGENT_IMAGES.strategist,
-                modelKey: "planModel",
-                recommendedSet: RECOMMENDED_PLANNER,
-              },
-              {
-                key: "agentSystemPrompt",
-                label: "Searcher (ReAct loop)",
-                hint: "JSON-only tool-calling loop. Edit with care.",
-                defaultValue: DEFAULT_SETTINGS.agentSystemPrompt,
-                image: AGENT_IMAGES.searcher,
-                modelKey: "investigatorModel",
-                recommendedSet: RECOMMENDED_INVESTIGATOR,
-              },
-              {
-                key: "synthesisSystemPrompt",
-                label: "Writer (final report)",
-                hint: "Writes the final Markdown report from gathered sources.",
-                defaultValue: DEFAULT_SETTINGS.synthesisSystemPrompt,
-                image: AGENT_IMAGES.writer,
-                modelKey: "synthesisModel",
-                recommendedSet: RECOMMENDED_SYNTHESIZER,
-              },
-            ] as const).map((field) => {
-              const value = draft[field.key];
-              const isDefault = value === field.defaultValue;
-              return (
-                <div key={field.key} className="flex gap-3">
-                  <img
-                    src={field.image}
-                    alt={`${field.label} octopus agent`}
-                    className="hidden h-24 w-24 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_18px_rgba(0,242,254,0.3)]"
-                  />
-                  <div className="flex-1">
-                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-base font-semibold text-foreground">{field.label}</span>
-                        <span className="text-xs text-muted-foreground">{field.hint}</span>
-                        {"modelKey" in field && (
+
+            {promptsTab === "research" &&
+              ([
+                {
+                  key: "planSystemPrompt",
+                  label: "Strategist (plan)",
+                  hint: "Drafts the structured research plan.",
+                  defaultValue: DEFAULT_SETTINGS.planSystemPrompt,
+                  image: AGENT_IMAGES.strategist,
+                  modelKey: "planModel",
+                  recommendedSet: RECOMMENDED_PLANNER,
+                },
+                {
+                  key: "agentSystemPrompt",
+                  label: "Searcher (ReAct loop)",
+                  hint: "JSON-only tool-calling loop. Edit with care.",
+                  defaultValue: DEFAULT_SETTINGS.agentSystemPrompt,
+                  image: AGENT_IMAGES.searcher,
+                  modelKey: "investigatorModel",
+                  recommendedSet: RECOMMENDED_INVESTIGATOR,
+                },
+                {
+                  key: "synthesisSystemPrompt",
+                  label: "Writer (final report)",
+                  hint: "Writes the final Markdown report from gathered sources.",
+                  defaultValue: DEFAULT_SETTINGS.synthesisSystemPrompt,
+                  image: AGENT_IMAGES.writer,
+                  modelKey: "synthesisModel",
+                  recommendedSet: RECOMMENDED_SYNTHESIZER,
+                },
+              ] as const).map((field) => {
+                const value = draft[field.key];
+                const isDefault = value === field.defaultValue;
+                return (
+                  <div key={field.key} className="flex gap-3">
+                    <img
+                      src={field.image}
+                      alt={`${field.label} octopus agent`}
+                      className="hidden h-24 w-24 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_18px_rgba(0,242,254,0.3)]"
+                    />
+                    <div className="flex-1">
+                      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-base font-semibold text-foreground">{field.label}</span>
+                          <span className="text-xs text-muted-foreground">{field.hint}</span>
                           <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <span>Model</span>
                             <select
-                              value={settings[field.modelKey]}
+                              value={draft[field.modelKey]}
                               onChange={(e) =>
                                 persistDraft({
                                   ...draft,
@@ -477,28 +514,140 @@ export function PromptInput({
                               ))}
                             </select>
                           </label>
-                        )}
+                        </div>
+                        <button
+                          type="button"
+                          disabled={isDefault}
+                          onClick={() => persistDraft({ ...draft, [field.key]: field.defaultValue })}
+                          className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
+                        >
+                          <RotateCcw className="size-3" />
+                          Reset
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        disabled={isDefault}
-                        onClick={() => persistDraft({ ...draft, [field.key]: field.defaultValue })}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
-                      >
-                        <RotateCcw className="size-3" />
-                        Reset
-                      </button>
+                      <textarea
+                        value={value}
+                        onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
+                        rows={10}
+                        className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                      />
                     </div>
-                    <textarea
-                      value={value}
-                      onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
-                      rows={10}
-                      className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
-                    />
                   </div>
+                );
+              })}
+
+            {promptsTab === "chat" && (
+              <div className="space-y-5">
+                <div className="rounded-md border border-border bg-muted/30 p-3">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">Shared chat base prompt</div>
+                      <div className="text-xs text-muted-foreground">
+                        Applied to every persona during post-report chat. Defines grounding, citation, and response rules.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={draft.personaChatBasePrompt === PERSONA_CHAT_BASE_SYSTEM_PROMPT}
+                      onClick={() =>
+                        persistDraft({ ...draft, personaChatBasePrompt: PERSONA_CHAT_BASE_SYSTEM_PROMPT })
+                      }
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
+                    >
+                      <RotateCcw className="size-3" />
+                      Reset
+                    </button>
+                  </div>
+                  <textarea
+                    value={draft.personaChatBasePrompt}
+                    onChange={(e) =>
+                      persistDraft({ ...draft, personaChatBasePrompt: e.target.value })
+                    }
+                    rows={8}
+                    className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                  />
                 </div>
-              );
-            })}
+
+                {RESEARCH_ROLE_GROUPS.map((role) => {
+                  const cfg = draft.personaChat[role.id];
+                  const defaultPrompt = PERSONA_CHAT_ROLE_SYSTEM_PROMPTS[role.id];
+                  const defaultModel = DEFAULT_SETTINGS.personaChat[role.id].model;
+                  const isDefault =
+                    cfg.systemPrompt === defaultPrompt && cfg.model === defaultModel;
+                  return (
+                    <div key={role.id} className="flex gap-3">
+                      <img
+                        src={PERSONA_IMAGES[role.id]}
+                        alt={`${role.label} persona`}
+                        className="hidden h-24 w-24 shrink-0 rounded-md object-cover sm:block dark:drop-shadow-[0_0_18px_rgba(0,242,254,0.3)]"
+                      />
+                      <div className="flex-1">
+                        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-base font-semibold text-foreground">{role.label}</span>
+                            <span className="text-xs text-muted-foreground">{role.description}</span>
+                            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <span>Model</span>
+                              <select
+                                value={cfg.model}
+                                onChange={(e) =>
+                                  persistDraft({
+                                    ...draft,
+                                    personaChat: {
+                                      ...draft.personaChat,
+                                      [role.id]: { ...cfg, model: e.target.value as NavigatorModel },
+                                    },
+                                  })
+                                }
+                                className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
+                              >
+                                {modelOptions.map((m) => (
+                                  <option key={m} value={m}>
+                                    {m}
+                                    {RECOMMENDED_SYNTHESIZER.has(m) ? " (Recommended)" : ""}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          </div>
+                          <button
+                            type="button"
+                            disabled={isDefault}
+                            onClick={() =>
+                              persistDraft({
+                                ...draft,
+                                personaChat: {
+                                  ...draft.personaChat,
+                                  [role.id]: { model: defaultModel, systemPrompt: defaultPrompt },
+                                },
+                              })
+                            }
+                            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
+                          >
+                            <RotateCcw className="size-3" />
+                            Reset
+                          </button>
+                        </div>
+                        <textarea
+                          value={cfg.systemPrompt}
+                          onChange={(e) =>
+                            persistDraft({
+                              ...draft,
+                              personaChat: {
+                                ...draft.personaChat,
+                                [role.id]: { ...cfg, systemPrompt: e.target.value },
+                              },
+                            })
+                          }
+                          rows={10}
+                          className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
