@@ -75,16 +75,13 @@ function MarkdownBlock({ children }: { children: string }) {
 }
 
 function ExpertChip({ expertId, reason }: { expertId: MoeExpertId; reason?: string }) {
+  const Icon = PERSONA_ICONS[expertId];
   return (
     <span
       title={reason}
       className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-2 py-0.5 text-[11px] text-foreground"
     >
-      <img
-        src={PERSONA_IMAGES[expertId]}
-        alt=""
-        className="size-4 rounded-full object-cover"
-      />
+      <Icon className="size-4" />
       {MOE_EXPERT_LABELS[expertId]}
     </span>
   );
@@ -280,6 +277,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
         <div className="flex flex-wrap gap-1.5">
           {MOE_EXPERT_IDS.map((id) => {
             const active = singleExpert === id;
+            const Icon = PERSONA_ICONS[id];
             return (
               <button
                 key={id}
@@ -292,11 +290,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                     : "border-border bg-background text-foreground hover:bg-accent")
                 }
               >
-                <img
-                  src={PERSONA_IMAGES[id]}
-                  alt=""
-                  className="size-4 rounded-full object-cover"
-                />
+                <Icon className="size-4" />
                 {MOE_EXPERT_LABELS[id]}
               </button>
             );
@@ -368,6 +362,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
               <div className="flex flex-wrap gap-1.5">
                 {MOE_EXPERT_IDS.map((id) => {
                   const active = customPanel.includes(id);
+                  const Icon = PERSONA_ICONS[id];
                   return (
                     <button
                       key={id}
@@ -380,11 +375,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                           : "border-border bg-background text-foreground hover:bg-accent")
                       }
                     >
-                      <img
-                        src={PERSONA_IMAGES[id]}
-                        alt=""
-                        className="size-4 rounded-full object-cover"
-                      />
+                      <Icon className="size-4" />
                       {MOE_EXPERT_LABELS[id]}
                     </button>
                   );
@@ -419,13 +410,12 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
               );
             }
             if (m.mode === "single") {
+              const Icon = PERSONA_ICONS[m.personaId];
               return (
                 <div key={i} className="flex items-start gap-2">
-                  <img
-                    src={PERSONA_IMAGES[m.personaId]}
-                    alt=""
-                    className="mt-1 size-6 shrink-0 rounded-full object-cover"
-                  />
+                  <div className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-muted">
+                    <Icon className="size-4" />
+                  </div>
                   <div className="flex-1">
                     <div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">
                       {MOE_EXPERT_LABELS[m.personaId]}
@@ -482,11 +472,10 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                       >
                         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-xs">
                           <span className="flex items-center gap-2">
-                            <img
-                              src={PERSONA_IMAGES[ea.expertId]}
-                              alt=""
-                              className="size-5 rounded-full object-cover"
-                            />
+                            {(() => {
+                              const Icon = PERSONA_ICONS[ea.expertId];
+                              return <Icon className="size-5" />;
+                            })()}
                             <span className="font-medium text-foreground">
                               {MOE_EXPERT_LABELS[ea.expertId]}
                             </span>
