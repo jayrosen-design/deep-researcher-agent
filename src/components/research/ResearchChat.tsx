@@ -74,7 +74,7 @@ Begin the conversation. Be helpful, accurate, and always cite.`;
   return { system, flatSources };
 }
 
-export function ResearchChat({ currentDoc, settings }: Props) {
+export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   const [extraDocs, setExtraDocs] = useState<ContextDoc[]>([]);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
