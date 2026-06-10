@@ -505,6 +505,7 @@ export function PromptInput({
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }
