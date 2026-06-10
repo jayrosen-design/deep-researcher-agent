@@ -4,7 +4,7 @@ import { ArrowUp, LayoutTemplate } from "lucide-react";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { SOURCE_COUNT_OPTIONS, type UserSettings } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates";
-import { PERSONA_IMAGES } from "@/lib/persona-images";
+import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
 
 export function PromptInput({
   onSubmit,
