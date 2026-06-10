@@ -251,7 +251,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-6 pb-8 sm:px-6">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-3 px-4 pt-4 pb-6 sm:px-6">
       <div className="flex flex-col items-center text-center">
         <img
           key={heroImage}
@@ -259,18 +259,18 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           alt={`${heroLabel}${isSingle ? "" : " panel"}`}
           loading="eager"
           className={
-            "h-[300px] w-auto object-contain transition-opacity duration-300 " +
+            "h-[160px] w-auto object-contain transition-opacity duration-300 " +
             (isSingle ? "dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]" : "rounded-xl")
           }
         />
-        <div className="mt-3 mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+        <div className="mt-2 mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
           <MessagesSquare className="size-3.5" />
           Mixture of Experts · No research run required
         </div>
-        <h1 className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+        <h1 className="text-center text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           Chat with Mixture of Experts
         </h1>
-        <p className="mt-2 text-center text-sm text-muted-foreground">
+        <p className="mt-1 text-center text-xs text-muted-foreground">
           Ask any question and have one expert, an auto-routed group, or a full panel weigh in.
         </p>
       </div>
@@ -418,10 +418,10 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="min-h-[420px] flex-1 overflow-y-auto rounded-lg border border-border bg-background p-4"
+        className="min-h-[120px] flex-1 overflow-y-auto rounded-lg border border-border bg-background p-3"
       >
         {messages.length === 0 && !sending && (
-          <div className="py-16 text-center text-sm text-muted-foreground">
+          <div className="py-8 text-center text-sm text-muted-foreground">
             Ask any question and chat with the selected experts. No deep research required.
           </div>
         )}
@@ -556,8 +556,8 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question for the experts…"
-          rows={3}
-          className="min-h-[72px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          rows={2}
+          className="min-h-[48px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
         <button
           type="button"
