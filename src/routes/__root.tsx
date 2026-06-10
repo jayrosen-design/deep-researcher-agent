@@ -123,6 +123,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <div aria-hidden="true" className="deep-sea-particles" />
       <Outlet />
     </QueryClientProvider>
   );
