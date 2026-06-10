@@ -9,6 +9,11 @@ import {
   PERSONA_CHAT_ROLE_SYSTEM_PROMPTS,
   type PersonaChatRoleId,
 } from "./persona-chat-prompts";
+import {
+  MOE_EXPERT_ANSWER_INSTRUCTIONS,
+  MOE_MODERATOR_SYSTEM_PROMPT,
+  MOE_ROUTER_SYSTEM_PROMPT,
+} from "./moe-prompts";
 
 const KEY = "dr-settings-v1";
 
