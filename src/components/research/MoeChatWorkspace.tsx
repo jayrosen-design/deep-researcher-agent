@@ -20,6 +20,7 @@ import {
   MOE_EXPERT_LABELS,
   MOE_PANEL_PRESETS,
   MOE_PANEL_PRESET_META,
+  MOE_PANEL_PRESET_IMAGES,
   PANEL_PRESET_ORDER,
   type ExpertAnswer,
   type MoeExpertId,
