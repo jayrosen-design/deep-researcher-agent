@@ -52,7 +52,7 @@ type Props = {
   roleId?: UserRoleId;
 };
 
-type PanelPreset = "default" | "education" | "custom";
+type PanelPreset = PanelPresetId | "custom";
 type LoadingStage = "routing" | "consulting" | "synthesizing" | null;
 
 function MarkdownBlock({ children }: { children: string }) {
