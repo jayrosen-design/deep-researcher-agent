@@ -60,6 +60,7 @@ export function PromptInput({
     onRoleChange?.(id);
   };
   const [showPrompts, setShowPrompts] = useState(false);
+  const [promptsTab, setPromptsTab] = useState<"research" | "chat">("research");
   const [showTemplates, setShowTemplates] = useState(true);
   const [draft, setDraft] = useState<UserSettings>(settings);
   const [remoteModels, setRemoteModels] = useState<string[] | null>(null);
