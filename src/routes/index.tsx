@@ -870,6 +870,8 @@ function Index() {
           onSubmit={handleStart}
           settings={settings}
           onSettingsChange={setSettings}
+          roleId={roleId}
+          onRoleChange={setRoleId}
         />
         <Disclaimer />
       </>
