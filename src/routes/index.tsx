@@ -653,7 +653,7 @@ function Index() {
             : buildPlanUserMessage(query);
         const { content } = await navigatorChat({
           data: {
-            model: settings.synthesisModel,
+            model: settings.planModel,
             messages: [
               { role: "system", content: settings.planSystemPrompt || PLAN_SYSTEM_PROMPT },
               { role: "user", content: userMsg },
@@ -670,7 +670,7 @@ function Index() {
         setPlanLoading(false);
       }
     },
-    [settings.synthesisModel, settings.navigatorApiKey, settings.planSystemPrompt],
+    [settings.planModel, settings.navigatorApiKey, settings.planSystemPrompt],
   );
 
 
