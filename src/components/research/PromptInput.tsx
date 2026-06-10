@@ -31,6 +31,11 @@ const RECOMMENDED_SYNTHESIZER = new Set<string>([
   "llama-3.3-70b-instruct",
   "nemotron-3-super-120b-a12b",
 ]);
+const RECOMMENDED_PLANNER = new Set<string>([
+  "gpt-oss-120b",
+  "llama-3.3-70b-instruct",
+  "nemotron-3-super-120b-a12b",
+]);
 
 export function PromptInput({
   onSubmit,
