@@ -120,6 +120,27 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   const effectivePanel: MoeExpertId[] =
     panelPreset === "custom" ? customPanel : MOE_PANEL_PRESETS[panelPreset];
 
+  const templateExperts: MoeExpertId[] = useMemo(() => {
+    if (mode === "single") return [singleExpert];
+    if (mode === "panel") return effectivePanel;
+    return [roleId ?? singleExpert ?? "researcher"];
+  }, [mode, singleExpert, effectivePanel, roleId]);
+
+  const suggestedTemplates: ResearchTemplate[] = useMemo(() => {
+    const ids = new Set<UserRoleId>(templateExperts);
+    const list: ResearchTemplate[] = [];
+    const seen = new Set<string>();
+    for (const group of RESEARCH_ROLE_GROUPS) {
+      if (!ids.has(group.id)) continue;
+      for (const t of group.templates) {
+        if (seen.has(t.id)) continue;
+        seen.add(t.id);
+        list.push(t);
+      }
+    }
+    return list.slice(0, 8);
+  }, [templateExperts]);
+
   const stageLabel: Record<Exclude<LoadingStage, null>, string> = {
     routing: "Routing question…",
     consulting: "Consulting experts…",
