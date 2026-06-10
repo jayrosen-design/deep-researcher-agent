@@ -204,7 +204,7 @@ export function PromptInput({
                 <button
                   type="button"
                   onClick={() => setShowTemplates((s) => !s)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
                 >
                   <LayoutTemplate className="size-3.5" />
                   Templates
@@ -212,7 +212,7 @@ export function PromptInput({
                 <button
                   type="button"
                   onClick={() => setShowSettings((s) => !s)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
                 >
                   <SettingsIcon className="size-3.5" />
                   API keys
@@ -220,7 +220,7 @@ export function PromptInput({
                 <button
                   type="button"
                   onClick={() => setShowPrompts((s) => !s)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
                 >
                   <FileText className="size-3.5" />
                   System prompts

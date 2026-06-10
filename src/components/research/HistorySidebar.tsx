@@ -58,7 +58,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={() => setCollapsed(false)}
-          className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
           title="Open history"
         >
           <PanelLeft className="size-4" />
@@ -66,7 +66,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={onNew}
-          className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
           title="New research"
         >
           <Plus className="size-4" />
@@ -74,7 +74,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <div className="mt-auto flex flex-col items-center gap-2 md:hidden">
           <Link
             to="/how-it-works"
-            className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+            className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
             title="How it Works"
           >
             <HelpCircle className="size-4" />
@@ -83,7 +83,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
             <button
               type="button"
               onClick={onSignOut}
-              className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
               title="Sign out"
             >
               <LogOut className="size-4" />
@@ -105,7 +105,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="rounded-md p-1 text-muted-foreground hover:bg-foreground hover:text-background"
           title="Collapse sidebar"
         >
           <PanelLeftClose className="size-4" />
@@ -115,7 +115,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={onNew}
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium text-foreground hover:bg-accent"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
         >
           <Plus className="size-3.5" />
           New research
@@ -144,15 +144,15 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
                     }}
                     className={`group flex w-full cursor-pointer items-start gap-2 rounded-md border px-2 py-2 text-left transition ${
                       isActive
-                        ? "border-foreground/30 bg-accent"
-                        : "border-transparent hover:border-border hover:bg-accent"
+                        ? "border-foreground/30 bg-foreground text-background"
+                        : "border-transparent hover:border-border hover:bg-foreground hover:text-background"
                     }`}
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-xs font-medium text-foreground" title={e.prompt}>
+                      <div className={`truncate text-xs font-medium ${isActive ? "text-background" : "text-foreground"}`} title={e.prompt}>
                         {e.title || e.prompt}
                       </div>
-                      <div className="mt-0.5 text-[10px] text-muted-foreground">
+                      <div className={`mt-0.5 text-[10px] ${isActive ? "text-background/70" : "text-muted-foreground"}`}>
                         {formatDate(e.createdAt)} · {e.sources.length} sources
                       </div>
                     </div>
@@ -175,7 +175,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
       <div className="flex flex-col gap-2 border-t border-border px-3 py-2 md:hidden">
         <Link
           to="/how-it-works"
-          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
         >
           <HelpCircle className="size-3.5" />
           How it Works
@@ -185,7 +185,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
           <button
             type="button"
             onClick={onSignOut}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
           >
             <LogOut className="size-3.5" />
             Sign out
