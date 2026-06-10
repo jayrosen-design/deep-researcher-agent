@@ -192,7 +192,7 @@ export function PromptInput({
                     onChange={(e) =>
                       persistDraft({ ...draft, maxSources: Number(e.target.value) })
                     }
-                    className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                    className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
                   >
                     {SOURCE_COUNT_OPTIONS.map((n) => (
                       <option key={n} value={n}>
@@ -338,7 +338,7 @@ export function PromptInput({
                   persistDraft({ ...draft, navigatorApiKey: e.target.value.trim() })
                 }
                 placeholder="sk-…"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               />
             </label>
             <label className="block">
@@ -356,7 +356,7 @@ export function PromptInput({
                     searchProvider: e.target.value as "firecrawl" | "tavily",
                   })
                 }
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               >
                 <option value="firecrawl">Firecrawl (default)</option>
                 <option value="tavily">Tavily</option>
@@ -381,7 +381,7 @@ export function PromptInput({
                   persistDraft({ ...draft, firecrawlApiKey: e.target.value.trim() })
                 }
                 placeholder="fc-…"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               />
             </label>
             <label className="block">
@@ -403,7 +403,7 @@ export function PromptInput({
                   persistDraft({ ...draft, tavilyApiKey: e.target.value.trim() })
                 }
                 placeholder="tvly-…"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               />
             </label>
           </div>
@@ -480,7 +480,7 @@ export function PromptInput({
                     value={value}
                     onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
                     rows={10}
-                    className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none"
+                    className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
                   />
                 </label>
               );
