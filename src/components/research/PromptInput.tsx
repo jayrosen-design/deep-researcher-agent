@@ -110,16 +110,15 @@ export function PromptInput({
   const personaImage = PERSONA_IMAGES[activeRoleId];
 
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-6xl flex-row items-center justify-center gap-8 px-6">
-      <div className="hidden shrink-0 md:block">
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-4xl flex-col items-center justify-center px-6">
+      <div className="relative w-full">
         <img
           key={activeRoleId}
           src={personaImage}
           alt={`${activeRole.label} octopus persona`}
-          className="h-56 w-56 object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_28px_rgba(0,242,254,0.35)]"
+          className="pointer-events-none absolute right-full top-1/2 hidden h-[32rem] w-auto -translate-y-1/2 -translate-x-4 object-contain transition-opacity duration-500 lg:block dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
         />
-      </div>
-      <div className="flex w-full max-w-4xl flex-col items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-center">
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
         Deep Researcher Agent · {activeRole.label}
       </div>
@@ -504,6 +503,7 @@ export function PromptInput({
           </div>
         </DialogContent>
       </Dialog>
+      </div>
       </div>
     </div>
   );
