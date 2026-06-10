@@ -739,6 +739,7 @@ function Index() {
     setReport(entry.report);
     savedReportRef.current = entry.report;
     setActiveHistoryId(entry.id);
+    if (entry.roleId) setRoleId(entry.roleId);
     setFollowUps([]);
     setReviewing(false);
     setPhase("research");
