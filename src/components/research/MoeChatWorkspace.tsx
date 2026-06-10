@@ -525,8 +525,8 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question for the experts…"
-          rows={5}
-          className="min-h-[120px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          rows={3}
+          className="min-h-[72px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
         <button
           type="button"
