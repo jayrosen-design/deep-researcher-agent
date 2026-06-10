@@ -21,6 +21,11 @@ import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates"
 import { listNavigatorModels } from "@/lib/navigator-models.functions";
 import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
 import { PERSONA_CHAT_ROLE_SYSTEM_PROMPTS, PERSONA_CHAT_BASE_SYSTEM_PROMPT } from "@/lib/persona-chat-prompts";
+import {
+  MOE_ROUTER_SYSTEM_PROMPT,
+  MOE_EXPERT_ANSWER_INSTRUCTIONS,
+  MOE_MODERATOR_SYSTEM_PROMPT,
+} from "@/lib/moe-prompts";
 
 const RECOMMENDED_INVESTIGATOR = new Set<string>([
   "llama-3.1-8b-instruct",
