@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -7,18 +7,23 @@ import {
   ChevronDown,
   AlertTriangle,
   MessagesSquare,
+  LayoutTemplate,
 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import type { UserSettings } from "@/lib/user-settings";
-import type { UserRoleId } from "@/lib/research-templates";
+import { RESEARCH_ROLE_GROUPS, type UserRoleId, type ResearchTemplate } from "@/lib/research-templates";
 import { PERSONA_IMAGES } from "@/lib/persona-images";
 import {
   MOE_EXPERT_IDS,
   MOE_EXPERT_LABELS,
   MOE_PANEL_PRESETS,
+  MOE_PANEL_PRESET_META,
+  PANEL_PRESET_ORDER,
   type ExpertAnswer,
   type MoeExpertId,
+  type PanelPresetId,
   type RouterRoute,
 } from "@/lib/moe-prompts";
 import { runMoeTurn, type MoeMode } from "@/lib/moe-chat";
@@ -47,7 +52,7 @@ type Props = {
   roleId?: UserRoleId;
 };
 
-type PanelPreset = "default" | "education" | "custom";
+type PanelPreset = PanelPresetId | "custom";
 type LoadingStage = "routing" | "consulting" | "synthesizing" | null;
 
 function MarkdownBlock({ children }: { children: string }) {
@@ -93,14 +98,15 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const [mode, setMode] = useState<MoeMode>("auto");
+  const [mode, setMode] = useState<MoeMode>("panel");
   const [singleExpert, setSingleExpert] = useState<MoeExpertId>(roleId ?? "researcher");
-  const [panelPreset, setPanelPreset] = useState<PanelPreset>("default");
+  const [panelPreset, setPanelPreset] = useState<PanelPreset>("education");
   const [customPanel, setCustomPanel] = useState<MoeExpertId[]>([
     "researcher",
     "experience-designer",
     "software-developer",
   ]);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   useEffect(() => {
     setMessages([]);
@@ -113,6 +119,27 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
 
   const effectivePanel: MoeExpertId[] =
     panelPreset === "custom" ? customPanel : MOE_PANEL_PRESETS[panelPreset];
+
+  const templateExperts: MoeExpertId[] = useMemo(() => {
+    if (mode === "single") return [singleExpert];
+    if (mode === "panel") return effectivePanel;
+    return [roleId ?? singleExpert ?? "researcher"];
+  }, [mode, singleExpert, effectivePanel, roleId]);
+
+  const suggestedTemplates: ResearchTemplate[] = useMemo(() => {
+    const ids = new Set<UserRoleId>(templateExperts);
+    const list: ResearchTemplate[] = [];
+    const seen = new Set<string>();
+    for (const group of RESEARCH_ROLE_GROUPS) {
+      if (!ids.has(group.id)) continue;
+      for (const t of group.templates) {
+        if (seen.has(t.id)) continue;
+        seen.add(t.id);
+        list.push(t);
+      }
+    }
+    return list.slice(0, 8);
+  }, [templateExperts]);
 
   const stageLabel: Record<Exclude<LoadingStage, null>, string> = {
     routing: "Routing question…",
@@ -281,17 +308,13 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
       {mode === "panel" && (
         <div className="space-y-2">
           <div className="flex flex-wrap gap-1.5">
-            {([
-              { id: "default", label: "Default panel" },
-              { id: "education", label: "Education panel" },
-              { id: "custom", label: "Custom" },
-            ] as const).map((p) => {
-              const active = panelPreset === p.id;
+            {PANEL_PRESET_ORDER.map((pid) => {
+              const active = panelPreset === pid;
               return (
                 <button
-                  key={p.id}
+                  key={pid}
                   type="button"
-                  onClick={() => setPanelPreset(p.id)}
+                  onClick={() => setPanelPreset(pid)}
                   className={
                     "rounded-full border px-3 py-1 text-[11px] transition " +
                     (active
@@ -299,16 +322,37 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                       : "border-border bg-background text-foreground hover:bg-accent")
                   }
                 >
-                  {p.label}
+                  {MOE_PANEL_PRESET_META[pid].label}
                 </button>
               );
             })}
+            <button
+              type="button"
+              onClick={() => setPanelPreset("custom")}
+              className={
+                "rounded-full border px-3 py-1 text-[11px] transition " +
+                (panelPreset === "custom"
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border bg-background text-foreground hover:bg-accent")
+              }
+            >
+              Custom
+            </button>
           </div>
           {panelPreset !== "custom" ? (
-            <div className="flex flex-wrap gap-1.5">
-              {MOE_PANEL_PRESETS[panelPreset].map((id) => (
-                <ExpertChip key={id} expertId={id} />
-              ))}
+            <div className="space-y-2 rounded-md border border-border bg-muted/20 p-3">
+              <div className="text-xs text-foreground">
+                {MOE_PANEL_PRESET_META[panelPreset].description}
+              </div>
+              <div className="text-[11px] text-muted-foreground">
+                <span className="font-semibold">Best for:</span>{" "}
+                {MOE_PANEL_PRESET_META[panelPreset].bestFor}
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {MOE_PANEL_PRESETS[panelPreset].map((id) => (
+                  <ExpertChip key={id} expertId={id} />
+                ))}
+              </div>
             </div>
           ) : (
             <div>
@@ -344,6 +388,56 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           )}
         </div>
       )}
+
+      {/* Templates */}
+      <div className="space-y-2">
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowTemplates((s) => !s)}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
+          >
+            <LayoutTemplate className="size-3.5" />
+            {showTemplates ? "Hide templates" : "Templates"}
+          </button>
+        </div>
+        <Collapsible open={showTemplates} onOpenChange={setShowTemplates}>
+          <CollapsibleContent className="collapsible-content">
+            <div className="rounded-lg border border-border bg-muted/20 p-3">
+              <div className="mb-2 text-[11px] text-muted-foreground">
+                Starter prompts for the {mode === "panel" ? "selected panel" : "selected expert"}.
+                Click one to load it into the composer.
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {suggestedTemplates.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      setInput(t.prompt);
+                      setShowTemplates(false);
+                    }}
+                    className="group flex flex-col items-start gap-1 rounded-md border border-border bg-background p-2 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
+                  >
+                    <div className="text-xs font-medium text-foreground group-hover:text-background">
+                      {t.label}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground group-hover:text-background/80">
+                      {t.description}
+                    </div>
+                  </button>
+                ))}
+                {suggestedTemplates.length === 0 && (
+                  <div className="text-xs text-muted-foreground">
+                    No templates available for the current selection.
+                  </div>
+                )}
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+
 
       {/* Messages */}
       <div
