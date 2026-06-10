@@ -279,33 +279,27 @@ export function PromptInput({
                 );
               })}
             </div>
-            {(() => {
-              const activeRole =
-                RESEARCH_ROLE_GROUPS.find((r) => r.id === activeRoleId) ?? RESEARCH_ROLE_GROUPS[0];
-              return (
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <div className="mb-3">
-                    <div className="text-sm font-semibold text-foreground">{activeRole.label} templates</div>
-                    <div className="text-xs text-muted-foreground">
-                      {activeRole.description}. Click one to load it, then replace [PLACEHOLDERS] with your specifics.
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {activeRole.templates.map((template) => (
-                      <button
-                        key={template.id}
-                        type="button"
-                        onClick={() => setValue(template.prompt)}
-                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
-                      >
-                        <div className="text-sm font-medium text-foreground group-hover:text-background">{template.label}</div>
-                        <div className="text-xs text-muted-foreground group-hover:text-background/80">{template.description}</div>
-                      </button>
-                    ))}
-                  </div>
+            <div className="rounded-xl border border-border bg-card p-5">
+              <div className="mb-3">
+                <div className="text-sm font-semibold text-foreground">{activeRole.label} templates</div>
+                <div className="text-xs text-muted-foreground">
+                  {activeRole.description}. Click one to load it, then replace [PLACEHOLDERS] with your specifics.
                 </div>
-              );
-            })()}
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {activeRole.templates.map((template) => (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => setValue(template.prompt)}
+                    className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
+                  >
+                    <div className="text-sm font-medium text-foreground group-hover:text-background">{template.label}</div>
+                    <div className="text-xs text-muted-foreground group-hover:text-background/80">{template.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </CollapsibleContent>
       </Collapsible>
