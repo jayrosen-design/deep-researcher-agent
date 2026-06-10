@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -7,18 +7,23 @@ import {
   ChevronDown,
   AlertTriangle,
   MessagesSquare,
+  LayoutTemplate,
 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import type { UserSettings } from "@/lib/user-settings";
-import type { UserRoleId } from "@/lib/research-templates";
+import { RESEARCH_ROLE_GROUPS, type UserRoleId, type ResearchTemplate } from "@/lib/research-templates";
 import { PERSONA_IMAGES } from "@/lib/persona-images";
 import {
   MOE_EXPERT_IDS,
   MOE_EXPERT_LABELS,
   MOE_PANEL_PRESETS,
+  MOE_PANEL_PRESET_META,
+  PANEL_PRESET_ORDER,
   type ExpertAnswer,
   type MoeExpertId,
+  type PanelPresetId,
   type RouterRoute,
 } from "@/lib/moe-prompts";
 import { runMoeTurn, type MoeMode } from "@/lib/moe-chat";
