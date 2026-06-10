@@ -15,6 +15,7 @@ import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import type { UserSettings } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId, type ResearchTemplate } from "@/lib/research-templates";
 import { PERSONA_ICONS } from "@/lib/persona-icons";
+import { PERSONA_IMAGES } from "@/lib/persona-images";
 import {
   MOE_EXPERT_IDS,
   MOE_EXPERT_LABELS,
