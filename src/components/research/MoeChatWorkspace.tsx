@@ -259,7 +259,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           alt={`${heroLabel}${isSingle ? "" : " panel"}`}
           loading="eager"
           className={
-            "h-[160px] w-auto object-contain transition-opacity duration-300 " +
+            (messages.length === 0 ? "h-[300px] " : "h-[160px] ") + "w-auto object-contain transition-opacity duration-300 " +
             (isSingle ? "dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]" : "rounded-xl")
           }
         />
