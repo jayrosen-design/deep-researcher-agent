@@ -119,12 +119,15 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   const effectivePanel: MoeExpertId[] =
     panelPreset === "custom" ? customPanel : MOE_PANEL_PRESETS[panelPreset];
 
-  const panelImage =
-    mode === "panel" && panelPreset !== "custom"
+  const isSingle = mode === "single";
+  const heroImage = isSingle
+    ? PERSONA_IMAGES[singleExpert]
+    : mode === "panel" && panelPreset !== "custom"
       ? MOE_PANEL_PRESET_IMAGES[panelPreset]
       : MOE_PANEL_PRESET_IMAGES["product-design"];
-  const panelImageLabel =
-    mode === "panel" && panelPreset !== "custom"
+  const heroLabel = isSingle
+    ? MOE_EXPERT_LABELS[singleExpert]
+    : mode === "panel" && panelPreset !== "custom"
       ? MOE_PANEL_PRESET_META[panelPreset].label
       : MOE_PANEL_PRESET_META["product-design"].label;
 
