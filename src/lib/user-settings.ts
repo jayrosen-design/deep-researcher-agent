@@ -17,6 +17,7 @@ export type UserSettings = {
   maxSources: number; // 10..100, increments of 10
   investigatorModel: NavigatorModel;
   synthesisModel: NavigatorModel;
+  planModel: NavigatorModel;
   planSystemPrompt: string;
   agentSystemPrompt: string;
   synthesisSystemPrompt: string;
