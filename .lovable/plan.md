@@ -1,55 +1,52 @@
-# MoE Mode for Chat with Research
+## 1. Make "Chat with this report" window opaque and expandable
 
-Extend the existing `ResearchChat` panel with three chat modes for follow-up questions on a completed report. Existing single-persona chat stays intact (becomes "Single Expert" mode). No new web search, no changes to the research/report flow.
+File: `src/components/research/ResearchChat.tsx`
 
-## New files
+- The floating panel uses `bg-card` which can read as translucent over the report. Swap to a fully opaque surface (`bg-background`) and add a stronger border + shadow so it visibly separates from the page.
+- Add an `expanded` state alongside the existing `open` state. New header control next to the minimize button:
+  - Collapsed (default): current size — `h-[min(720px,calc(100vh-3rem))] w-[min(480px,calc(100vw-3rem))]` anchored bottom-right.
+  - Expanded: near-fullscreen — `inset-4` (or `h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]`) centered, same opaque surface.
+- Use `Maximize2` / `Minimize2` icons from `lucide-react` for the toggle, with proper aria-labels.
+- Keep the minimized "Chat with this report" pill button unchanged.
 
-**`src/lib/moe-prompts.ts`** — system prompts and JSON schemas for:
-- Expert router (selects 1–3 experts, or 4–6 for panel-style questions). Uses the prompt in the spec; output validated by Zod.
-- Expert answer (each expert returns `{ expertId, answer, confidence, evidenceUsed, missingEvidence, recommendations }`).
-- Moderator/synthesizer (returns one synthesized markdown answer with the required sections: Direct Answer, Expert Panel Synthesis, Trade-offs, Recommended Next Step, Evidence Gaps, Expert Contributions).
-- Helpers `buildExpertContextBlock(docs)` so router/experts/moderator share grounding.
+## 2. Home page workflow mode toggle: Deep Research vs MoE Chat
 
-**`src/lib/moe-chat.ts`** (client-side orchestrator, no new server fn needed — reuses `navigatorChat`):
-- `routeExperts({ question, docs, settings, preferredRoleId? })` → calls `navigatorChat` with `responseFormat: "json_object"` against the router prompt; parses+validates JSON; on failure falls back to `[preferredRoleId ?? "researcher"]`.
-- `askExpert({ expertId, question, history, docs, settings })` → uses each persona's configured `chatModel`/`systemPrompt` from `settings.personaChat`; requests JSON; on parse failure wraps raw text into the expert-answer shape with `confidence: "low"`.
-- `synthesizePanel({ question, expertAnswers, docs, settings })` → moderator call, returns markdown.
-- `runMoeTurn(mode, …)` orchestrates router → parallel `askExpert` (Promise.allSettled so one failure doesn't block) → optional synthesis. Returns `{ selectedExperts, routerReasoning, expertAnswers, failures, synthesis }`.
+Goal: from the landing screen, the user can flip between the existing Deep Research workflow and a standalone MoE Chat workspace (same MoE experience as the post-report chat, but with no prior report — user just types a topic/question and the experts respond).
 
-## Edits
+### UI
 
-**`src/components/research/ResearchChat.tsx`**
-- Add mode state: `"single" | "auto" | "panel"`, persona selection for single, panel composition (`"default" | "education" | "custom"` + custom expert set), and per-turn loading stages ("Routing question…", "Consulting experts…", "Synthesizing answer…").
-- New header row above the message list: three mode tabs. Below the tabs, mode-specific controls:
-  - Single: 9 persona buttons with `PERSONA_IMAGES` thumbnails (defaults to incoming `roleId`).
-  - Auto: brief explanatory text only.
-  - Panel: three preset chips (Default / Education / Custom) + when Custom is selected, multi-select chips for 2–6 experts (validated before send).
-- Extend `ChatMsg` to `{ role: "user" } | { role: "assistant"; mode; content; experts?; routerReasoning?; failures? }`. Assistant rendering:
-  - Single: existing markdown bubble (current behavior).
-  - Auto / Panel: render synthesis markdown first, then a "Selected experts" line (chips with persona avatar + router reason), then a collapsible `<details>` per expert showing their `answer` markdown, `confidence`, `evidenceUsed`, `missingEvidence`, `recommendations`, and a clear notice for any expert that failed.
-- `handleSend`: branch on mode. Single mode keeps current `navigatorChat` path (unchanged behavior). Auto/Panel call `runMoeTurn` with the staged loading messages.
-- Reset chat when `currentDoc.id` changes (already done) and also when mode changes (clear messages to avoid mode mismatch in transcripts).
+File: `src/routes/index.tsx`
 
-**`src/lib/user-settings.ts`**
-- Add `moeRouterPrompt`, `moeExpertPrompt`, `moeModeratorPrompt`, `moeRouterModel`, `moeModeratorModel` (default to current synthesis model). Defaults sourced from `moe-prompts.ts`.
-- Backfill in the existing settings-merge/migration so prior users get the new defaults.
+- Add a centered pill toggle (mirroring the Deep Research / Chat toggle inside the System Prompts modal) directly under `<Navbar>` on the input phase, with two options: **Deep Research** and **MoE Chat**.
+- New local state `workflowMode: "research" | "moe"`, default `"research"`. Only shown when `phase === "input"` (once a research run starts, the workflow is locked in).
+- When `workflowMode === "research"`: render the existing `WorkflowStepper` + `PromptInput` flow unchanged.
+- When `workflowMode === "moe"`: render a new `<MoeChatWorkspace />` component instead of the stepper/prompt. Keep `Navbar`, `HistorySidebar`, and `Disclaimer` around it.
 
-**`src/components/research/PromptInput.tsx`** (System Prompts modal)
-- Inside the existing Chat tab, add a "Mixture of Experts" subsection with editable router/expert-base/moderator prompts and model pickers, each with a Reset button — mirroring how the per-persona chat prompts are edited today. No new modal; same toggle scheme.
+### New component
 
-## Technical details
+File: `src/components/research/MoeChatWorkspace.tsx` (new)
 
-- All MoE calls reuse `navigatorChat` (no new server fn). Router and expert calls use `responseFormat: "json_object"`, parsed with Zod; moderator uses plain text (markdown).
-- Expert calls run in parallel via `Promise.allSettled`. Failures surface inline ("Software Developer expert failed: …") and don't block synthesis as long as ≥1 expert succeeded; if all fail, show an error and don't call the moderator.
-- Grounding context for every MoE call uses the same `buildDocsBlock` helper already in `ResearchChat`, lifted into `moe-prompts.ts` so router/expert/moderator share it.
-- Per-expert system prompt = `PERSONA_CHAT_BASE_SYSTEM_PROMPT` + that persona's `PERSONA_CHAT_ROLE_SYSTEM_PROMPTS` entry + MoE expert-answer instructions (JSON shape + "answer only from your expert perspective"). Reuses the existing persona prompt library — no duplication.
-- Auto mode passes the incoming template `roleId` as `preferredRoleId` so the user's chosen persona is favored when relevant.
-- No new dependencies. All changes are frontend/presentation + prompt config.
+- Full-page chat surface (max-w-4xl, vertical layout) reusing the MoE logic already in `ResearchChat`:
+  - Mode tabs: Single Expert / Auto-Pick / Expert Panel.
+  - Persona buttons / panel preset chips identical to `ResearchChat`.
+  - Message list + composer styled like `ResearchChat`'s body but sized for full page.
+- Calls `runMoeTurn` from `@/lib/moe-chat` with an **empty docs array** (no report grounding). For Single mode, calls `navigatorChat` with the persona's chat system prompt from `settings` (same path `ResearchChat` uses today) and no docs block.
+- Passes `settings` and optional initial `roleId` as props; reuses `PERSONA_IMAGES`, `MOE_EXPERT_*` constants.
+- Refactor: extract the shared rendering pieces (`MarkdownBlock`, `ExpertChip`, expert-answer accordion) from `ResearchChat.tsx` into `src/components/research/moe-shared.tsx` so both `ResearchChat` and `MoeChatWorkspace` import them. No behavior change to `ResearchChat`.
 
-## Acceptance checks
+### Prompts/grounding
 
-- Single mode behaves exactly like today (regression check: existing transcripts still render).
-- Auto mode shows 1–3 expert chips + reasons, then synthesis + collapsible contributions.
-- Panel mode (Default / Education / Custom 2–6) shows synthesis first, contributions collapsed.
-- One expert failing still produces a synthesized answer plus a visible failure notice.
-- Report generation flow is untouched.
+File: `src/lib/moe-prompts.ts` (small tweak)
+
+- `buildExpertContextBlock` (and any equivalents) already accept a docs array. When called with `[]`, ensure the assembled system prompt tells experts to answer from general expertise since no report is provided (small wording branch). No schema changes.
+
+### History
+
+- Out of scope for this turn — MoE Chat workspace sessions are ephemeral. Existing research history sidebar still shows research entries only.
+
+## Technical notes
+
+- No new dependencies.
+- No server function changes; reuses `navigatorChat` / `runMoeTurn`.
+- `ResearchChat`'s post-report behavior is unchanged except for the opaque background and the new expand/collapse control.
+- Mode toggle styling reuses the same Tailwind pattern already used by the System Prompts modal's Deep Research / Chat switch for visual consistency.
