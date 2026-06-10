@@ -144,15 +144,15 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
                     }}
                     className={`group flex w-full cursor-pointer items-start gap-2 rounded-md border px-2 py-2 text-left transition ${
                       isActive
-                        ? "border-foreground/30 bg-accent"
-                        : "border-transparent hover:border-border hover:bg-accent"
+                        ? "border-foreground/30 bg-foreground text-background"
+                        : "border-transparent hover:border-border hover:bg-foreground hover:text-background"
                     }`}
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-xs font-medium text-foreground" title={e.prompt}>
+                      <div className={`truncate text-xs font-medium ${isActive ? "text-background" : "text-foreground"}`} title={e.prompt}>
                         {e.title || e.prompt}
                       </div>
-                      <div className="mt-0.5 text-[10px] text-muted-foreground">
+                      <div className={`mt-0.5 text-[10px] ${isActive ? "text-background/70" : "text-muted-foreground"}`}>
                         {formatDate(e.createdAt)} · {e.sources.length} sources
                       </div>
                     </div>
