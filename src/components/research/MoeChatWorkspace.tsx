@@ -253,16 +253,33 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   return (
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-3 px-4 pt-4 pb-6 sm:px-6">
       <div className="flex flex-col items-center text-center">
-        <img
-          key={heroImage}
-          src={heroImage}
-          alt={`${heroLabel}${isSingle ? "" : " panel"}`}
-          loading="eager"
-          className={
-            (messages.length === 0 ? "h-[300px] " : "h-[160px] ") + "w-auto object-contain transition-opacity duration-300 " +
-            (isSingle ? "dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]" : "rounded-xl")
-          }
-        />
+        {mode === "panel" && panelPreset === "custom" ? (
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {customPanel.map((id) => (
+              <img
+                key={id}
+                src={PERSONA_IMAGES[id]}
+                alt={MOE_EXPERT_LABELS[id]}
+                loading="eager"
+                className={
+                  (messages.length === 0 ? "h-[220px] " : "h-[80px] ") +
+                  "w-auto object-contain transition-opacity duration-300 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <img
+            key={heroImage}
+            src={heroImage}
+            alt={`${heroLabel}${isSingle ? "" : " panel"}`}
+            loading="eager"
+            className={
+              (messages.length === 0 ? "h-[300px] " : "h-[160px] ") + "w-auto object-contain transition-opacity duration-300 " +
+              (isSingle ? "dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]" : "rounded-xl")
+            }
+          />
+        )}
         <div className="mt-2 mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
           <MessagesSquare className="size-3.5" />
           Mixture of Experts · No research run required
