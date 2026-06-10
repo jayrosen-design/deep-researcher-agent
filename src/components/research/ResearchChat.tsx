@@ -7,6 +7,8 @@ import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { loadHistory, type HistoryEntry } from "@/lib/research-history";
 import type { SearchResult } from "@/lib/web-search.functions";
 import type { UserSettings } from "@/lib/user-settings";
+import type { UserRoleId } from "@/lib/research-templates";
+import { PERSONA_IMAGES } from "@/lib/persona-images";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
@@ -21,6 +23,7 @@ type ContextDoc = {
 type Props = {
   currentDoc: ContextDoc;
   settings: UserSettings;
+  roleId?: UserRoleId;
 };
 
 function buildGroundingPrompt(docs: ContextDoc[]): {
