@@ -170,6 +170,7 @@ function Index() {
   const [historyRefresh, setHistoryRefresh] = useState(0);
   const savedReportRef = useRef<string | null>(null);
   const [roleId, setRoleId] = useState<UserRoleId>("researcher");
+  const [workflowMode, setWorkflowMode] = useState<"research" | "moe">("research");
 
 
   // Persist completed researches to localStorage (per-device only).
