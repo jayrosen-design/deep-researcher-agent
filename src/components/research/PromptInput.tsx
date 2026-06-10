@@ -451,45 +451,55 @@ export function PromptInput({
                 label: "Strategist (plan)",
                 hint: "Drafts the structured research plan.",
                 defaultValue: DEFAULT_SETTINGS.planSystemPrompt,
+                image: AGENT_IMAGES.strategist,
               },
               {
                 key: "agentSystemPrompt",
                 label: "Searcher (ReAct loop)",
                 hint: "JSON-only tool-calling loop. Edit with care.",
                 defaultValue: DEFAULT_SETTINGS.agentSystemPrompt,
+                image: AGENT_IMAGES.searcher,
               },
               {
                 key: "synthesisSystemPrompt",
                 label: "Writer (final report)",
                 hint: "Writes the final Markdown report from gathered sources.",
                 defaultValue: DEFAULT_SETTINGS.synthesisSystemPrompt,
+                image: AGENT_IMAGES.writer,
               },
             ] as const).map((field) => {
               const value = draft[field.key];
               const isDefault = value === field.defaultValue;
               return (
-                <label key={field.key} className="block">
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>
-                      <span className="text-foreground">{field.label}</span> — {field.hint}
-                    </span>
-                    <button
-                      type="button"
-                      disabled={isDefault}
-                      onClick={() => persistDraft({ ...draft, [field.key]: field.defaultValue })}
-                      className="inline-flex items-center gap-1 underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
-                    >
-                      <RotateCcw className="size-3" />
-                      Reset
-                    </button>
-                  </div>
-                  <textarea
-                    value={value}
-                    onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
-                    rows={10}
-                    className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                <div key={field.key} className="flex gap-3">
+                  <img
+                    src={field.image}
+                    alt={`${field.label} octopus agent`}
+                    className="hidden h-24 w-24 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_18px_rgba(0,242,254,0.3)]"
                   />
-                </label>
+                  <label className="block flex-1">
+                    <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                      <span>
+                        <span className="text-foreground">{field.label}</span> — {field.hint}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={isDefault}
+                        onClick={() => persistDraft({ ...draft, [field.key]: field.defaultValue })}
+                        className="inline-flex items-center gap-1 underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
+                      >
+                        <RotateCcw className="size-3" />
+                        Reset
+                      </button>
+                    </div>
+                    <textarea
+                      value={value}
+                      onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
+                      rows={10}
+                      className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                    />
+                  </label>
+                </div>
               );
             })}
           </div>
