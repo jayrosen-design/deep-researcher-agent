@@ -19,6 +19,7 @@ import {
 } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates";
 import { listNavigatorModels } from "@/lib/navigator-models.functions";
+import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
 
 const RECOMMENDED_INVESTIGATOR = new Set<string>([
   "llama-3.1-8b-instruct",
@@ -104,14 +105,26 @@ export function PromptInput({
     onSettingsChange(next);
   };
 
+  const activeRole =
+    RESEARCH_ROLE_GROUPS.find((r) => r.id === activeRoleId) ?? RESEARCH_ROLE_GROUPS[0];
+  const personaImage = PERSONA_IMAGES[activeRoleId];
+
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-4xl flex-col items-center justify-center px-6">
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-6xl flex-row items-center justify-center gap-8 px-6">
+      <div className="hidden shrink-0 md:block">
+        <img
+          key={activeRoleId}
+          src={personaImage}
+          alt={`${activeRole.label} octopus persona`}
+          className="h-56 w-56 object-contain opacity-0 transition-opacity duration-500 ease-out [animation:fadeIn_0.5s_ease-out_forwards] dark:drop-shadow-[0_0_28px_rgba(0,242,254,0.35)]"
+          style={{ animation: "fadeIn 0.5s ease-out forwards" }}
+        />
+      </div>
+      <div className="flex w-full max-w-4xl flex-col items-center justify-center">
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
-        Deep Researcher Agent
+        Deep Researcher Agent · {activeRole.label}
       </div>
       <h1 className="text-center text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-
-
         What should we research?
       </h1>
       <p className="mt-3 text-center text-base text-muted-foreground">
