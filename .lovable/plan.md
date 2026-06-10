@@ -1,91 +1,76 @@
-## Deep Research Assistant
+# Add persona & agent images across the app
 
-A single-page agentic research app: user enters a prompt → LLM drafts a search plan → web searches run in parallel → LLM synthesizes a cited Markdown report.
+## 1. Move images into the app
 
-### Stack note
-This project runs on TanStack Start (not classic Vite + Supabase Edge Functions). I'll implement the two "edge functions" as **TanStack server functions** (`createServerFn`) — same security guarantees (keys stay server-side, never bundled to the client), no Supabase needed. If you specifically want them as Supabase Edge Functions, say so and I'll enable Lovable Cloud and switch.
+Move the 18 images from `/images/` (project root, not currently served) into `src/assets/personas/` and import them statically so Vite fingerprints and bundles them.
 
-### Transient memory
-- No database, no localStorage, no file writes.
-- All state (prompt, plan, search results, report) lives in React `useState` only.
-- Server functions hold data only for the duration of the request.
+Build a single shared module `src/lib/persona-images.ts` that exports:
 
----
+- `PERSONA_IMAGES: Record<UserRoleId, string>` mapping each role id to its imported image URL.
+- `AGENT_IMAGES: { strategist, searcher, writer, workingTogether }`.
+- `STAGE_IMAGES: { plan, searching, report, final }` (alias of the agent images so stage headers stay easy to swap).
 
-### 1. Server functions (`src/lib/`)
+Role → file mapping:
 
-**`navigator-chat.functions.ts`** — proxies UF NaviGator
-- POST to `https://api.ai.it.ufl.edu/v1/chat/completions`
-- `Authorization: Bearer ${process.env.UF_NAVIGATOR_API_KEY}`
-- Input: `{ messages, model?, temperature?, responseFormat? }`
-- Default model: `gemini-1.5-pro`
-- Returns assistant message content (string)
+| UserRoleId | File |
+|---|---|
+| researcher | researcher-agent.png |
+| school-teacher | teacher.png |
+| higher-education-instructor | higher-ed-instructor.png |
+| instructional-designer | instructional-designer.png |
+| education-leader | edu-leader.png |
+| experience-designer | designer.png |
+| software-developer | developer.png |
+| communications-marketing | marketing.png |
+| business-operations | business-ops.png |
 
-**`web-search.functions.ts`** — proxies Tavily
-- POST to `https://api.tavily.com/search` with `process.env.TAVILY_API_KEY`
-- Input: `{ query: string }`
-- Returns top 5 results: `[{ url, title, content }]`
+Agent → file mapping:
 
-Both use Zod input validation and return clean DTOs. Errors return `{ error: string }` so the UI can retry per-step.
+| Agent | File |
+|---|---|
+| Strategist (plan) | strategist-agent.png |
+| Searcher (ReAct) | searcher-agent.png |
+| Writer (report) | writer-agent.png |
+| Final report / How it Works hero | working-togeather.png |
 
-**Secrets to add:** `UF_NAVIGATOR_API_KEY`, `TAVILY_API_KEY` (I'll request via secrets tool after you approve).
+## 2. Prompt page — persona image beside the prompt
 
----
+In `src/components/research/PromptInput.tsx`:
 
-### 2. Frontend state machine (`src/routes/index.tsx` + `src/components/research/`)
+- Lift `activeRoleId` so it is the source of truth for "currently selected persona" (default `researcher`). It already exists at line 48.
+- Wrap the existing hero block (badge, H1, subtitle, form) in a two-column flex layout: persona portrait on the left (hidden < `md`, ~`w-40` to `w-56`, transparent PNG, soft cyan glow via existing `glow-primary` utility), content column on the right keeping its current max-width.
+- Portrait renders `PERSONA_IMAGES[activeRoleId]` with the persona label as alt text. When the user switches persona in the Templates carousel, the image swaps with a subtle fade (`transition-opacity`).
 
-State phases: `idle → planning → searching → synthesizing → done | error`
+No business-logic changes — purely a presentational left rail driven by `activeRoleId`.
 
-```text
-idle ──submit──▶ planning ──plan[]──▶ searching ──results──▶ synthesizing ──report──▶ done
-                    │                      │                      │
-                    └──────────────────────┴──────────────────────┴──▶ error (retry per phase)
-```
+## 3. System Prompts modal — agent next to each textarea
 
-- **Phase 1 (planning):** call `navigatorChat` with system prompt: "You are a research planner. Output a JSON array of 3–5 optimized search queries. Respond with JSON only." Parse into `string[]`.
-- **Phase 2 (searching):** `Promise.all` over queries → `webSearch` per query. Aggregate into `{ query, results: [{url, title, content}] }[]`. Display current query as it resolves.
-- **Phase 3 (synthesis):** build context block with numbered sources, send to `navigatorChat` with system prompt: "Expert analyst. Write comprehensive Markdown report with inline citations as `[Title](URL)` linking to sources provided." Return Markdown string.
+Still in `PromptInput.tsx`, inside the `Dialog open={showPrompts}` block (~lines 413–490):
 
-Retry logic: each phase failure shows error + "Retry this step" button that re-runs only that phase using cached prior results.
+- For each of the three prompt fields, render a two-column row: a ~`w-24` agent thumbnail on the left (`AGENT_IMAGES.strategist | searcher | writer`), and the existing label + textarea on the right.
+- Keep the existing reset button and white textarea background; just add the image column.
 
----
+## 4. How It Works page
 
-### 3. UI components
+In `src/routes/how-it-works.tsx`:
 
-- **`PromptInput`** — centered hero with large `<textarea>` + "Start Research" button (idle state).
-- **`ProgressTracker`** — vertical step list showing phase status with icons (pending/active/done/error). During search shows "Searching: {currentQuery}".
-- **`ReportView`** — `react-markdown` + `remark-gfm` rendering, prose styling, clickable links open in new tab.
-- **`SourcesPanel`** — collapsible footer/sidebar listing all unique URLs with title + favicon.
-- **`Header`** — minimal: app name + "New Research" button (visible after first run).
+- Add a `working-togeather.png` hero image at the top of the page, centered, with a sonar-divider underneath.
+- For the three agent description sections (Strategist, Searcher, Writer), render the matching agent image to the left of each description block using the same two-column pattern.
 
-Design: minimalist, generous whitespace, single accent color, system font stack — Perplexity/Gemini feel. All colors via existing `src/styles.css` semantic tokens.
+## 5. Workflow stage headers
 
-**Dependencies to add:** `react-markdown`, `remark-gfm`, `zod` (likely already present).
+In `src/routes/index.tsx`:
 
----
+- Above the Plan UI (`PlanReview` render path), show `STAGE_IMAGES.plan` (strategist) with a small caption "Strategist is planning".
+- Above the Searching UI (`ProgressTracker` block around line 923), show `STAGE_IMAGES.searching` (searcher) with "Searcher is investigating".
+- Above the in-progress Report block, show `STAGE_IMAGES.report` (writer) with "Writer is drafting".
+- Above the finished `ReportView` (around line 979), show `STAGE_IMAGES.final` (`working-togeather.png`) with "Your research team's final report".
 
-### 4. File map
+These stage headers are small (e.g. `h-20` to `h-24`) so they don't push the content off-screen, but visible enough to identify the active agent.
 
-```text
-src/
-├── routes/index.tsx                       # state machine + page composition
-├── lib/
-│   ├── navigator-chat.functions.ts        # server fn → UF NaviGator
-│   ├── web-search.functions.ts            # server fn → Tavily
-│   └── research-prompts.ts                # shared system prompts
-└── components/research/
-    ├── PromptInput.tsx
-    ├── ProgressTracker.tsx
-    ├── ReportView.tsx
-    └── SourcesPanel.tsx
-```
+## Technical notes
 
----
-
-### Open questions before I build
-
-1. **Server functions vs Supabase Edge Functions?** The project's stack uses TanStack server functions natively. I recommend those (simpler, no Supabase setup). Confirm or say "use Supabase".
-2. **Search provider:** Tavily (you have an API key) or Firecrawl connector (managed OAuth, no key needed)?
-3. **Model default** `gemini-1.5-pro` confirmed, or prefer `gpt-4o` / something else available on the NaviGator gateway?
-
-Reply with answers (or "go with defaults") and I'll implement.
+- All images imported as ES modules from `src/assets/personas/`; no `.asset.json` migration needed unless the user later asks to externalise them.
+- No changes to agent prompts, model wiring, or research logic — UI only.
+- Dark/light mode already handled by the existing theme; the PNGs are transparent so they sit naturally on both backgrounds. A subtle `drop-shadow-[0_0_24px_rgba(0,242,254,0.25)]` is added in dark mode for the bioluminescent feel.
+- `activeRoleId` already exists; no new state in `index.tsx` beyond reading the current workflow phase to pick the stage image.
