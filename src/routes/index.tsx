@@ -991,7 +991,23 @@ function Index() {
 
           {isDone && report && (
             <div className="space-y-8">
-              <StageHeader stage="final" title="Your research team's final report" />
+              <div className="mb-6 flex flex-col items-center gap-3">
+                <div className="flex items-center justify-center gap-4">
+                  <img
+                    src={PERSONA_IMAGES[roleId]}
+                    alt="Your persona"
+                    className="h-48 w-auto object-contain dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
+                  />
+                  <img
+                    src={AGENT_IMAGES.workingTogether}
+                    alt="Research agents working together"
+                    className="h-48 w-auto object-contain dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
+                  />
+                </div>
+                <div className="text-base font-medium text-foreground text-center">
+                  Your research team's final report
+                </div>
+              </div>
               <section className="rounded-xl border border-border bg-card p-4 sm:p-8">
                 <ReportView markdown={report} sources={sources} prompt={prompt} />
               </section>
