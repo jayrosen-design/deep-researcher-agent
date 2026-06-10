@@ -169,6 +169,8 @@ function Index() {
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [historyRefresh, setHistoryRefresh] = useState(0);
   const savedReportRef = useRef<string | null>(null);
+  const [roleId, setRoleId] = useState<UserRoleId>("researcher");
+
 
   // Persist completed researches to localStorage (per-device only).
   useEffect(() => {
