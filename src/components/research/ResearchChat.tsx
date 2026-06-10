@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { MessageSquare, Send, Plus, X, Loader2, BookOpen, Minus, ChevronDown, AlertTriangle } from "lucide-react";
+import { MessageSquare, Send, Plus, X, Loader2, BookOpen, Minus, ChevronDown, AlertTriangle, Maximize2, Minimize2 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { loadHistory, type HistoryEntry } from "@/lib/research-history";
