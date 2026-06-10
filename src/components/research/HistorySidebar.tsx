@@ -149,13 +149,11 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
                         : "border-transparent hover:border-border hover:bg-foreground hover:text-background"
                     }`}
                   >
-                    {e.roleId && PERSONA_IMAGES[e.roleId] && (
-                      <img
-                        src={PERSONA_IMAGES[e.roleId]}
-                        alt=""
-                        className="size-8 shrink-0 rounded-full object-cover"
-                      />
-                    )}
+                    <img
+                      src={PERSONA_IMAGES[e.roleId ?? "researcher"]}
+                      alt=""
+                      className="size-8 shrink-0 rounded-full object-cover"
+                    />
                     <div className="min-w-0 flex-1">
                       <div className={`truncate text-xs font-medium ${isActive ? "text-background" : "text-foreground"}`} title={e.prompt}>
                         {e.title || e.prompt}
