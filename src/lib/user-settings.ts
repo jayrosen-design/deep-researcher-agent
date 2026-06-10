@@ -4,10 +4,20 @@
 import { DEFAULT_INVESTIGATOR_MODEL, DEFAULT_SYNTHESIS_MODEL, DEFAULT_PLAN_MODEL, type NavigatorModel } from "./models";
 import { AGENT_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT } from "./agent-prompts";
 import { PLAN_SYSTEM_PROMPT } from "./plan-prompts";
+import {
+  PERSONA_CHAT_BASE_SYSTEM_PROMPT,
+  PERSONA_CHAT_ROLE_SYSTEM_PROMPTS,
+  type PersonaChatRoleId,
+} from "./persona-chat-prompts";
 
 const KEY = "dr-settings-v1";
 
 export type SearchProvider = "firecrawl" | "tavily";
+
+export type PersonaChatSetting = {
+  model: NavigatorModel;
+  systemPrompt: string;
+};
 
 export type UserSettings = {
   navigatorApiKey: string;
@@ -21,7 +31,32 @@ export type UserSettings = {
   planSystemPrompt: string;
   agentSystemPrompt: string;
   synthesisSystemPrompt: string;
+  personaChatBasePrompt: string;
+  personaChat: Record<PersonaChatRoleId, PersonaChatSetting>;
 };
+
+const PERSONA_ROLE_IDS: PersonaChatRoleId[] = [
+  "researcher",
+  "school-teacher",
+  "higher-education-instructor",
+  "instructional-designer",
+  "education-leader",
+  "experience-designer",
+  "software-developer",
+  "communications-marketing",
+  "business-operations",
+];
+
+function defaultPersonaChat(): Record<PersonaChatRoleId, PersonaChatSetting> {
+  const out = {} as Record<PersonaChatRoleId, PersonaChatSetting>;
+  for (const id of PERSONA_ROLE_IDS) {
+    out[id] = {
+      model: DEFAULT_SYNTHESIS_MODEL,
+      systemPrompt: PERSONA_CHAT_ROLE_SYSTEM_PROMPTS[id],
+    };
+  }
+  return out;
+}
 
 export const DEFAULT_SETTINGS: UserSettings = {
   navigatorApiKey: "",
@@ -35,6 +70,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   planSystemPrompt: PLAN_SYSTEM_PROMPT,
   agentSystemPrompt: AGENT_SYSTEM_PROMPT,
   synthesisSystemPrompt: SYNTHESIS_SYSTEM_PROMPT,
+  personaChatBasePrompt: PERSONA_CHAT_BASE_SYSTEM_PROMPT,
+  personaChat: defaultPersonaChat(),
 };
 
 export const SOURCE_COUNT_OPTIONS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
@@ -48,6 +85,23 @@ function coerceModel(m: unknown, fallback: NavigatorModel): NavigatorModel {
 
 function coerceString(v: unknown, fallback: string): string {
   return typeof v === "string" && v.trim().length > 0 ? v : fallback;
+}
+
+function coercePersonaChat(
+  v: unknown,
+): Record<PersonaChatRoleId, PersonaChatSetting> {
+  const defaults = defaultPersonaChat();
+  if (!v || typeof v !== "object") return defaults;
+  const obj = v as Record<string, unknown>;
+  const out = {} as Record<PersonaChatRoleId, PersonaChatSetting>;
+  for (const id of PERSONA_ROLE_IDS) {
+    const entry = obj[id] as Partial<PersonaChatSetting> | undefined;
+    out[id] = {
+      model: coerceModel(entry?.model, defaults[id].model),
+      systemPrompt: coerceString(entry?.systemPrompt, defaults[id].systemPrompt),
+    };
+  }
+  return out;
 }
 
 export function loadSettings(): UserSettings {
@@ -75,6 +129,8 @@ export function loadSettings(): UserSettings {
       planSystemPrompt: coerceString(parsed.planSystemPrompt, PLAN_SYSTEM_PROMPT),
       agentSystemPrompt: coerceString(parsed.agentSystemPrompt, AGENT_SYSTEM_PROMPT),
       synthesisSystemPrompt: coerceString(parsed.synthesisSystemPrompt, SYNTHESIS_SYSTEM_PROMPT),
+      personaChatBasePrompt: coerceString(parsed.personaChatBasePrompt, PERSONA_CHAT_BASE_SYSTEM_PROMPT),
+      personaChat: coercePersonaChat(parsed.personaChat),
     };
   } catch {
     return DEFAULT_SETTINGS;

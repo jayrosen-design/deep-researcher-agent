@@ -26,10 +26,7 @@ type Props = {
   roleId?: UserRoleId;
 };
 
-function buildGroundingPrompt(docs: ContextDoc[]): {
-  system: string;
-  flatSources: { url: string; title: string }[];
-} {
+function buildDocsBlock(docs: ContextDoc[]): string {
   const flatSources: { url: string; title: string }[] = [];
   const seen = new Set<string>();
   const docBlocks: string[] = [];
@@ -56,22 +53,15 @@ ${localLines.join("\n") || "  (none)"}
     );
   }
 
-  const system = `You are a research assistant chatbot. The user has completed deep research and wants to chat about the resulting report(s) below.
+  return `Available documents and sources:\n\n${docBlocks.join("\n\n")}`;
+}
 
-STRICT GROUNDING RULES:
-- Answer ONLY using information found in the provided documents below.
-- If the user asks something that is not covered, say so plainly and suggest what additional research could answer it. Do NOT speculate or use outside knowledge.
-- Whenever you make a factual claim, cite the source(s) inline using the format [n](URL) where n is the source number from the list below and URL is its URL. Use multiple citations when relevant, e.g. "...growth has accelerated [1](https://...) [3](https://...)."
-- Prefer concise, well-structured Markdown answers. Use bullet lists and short paragraphs.
-- Never fabricate URLs or source numbers. Only use the ones listed.
-
-Available documents and sources:
-
-${docBlocks.join("\n\n")}
-
-Begin the conversation. Be helpful, accurate, and always cite.`;
-
-  return { system, flatSources };
+function buildSystemPrompt(
+  docs: ContextDoc[],
+  basePrompt: string,
+  rolePrompt: string,
+): string {
+  return `${basePrompt}\n\n${rolePrompt}\n\n${buildDocsBlock(docs)}`;
 }
 
 export function ResearchChat({ currentDoc, settings, roleId }: Props) {
@@ -100,7 +90,17 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   }, [messages, sending]);
 
   const allDocs = useMemo(() => [currentDoc, ...extraDocs], [currentDoc, extraDocs]);
-  const { system } = useMemo(() => buildGroundingPrompt(allDocs), [allDocs]);
+  const personaCfg = roleId ? settings.personaChat[roleId] : undefined;
+  const system = useMemo(
+    () =>
+      buildSystemPrompt(
+        allDocs,
+        settings.personaChatBasePrompt,
+        personaCfg?.systemPrompt ?? "",
+      ),
+    [allDocs, settings.personaChatBasePrompt, personaCfg?.systemPrompt],
+  );
+  const chatModel = personaCfg?.model ?? settings.synthesisModel;
 
   const availableHistory = history.filter(
     (h) => h.id !== currentDoc.id && !extraDocs.some((d) => d.id === h.id) && !!h.report,
@@ -135,7 +135,7 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
     try {
       const { content } = await navigatorChat({
         data: {
-          model: settings.synthesisModel,
+          model: chatModel,
           temperature: 0.3,
           maxTokens: 4000,
           apiKey: settings.navigatorApiKey || undefined,
