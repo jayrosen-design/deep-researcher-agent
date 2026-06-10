@@ -3,6 +3,8 @@ import { ArrowLeft } from "lucide-react";
 import { BrandLockup } from "@/components/research/BrandLockup";
 import { ThemeToggle } from "@/components/research/ThemeToggle";
 import { AGENT_IMAGES } from "@/lib/persona-images";
+import apiKeysScreenshot from "@/assets/api-keys-screenshot.png";
+
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
@@ -162,75 +164,122 @@ function HowItWorks() {
 
         <div className="mt-5 space-y-4">
           <div className="rounded-xl border border-border bg-card p-5">
-            <div className="text-sm font-semibold text-foreground">
-              UF NaviGator (LLM provider)
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-foreground">
+                  UF NaviGator (LLM provider)
+                </div>
+                <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+                  <li>
+                    Go to{" "}
+                    <a
+                      href="https://api.ai.it.ufl.edu/ui/?page=api-keys"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground underline-offset-2 hover:underline"
+                    >
+                      api.ai.it.ufl.edu
+                    </a>{" "}
+                    and sign in with your UF credentials.
+                  </li>
+                  <li>Open the <em>API Keys</em> page from the left nav.</li>
+                  <li>Create a new key and copy it (starts with <code>sk-</code>).</li>
+                  <li>
+                    When NaviGator asks which models to attach to the key, select
+                    at least one fast model for the Searcher and one strong
+                    model for the Writer. Suggested picks:
+                    <ul className="mt-2 list-disc space-y-1 pl-5">
+                      <li>
+                        <strong className="text-foreground">Searcher (fast, JSON loop):</strong>{" "}
+                        <code>llama-3.1-8b-instruct</code>,{" "}
+                        <code>gpt-oss-20b</code>, or{" "}
+                        <code>llama-3.1-nemotron-nano-8B-v1</code>.
+                      </li>
+                      <li>
+                        <strong className="text-foreground">Writer (long-form report):</strong>{" "}
+                        <code>gpt-oss-120b</code>,{" "}
+                        <code>llama-3.3-70b-instruct</code>, or{" "}
+                        <code>nemotron-3-super-120b-a12b</code>.
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    Paste the key into <em>API keys → NaviGator API key</em> on
+                    the home page. The Searcher and Writer dropdowns will
+                    auto-populate with exactly the models your key has access to.
+                  </li>
+                </ol>
+              </div>
+              <img
+                src={apiKeysScreenshot}
+                alt="UF NaviGator API key screenshot"
+                className="mx-auto h-64 w-auto rounded-lg border border-border object-contain shadow-sm lg:mx-0 lg:h-80"
+              />
             </div>
-            <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
-              <li>
-                Go to{" "}
-                <a
-                  href="https://api.ai.it.ufl.edu/ui/?page=api-keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-foreground underline-offset-2 hover:underline"
-                >
-                  api.ai.it.ufl.edu
-                </a>{" "}
-                and sign in with your UF credentials.
-              </li>
-              <li>Open the <em>API Keys</em> page from the left nav.</li>
-              <li>Create a new key and copy it (starts with <code>sk-</code>).</li>
-              <li>
-                When NaviGator asks which models to attach to the key, select
-                at least one fast model for the Searcher and one strong
-                model for the Writer. Suggested picks:
-                <ul className="mt-2 list-disc space-y-1 pl-5">
-                  <li>
-                    <strong className="text-foreground">Searcher (fast, JSON loop):</strong>{" "}
-                    <code>llama-3.1-8b-instruct</code>,{" "}
-                    <code>gpt-oss-20b</code>, or{" "}
-                    <code>llama-3.1-nemotron-nano-8B-v1</code>.
-                  </li>
-                  <li>
-                    <strong className="text-foreground">Writer (long-form report):</strong>{" "}
-                    <code>gpt-oss-120b</code>,{" "}
-                    <code>llama-3.3-70b-instruct</code>, or{" "}
-                    <code>nemotron-3-super-120b-a12b</code>.
-                  </li>
-                </ul>
-              </li>
-              <li>
-                Paste the key into <em>API keys → NaviGator API key</em> on
-                the home page. The Searcher and Writer dropdowns will
-                auto-populate with exactly the models your key has access to.
-              </li>
-
-            </ol>
           </div>
 
           <div className="rounded-xl border border-border bg-card p-5">
-            <div className="text-sm font-semibold text-foreground">
-              Tavily (web search + extract)
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-foreground">
+                  Tavily (web search + extract)
+                </div>
+                <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+                  <li>
+                    Sign up at{" "}
+                    <a
+                      href="https://www.tavily.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground underline-offset-2 hover:underline"
+                    >
+                      tavily.com
+                    </a>
+                    . The free tier includes a generous monthly request quota.
+                  </li>
+                  <li>From the dashboard, copy your API key (starts with <code>tvly-</code>).</li>
+                  <li>
+                    Paste it into <em>API keys → Tavily API key</em> on the home
+                    page.
+                  </li>
+                </ol>
+                <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
+                  <div className="text-sm font-semibold text-foreground">
+                    Optional: Firecrawl (web crawler)
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Firecrawl is an optional add-on that can crawl entire websites,
+                    extract structured data from pages, and perform deep research
+                    across multiple URLs. If you want enhanced crawling capabilities
+                    beyond Tavily's search:
+                  </p>
+                  <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+                    <li>
+                      Sign up at{" "}
+                      <a
+                        href="https://www.firecrawl.dev/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground underline-offset-2 hover:underline"
+                      >
+                        firecrawl.dev
+                      </a>
+                      .
+                    </li>
+                    <li>From your dashboard, copy your API key.</li>
+                    <li>
+                      Paste it into <em>API keys → Firecrawl API key</em> on the
+                      home page.
+                    </li>
+                  </ol>
+                </div>
+              </div>
+              <img
+                src={apiKeysScreenshot}
+                alt="Tavily API key screenshot"
+                className="mx-auto h-64 w-auto rounded-lg border border-border object-contain shadow-sm lg:mx-0 lg:h-80"
+              />
             </div>
-            <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
-              <li>
-                Sign up at{" "}
-                <a
-                  href="https://www.tavily.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-foreground underline-offset-2 hover:underline"
-                >
-                  tavily.com
-                </a>
-                . The free tier includes a generous monthly request quota.
-              </li>
-              <li>From the dashboard, copy your API key (starts with <code>tvly-</code>).</li>
-              <li>
-                Paste it into <em>API keys → Tavily API key</em> on the home
-                page.
-              </li>
-            </ol>
           </div>
         </div>
       </section>
