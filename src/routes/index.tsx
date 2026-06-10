@@ -15,6 +15,7 @@ import { Navbar } from "@/components/research/Navbar";
 import { HistorySidebar } from "@/components/research/HistorySidebar";
 import { StageHeader } from "@/components/research/StageHeader";
 import { ResearchChat } from "@/components/research/ResearchChat";
+import { MoeChatWorkspace } from "@/components/research/MoeChatWorkspace";
 import { saveEntry, updateEntry, type HistoryEntry } from "@/lib/research-history";
 import type { UserRoleId } from "@/lib/research-templates";
 import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
