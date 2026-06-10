@@ -22,9 +22,11 @@ import {
   MOE_PANEL_PRESETS,
   MOE_PANEL_PRESET_META,
   MOE_PANEL_PRESET_IMAGES,
+  MOE_PANEL_TEMPLATES,
   PANEL_PRESET_ORDER,
   type ExpertAnswer,
   type MoeExpertId,
+  type MoePanelTemplate,
   type PanelPresetId,
   type RouterRoute,
 } from "@/lib/moe-prompts";
