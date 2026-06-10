@@ -418,7 +418,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="min-h-[120px] flex-1 overflow-y-auto rounded-lg border border-border bg-background p-3"
+        className={(messages.length === 0 ? "min-h-[120px] " : "min-h-[500px] ") + "flex-1 overflow-y-auto rounded-lg border border-border bg-background p-3"}
       >
         {messages.length === 0 && !sending && (
           <div className="py-8 text-center text-sm text-muted-foreground">
