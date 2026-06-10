@@ -8,7 +8,7 @@ import { loadHistory, type HistoryEntry } from "@/lib/research-history";
 import type { SearchResult } from "@/lib/web-search.functions";
 import type { UserSettings } from "@/lib/user-settings";
 import type { UserRoleId } from "@/lib/research-templates";
-import { PERSONA_IMAGES } from "@/lib/persona-images";
+import { PERSONA_ICONS } from "@/lib/persona-icons";
 import {
   MOE_EXPERT_IDS,
   MOE_EXPERT_LABELS,
