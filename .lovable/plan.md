@@ -1,76 +1,55 @@
-# Add persona & agent images across the app
+# MoE Mode for Chat with Research
 
-## 1. Move images into the app
+Extend the existing `ResearchChat` panel with three chat modes for follow-up questions on a completed report. Existing single-persona chat stays intact (becomes "Single Expert" mode). No new web search, no changes to the research/report flow.
 
-Move the 18 images from `/images/` (project root, not currently served) into `src/assets/personas/` and import them statically so Vite fingerprints and bundles them.
+## New files
 
-Build a single shared module `src/lib/persona-images.ts` that exports:
+**`src/lib/moe-prompts.ts`** — system prompts and JSON schemas for:
+- Expert router (selects 1–3 experts, or 4–6 for panel-style questions). Uses the prompt in the spec; output validated by Zod.
+- Expert answer (each expert returns `{ expertId, answer, confidence, evidenceUsed, missingEvidence, recommendations }`).
+- Moderator/synthesizer (returns one synthesized markdown answer with the required sections: Direct Answer, Expert Panel Synthesis, Trade-offs, Recommended Next Step, Evidence Gaps, Expert Contributions).
+- Helpers `buildExpertContextBlock(docs)` so router/experts/moderator share grounding.
 
-- `PERSONA_IMAGES: Record<UserRoleId, string>` mapping each role id to its imported image URL.
-- `AGENT_IMAGES: { strategist, searcher, writer, workingTogether }`.
-- `STAGE_IMAGES: { plan, searching, report, final }` (alias of the agent images so stage headers stay easy to swap).
+**`src/lib/moe-chat.ts`** (client-side orchestrator, no new server fn needed — reuses `navigatorChat`):
+- `routeExperts({ question, docs, settings, preferredRoleId? })` → calls `navigatorChat` with `responseFormat: "json_object"` against the router prompt; parses+validates JSON; on failure falls back to `[preferredRoleId ?? "researcher"]`.
+- `askExpert({ expertId, question, history, docs, settings })` → uses each persona's configured `chatModel`/`systemPrompt` from `settings.personaChat`; requests JSON; on parse failure wraps raw text into the expert-answer shape with `confidence: "low"`.
+- `synthesizePanel({ question, expertAnswers, docs, settings })` → moderator call, returns markdown.
+- `runMoeTurn(mode, …)` orchestrates router → parallel `askExpert` (Promise.allSettled so one failure doesn't block) → optional synthesis. Returns `{ selectedExperts, routerReasoning, expertAnswers, failures, synthesis }`.
 
-Role → file mapping:
+## Edits
 
-| UserRoleId | File |
-|---|---|
-| researcher | researcher-agent.png |
-| school-teacher | teacher.png |
-| higher-education-instructor | higher-ed-instructor.png |
-| instructional-designer | instructional-designer.png |
-| education-leader | edu-leader.png |
-| experience-designer | designer.png |
-| software-developer | developer.png |
-| communications-marketing | marketing.png |
-| business-operations | business-ops.png |
+**`src/components/research/ResearchChat.tsx`**
+- Add mode state: `"single" | "auto" | "panel"`, persona selection for single, panel composition (`"default" | "education" | "custom"` + custom expert set), and per-turn loading stages ("Routing question…", "Consulting experts…", "Synthesizing answer…").
+- New header row above the message list: three mode tabs. Below the tabs, mode-specific controls:
+  - Single: 9 persona buttons with `PERSONA_IMAGES` thumbnails (defaults to incoming `roleId`).
+  - Auto: brief explanatory text only.
+  - Panel: three preset chips (Default / Education / Custom) + when Custom is selected, multi-select chips for 2–6 experts (validated before send).
+- Extend `ChatMsg` to `{ role: "user" } | { role: "assistant"; mode; content; experts?; routerReasoning?; failures? }`. Assistant rendering:
+  - Single: existing markdown bubble (current behavior).
+  - Auto / Panel: render synthesis markdown first, then a "Selected experts" line (chips with persona avatar + router reason), then a collapsible `<details>` per expert showing their `answer` markdown, `confidence`, `evidenceUsed`, `missingEvidence`, `recommendations`, and a clear notice for any expert that failed.
+- `handleSend`: branch on mode. Single mode keeps current `navigatorChat` path (unchanged behavior). Auto/Panel call `runMoeTurn` with the staged loading messages.
+- Reset chat when `currentDoc.id` changes (already done) and also when mode changes (clear messages to avoid mode mismatch in transcripts).
 
-Agent → file mapping:
+**`src/lib/user-settings.ts`**
+- Add `moeRouterPrompt`, `moeExpertPrompt`, `moeModeratorPrompt`, `moeRouterModel`, `moeModeratorModel` (default to current synthesis model). Defaults sourced from `moe-prompts.ts`.
+- Backfill in the existing settings-merge/migration so prior users get the new defaults.
 
-| Agent | File |
-|---|---|
-| Strategist (plan) | strategist-agent.png |
-| Searcher (ReAct) | searcher-agent.png |
-| Writer (report) | writer-agent.png |
-| Final report / How it Works hero | working-togeather.png |
+**`src/components/research/PromptInput.tsx`** (System Prompts modal)
+- Inside the existing Chat tab, add a "Mixture of Experts" subsection with editable router/expert-base/moderator prompts and model pickers, each with a Reset button — mirroring how the per-persona chat prompts are edited today. No new modal; same toggle scheme.
 
-## 2. Prompt page — persona image beside the prompt
+## Technical details
 
-In `src/components/research/PromptInput.tsx`:
+- All MoE calls reuse `navigatorChat` (no new server fn). Router and expert calls use `responseFormat: "json_object"`, parsed with Zod; moderator uses plain text (markdown).
+- Expert calls run in parallel via `Promise.allSettled`. Failures surface inline ("Software Developer expert failed: …") and don't block synthesis as long as ≥1 expert succeeded; if all fail, show an error and don't call the moderator.
+- Grounding context for every MoE call uses the same `buildDocsBlock` helper already in `ResearchChat`, lifted into `moe-prompts.ts` so router/expert/moderator share it.
+- Per-expert system prompt = `PERSONA_CHAT_BASE_SYSTEM_PROMPT` + that persona's `PERSONA_CHAT_ROLE_SYSTEM_PROMPTS` entry + MoE expert-answer instructions (JSON shape + "answer only from your expert perspective"). Reuses the existing persona prompt library — no duplication.
+- Auto mode passes the incoming template `roleId` as `preferredRoleId` so the user's chosen persona is favored when relevant.
+- No new dependencies. All changes are frontend/presentation + prompt config.
 
-- Lift `activeRoleId` so it is the source of truth for "currently selected persona" (default `researcher`). It already exists at line 48.
-- Wrap the existing hero block (badge, H1, subtitle, form) in a two-column flex layout: persona portrait on the left (hidden < `md`, ~`w-40` to `w-56`, transparent PNG, soft cyan glow via existing `glow-primary` utility), content column on the right keeping its current max-width.
-- Portrait renders `PERSONA_IMAGES[activeRoleId]` with the persona label as alt text. When the user switches persona in the Templates carousel, the image swaps with a subtle fade (`transition-opacity`).
+## Acceptance checks
 
-No business-logic changes — purely a presentational left rail driven by `activeRoleId`.
-
-## 3. System Prompts modal — agent next to each textarea
-
-Still in `PromptInput.tsx`, inside the `Dialog open={showPrompts}` block (~lines 413–490):
-
-- For each of the three prompt fields, render a two-column row: a ~`w-24` agent thumbnail on the left (`AGENT_IMAGES.strategist | searcher | writer`), and the existing label + textarea on the right.
-- Keep the existing reset button and white textarea background; just add the image column.
-
-## 4. How It Works page
-
-In `src/routes/how-it-works.tsx`:
-
-- Add a `working-togeather.png` hero image at the top of the page, centered, with a sonar-divider underneath.
-- For the three agent description sections (Strategist, Searcher, Writer), render the matching agent image to the left of each description block using the same two-column pattern.
-
-## 5. Workflow stage headers
-
-In `src/routes/index.tsx`:
-
-- Above the Plan UI (`PlanReview` render path), show `STAGE_IMAGES.plan` (strategist) with a small caption "Strategist is planning".
-- Above the Searching UI (`ProgressTracker` block around line 923), show `STAGE_IMAGES.searching` (searcher) with "Searcher is investigating".
-- Above the in-progress Report block, show `STAGE_IMAGES.report` (writer) with "Writer is drafting".
-- Above the finished `ReportView` (around line 979), show `STAGE_IMAGES.final` (`working-togeather.png`) with "Your research team's final report".
-
-These stage headers are small (e.g. `h-20` to `h-24`) so they don't push the content off-screen, but visible enough to identify the active agent.
-
-## Technical notes
-
-- All images imported as ES modules from `src/assets/personas/`; no `.asset.json` migration needed unless the user later asks to externalise them.
-- No changes to agent prompts, model wiring, or research logic — UI only.
-- Dark/light mode already handled by the existing theme; the PNGs are transparent so they sit naturally on both backgrounds. A subtle `drop-shadow-[0_0_24px_rgba(0,242,254,0.25)]` is added in dark mode for the bioluminescent feel.
-- `activeRoleId` already exists; no new state in `index.tsx` beyond reading the current workflow phase to pick the stage image.
+- Single mode behaves exactly like today (regression check: existing transcripts still render).
+- Auto mode shows 1–3 expert chips + reasons, then synthesis + collapsible contributions.
+- Panel mode (Default / Education / Custom 2–6) shows synthesis first, contributions collapsed.
+- One expert failing still produces a synthesized answer plus a visible failure notice.
+- Report generation flow is untouched.

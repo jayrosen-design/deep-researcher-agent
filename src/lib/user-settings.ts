@@ -9,6 +9,11 @@ import {
   PERSONA_CHAT_ROLE_SYSTEM_PROMPTS,
   type PersonaChatRoleId,
 } from "./persona-chat-prompts";
+import {
+  MOE_EXPERT_ANSWER_INSTRUCTIONS,
+  MOE_MODERATOR_SYSTEM_PROMPT,
+  MOE_ROUTER_SYSTEM_PROMPT,
+} from "./moe-prompts";
 
 const KEY = "dr-settings-v1";
 
@@ -33,6 +38,11 @@ export type UserSettings = {
   synthesisSystemPrompt: string;
   personaChatBasePrompt: string;
   personaChat: Record<PersonaChatRoleId, PersonaChatSetting>;
+  moeRouterModel: NavigatorModel;
+  moeModeratorModel: NavigatorModel;
+  moeRouterPrompt: string;
+  moeExpertPrompt: string;
+  moeModeratorPrompt: string;
 };
 
 const PERSONA_ROLE_IDS: PersonaChatRoleId[] = [
@@ -72,6 +82,11 @@ export const DEFAULT_SETTINGS: UserSettings = {
   synthesisSystemPrompt: SYNTHESIS_SYSTEM_PROMPT,
   personaChatBasePrompt: PERSONA_CHAT_BASE_SYSTEM_PROMPT,
   personaChat: defaultPersonaChat(),
+  moeRouterModel: DEFAULT_SYNTHESIS_MODEL,
+  moeModeratorModel: DEFAULT_SYNTHESIS_MODEL,
+  moeRouterPrompt: MOE_ROUTER_SYSTEM_PROMPT,
+  moeExpertPrompt: MOE_EXPERT_ANSWER_INSTRUCTIONS,
+  moeModeratorPrompt: MOE_MODERATOR_SYSTEM_PROMPT,
 };
 
 export const SOURCE_COUNT_OPTIONS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
@@ -131,6 +146,11 @@ export function loadSettings(): UserSettings {
       synthesisSystemPrompt: coerceString(parsed.synthesisSystemPrompt, SYNTHESIS_SYSTEM_PROMPT),
       personaChatBasePrompt: coerceString(parsed.personaChatBasePrompt, PERSONA_CHAT_BASE_SYSTEM_PROMPT),
       personaChat: coercePersonaChat(parsed.personaChat),
+      moeRouterModel: coerceModel(parsed.moeRouterModel, DEFAULT_SYNTHESIS_MODEL),
+      moeModeratorModel: coerceModel(parsed.moeModeratorModel, DEFAULT_SYNTHESIS_MODEL),
+      moeRouterPrompt: coerceString(parsed.moeRouterPrompt, MOE_ROUTER_SYSTEM_PROMPT),
+      moeExpertPrompt: coerceString(parsed.moeExpertPrompt, MOE_EXPERT_ANSWER_INSTRUCTIONS),
+      moeModeratorPrompt: coerceString(parsed.moeModeratorPrompt, MOE_MODERATOR_SYSTEM_PROMPT),
     };
   } catch {
     return DEFAULT_SETTINGS;
