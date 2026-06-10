@@ -567,24 +567,26 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
       )}
 
       {/* Composer */}
-      <div className="flex items-end gap-2 rounded-lg border border-border bg-background p-2">
+      <div className="rounded-2xl border border-border bg-card shadow-sm transition focus-within:border-foreground/30 focus-within:shadow-md">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question for the experts…"
-          rows={2}
-          className="min-h-[48px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          rows={4}
+          className="w-full resize-none rounded-2xl bg-transparent px-5 py-4 text-base text-foreground placeholder:text-muted-foreground/70 focus:outline-none"
         />
-        <button
-          type="button"
-          onClick={() => void handleSend()}
-          disabled={!input.trim() || sending}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
-        >
-          {sending ? <Loader2 className="size-3.5 animate-spin" /> : <Send className="size-3.5" />}
-          Send
-        </button>
+        <div className="flex items-center justify-end gap-2 border-t border-border px-3 py-2">
+          <button
+            type="button"
+            onClick={() => void handleSend()}
+            disabled={!input.trim() || sending}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+          >
+            {sending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+            Send
+          </button>
+        </div>
       </div>
 
       {/* Templates (below composer so opening doesn't push the chat) */}
