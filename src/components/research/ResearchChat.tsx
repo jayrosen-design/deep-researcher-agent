@@ -7,6 +7,8 @@ import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { loadHistory, type HistoryEntry } from "@/lib/research-history";
 import type { SearchResult } from "@/lib/web-search.functions";
 import type { UserSettings } from "@/lib/user-settings";
+import type { UserRoleId } from "@/lib/research-templates";
+import { PERSONA_IMAGES } from "@/lib/persona-images";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
@@ -21,6 +23,7 @@ type ContextDoc = {
 type Props = {
   currentDoc: ContextDoc;
   settings: UserSettings;
+  roleId?: UserRoleId;
 };
 
 function buildGroundingPrompt(docs: ContextDoc[]): {
@@ -71,7 +74,7 @@ Begin the conversation. Be helpful, accurate, and always cite.`;
   return { system, flatSources };
 }
 
-export function ResearchChat({ currentDoc, settings }: Props) {
+export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   const [extraDocs, setExtraDocs] = useState<ContextDoc[]>([]);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
@@ -177,7 +180,15 @@ export function ResearchChat({ currentDoc, settings }: Props) {
     <div className="fixed bottom-6 right-6 z-40 flex h-[min(620px,calc(100vh-3rem))] w-[min(420px,calc(100vw-3rem))] flex-col rounded-xl border border-border bg-card shadow-2xl">
       <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
-          <MessageSquare className="size-4 text-foreground" />
+          {roleId && PERSONA_IMAGES[roleId] ? (
+            <img
+              src={PERSONA_IMAGES[roleId]}
+              alt="Your persona"
+              className="size-7 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <MessageSquare className="size-4 text-foreground" />
+          )}
           <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground">
             Chat with research
           </h2>

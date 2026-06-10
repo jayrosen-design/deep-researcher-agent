@@ -16,6 +16,8 @@ import { HistorySidebar } from "@/components/research/HistorySidebar";
 import { StageHeader } from "@/components/research/StageHeader";
 import { ResearchChat } from "@/components/research/ResearchChat";
 import { saveEntry, updateEntry, type HistoryEntry } from "@/lib/research-history";
+import type { UserRoleId } from "@/lib/research-templates";
+import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
 
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
@@ -167,6 +169,8 @@ function Index() {
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [historyRefresh, setHistoryRefresh] = useState(0);
   const savedReportRef = useRef<string | null>(null);
+  const [roleId, setRoleId] = useState<UserRoleId>("researcher");
+
 
   // Persist completed researches to localStorage (per-device only).
   useEffect(() => {
@@ -177,7 +181,7 @@ function Index() {
       savedReportRef.current = report;
       return;
     }
-    const entry = saveEntry({ prompt, plan, report, sources });
+    const entry = saveEntry({ prompt, plan, report, sources, roleId });
     savedReportRef.current = report;
     setActiveHistoryId(entry.id);
     setHistoryRefresh((n) => n + 1);
@@ -735,6 +739,7 @@ function Index() {
     setReport(entry.report);
     savedReportRef.current = entry.report;
     setActiveHistoryId(entry.id);
+    if (entry.roleId) setRoleId(entry.roleId);
     setFollowUps([]);
     setReviewing(false);
     setPhase("research");
@@ -865,6 +870,8 @@ function Index() {
           onSubmit={handleStart}
           settings={settings}
           onSettingsChange={setSettings}
+          roleId={roleId}
+          onRoleChange={setRoleId}
         />
         <Disclaimer />
       </>
@@ -984,7 +991,23 @@ function Index() {
 
           {isDone && report && (
             <div className="space-y-8">
-              <StageHeader stage="final" title="Your research team's final report" />
+              <div className="mb-6 flex flex-col items-center gap-3">
+                <div className="flex items-center justify-center gap-4">
+                  <img
+                    src={PERSONA_IMAGES[roleId]}
+                    alt="Your persona"
+                    className="h-48 w-auto object-contain dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
+                  />
+                  <img
+                    src={AGENT_IMAGES.workingTogether}
+                    alt="Research agents working together"
+                    className="h-48 w-auto object-contain dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
+                  />
+                </div>
+                <div className="text-base font-medium text-foreground text-center">
+                  Your research team's final report
+                </div>
+              </div>
               <section className="rounded-xl border border-border bg-card p-4 sm:p-8">
                 <ReportView markdown={report} sources={sources} prompt={prompt} />
               </section>
@@ -1088,6 +1111,7 @@ function Index() {
             sources,
           }}
           settings={settings}
+          roleId={roleId}
         />
       )}
     </div>
