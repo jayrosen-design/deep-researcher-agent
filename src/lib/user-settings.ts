@@ -1,7 +1,7 @@
 // User-configurable settings stored in browser localStorage.
 // Sent with each request to override server-side defaults.
 
-import { DEFAULT_INVESTIGATOR_MODEL, DEFAULT_SYNTHESIS_MODEL, type NavigatorModel } from "./models";
+import { DEFAULT_INVESTIGATOR_MODEL, DEFAULT_SYNTHESIS_MODEL, DEFAULT_PLAN_MODEL, type NavigatorModel } from "./models";
 import { AGENT_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT } from "./agent-prompts";
 import { PLAN_SYSTEM_PROMPT } from "./plan-prompts";
 
@@ -17,6 +17,7 @@ export type UserSettings = {
   maxSources: number; // 10..100, increments of 10
   investigatorModel: NavigatorModel;
   synthesisModel: NavigatorModel;
+  planModel: NavigatorModel;
   planSystemPrompt: string;
   agentSystemPrompt: string;
   synthesisSystemPrompt: string;
@@ -30,6 +31,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   maxSources: 30,
   investigatorModel: DEFAULT_INVESTIGATOR_MODEL,
   synthesisModel: DEFAULT_SYNTHESIS_MODEL,
+  planModel: DEFAULT_PLAN_MODEL,
   planSystemPrompt: PLAN_SYSTEM_PROMPT,
   agentSystemPrompt: AGENT_SYSTEM_PROMPT,
   synthesisSystemPrompt: SYNTHESIS_SYSTEM_PROMPT,
@@ -69,6 +71,7 @@ export function loadSettings(): UserSettings {
           : DEFAULT_SETTINGS.maxSources,
       investigatorModel: coerceModel(parsed.investigatorModel, DEFAULT_INVESTIGATOR_MODEL),
       synthesisModel: coerceModel(parsed.synthesisModel, DEFAULT_SYNTHESIS_MODEL),
+      planModel: coerceModel(parsed.planModel, DEFAULT_PLAN_MODEL),
       planSystemPrompt: coerceString(parsed.planSystemPrompt, PLAN_SYSTEM_PROMPT),
       agentSystemPrompt: coerceString(parsed.agentSystemPrompt, AGENT_SYSTEM_PROMPT),
       synthesisSystemPrompt: coerceString(parsed.synthesisSystemPrompt, SYNTHESIS_SYSTEM_PROMPT),
