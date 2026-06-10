@@ -308,17 +308,13 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
       {mode === "panel" && (
         <div className="space-y-2">
           <div className="flex flex-wrap gap-1.5">
-            {([
-              { id: "default", label: "Default panel" },
-              { id: "education", label: "Education panel" },
-              { id: "custom", label: "Custom" },
-            ] as const).map((p) => {
-              const active = panelPreset === p.id;
+            {PANEL_PRESET_ORDER.map((pid) => {
+              const active = panelPreset === pid;
               return (
                 <button
-                  key={p.id}
+                  key={pid}
                   type="button"
-                  onClick={() => setPanelPreset(p.id)}
+                  onClick={() => setPanelPreset(pid)}
                   className={
                     "rounded-full border px-3 py-1 text-[11px] transition " +
                     (active
@@ -326,16 +322,37 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                       : "border-border bg-background text-foreground hover:bg-accent")
                   }
                 >
-                  {p.label}
+                  {MOE_PANEL_PRESET_META[pid].label}
                 </button>
               );
             })}
+            <button
+              type="button"
+              onClick={() => setPanelPreset("custom")}
+              className={
+                "rounded-full border px-3 py-1 text-[11px] transition " +
+                (panelPreset === "custom"
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border bg-background text-foreground hover:bg-accent")
+              }
+            >
+              Custom
+            </button>
           </div>
           {panelPreset !== "custom" ? (
-            <div className="flex flex-wrap gap-1.5">
-              {MOE_PANEL_PRESETS[panelPreset].map((id) => (
-                <ExpertChip key={id} expertId={id} />
-              ))}
+            <div className="space-y-2 rounded-md border border-border bg-muted/20 p-3">
+              <div className="text-xs text-foreground">
+                {MOE_PANEL_PRESET_META[panelPreset].description}
+              </div>
+              <div className="text-[11px] text-muted-foreground">
+                <span className="font-semibold">Best for:</span>{" "}
+                {MOE_PANEL_PRESET_META[panelPreset].bestFor}
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {MOE_PANEL_PRESETS[panelPreset].map((id) => (
+                  <ExpertChip key={id} expertId={id} />
+                ))}
+              </div>
             </div>
           ) : (
             <div>
@@ -371,6 +388,56 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           )}
         </div>
       )}
+
+      {/* Templates */}
+      <div className="space-y-2">
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowTemplates((s) => !s)}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
+          >
+            <LayoutTemplate className="size-3.5" />
+            {showTemplates ? "Hide templates" : "Templates"}
+          </button>
+        </div>
+        <Collapsible open={showTemplates} onOpenChange={setShowTemplates}>
+          <CollapsibleContent className="collapsible-content">
+            <div className="rounded-lg border border-border bg-muted/20 p-3">
+              <div className="mb-2 text-[11px] text-muted-foreground">
+                Starter prompts for the {mode === "panel" ? "selected panel" : "selected expert"}.
+                Click one to load it into the composer.
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {suggestedTemplates.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      setInput(t.prompt);
+                      setShowTemplates(false);
+                    }}
+                    className="group flex flex-col items-start gap-1 rounded-md border border-border bg-background p-2 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
+                  >
+                    <div className="text-xs font-medium text-foreground group-hover:text-background">
+                      {t.label}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground group-hover:text-background/80">
+                      {t.description}
+                    </div>
+                  </button>
+                ))}
+                {suggestedTemplates.length === 0 && (
+                  <div className="text-xs text-muted-foreground">
+                    No templates available for the current selection.
+                  </div>
+                )}
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+
 
       {/* Messages */}
       <div
