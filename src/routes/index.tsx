@@ -867,14 +867,45 @@ function Index() {
     content = (
       <>
         <Navbar onSignOut={handleSignOut} />
-        <WorkflowStepper steps={workflowSteps} />
-        <PromptInput
-          onSubmit={handleStart}
-          settings={settings}
-          onSettingsChange={setSettings}
-          roleId={roleId}
-          onRoleChange={setRoleId}
-        />
+        <div className="mx-auto mt-4 flex w-full max-w-4xl justify-center px-4 sm:px-6">
+          <div className="inline-flex items-center rounded-full border border-border bg-muted/40 p-1 text-sm">
+            {([
+              { id: "research", label: "Deep Research" },
+              { id: "moe", label: "MoE Chat" },
+            ] as const).map((t) => {
+              const active = workflowMode === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setWorkflowMode(t.id)}
+                  className={
+                    "rounded-full px-5 py-2 font-medium transition " +
+                    (active
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground")
+                  }
+                >
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {workflowMode === "research" ? (
+          <>
+            <WorkflowStepper steps={workflowSteps} />
+            <PromptInput
+              onSubmit={handleStart}
+              settings={settings}
+              onSettingsChange={setSettings}
+              roleId={roleId}
+              onRoleChange={setRoleId}
+            />
+          </>
+        ) : (
+          <MoeChatWorkspace settings={settings} roleId={roleId} />
+        )}
         <Disclaimer />
       </>
     );
