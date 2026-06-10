@@ -90,7 +90,17 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   }, [messages, sending]);
 
   const allDocs = useMemo(() => [currentDoc, ...extraDocs], [currentDoc, extraDocs]);
-  const { system } = useMemo(() => buildGroundingPrompt(allDocs), [allDocs]);
+  const personaCfg = roleId ? settings.personaChat[roleId] : undefined;
+  const system = useMemo(
+    () =>
+      buildSystemPrompt(
+        allDocs,
+        settings.personaChatBasePrompt,
+        personaCfg?.systemPrompt ?? "",
+      ),
+    [allDocs, settings.personaChatBasePrompt, personaCfg?.systemPrompt],
+  );
+  const chatModel = personaCfg?.model ?? settings.synthesisModel;
 
   const availableHistory = history.filter(
     (h) => h.id !== currentDoc.id && !extraDocs.some((d) => d.id === h.id) && !!h.report,
