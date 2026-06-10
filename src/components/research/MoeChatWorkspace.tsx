@@ -20,6 +20,7 @@ import {
   MOE_EXPERT_LABELS,
   MOE_PANEL_PRESETS,
   MOE_PANEL_PRESET_META,
+  MOE_PANEL_PRESET_IMAGES,
   PANEL_PRESET_ORDER,
   type ExpertAnswer,
   type MoeExpertId,
@@ -116,6 +117,15 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
 
   const effectivePanel: MoeExpertId[] =
     panelPreset === "custom" ? customPanel : MOE_PANEL_PRESETS[panelPreset];
+
+  const panelImage =
+    mode === "panel" && panelPreset !== "custom"
+      ? MOE_PANEL_PRESET_IMAGES[panelPreset]
+      : MOE_PANEL_PRESET_IMAGES["product-design"];
+  const panelImageLabel =
+    mode === "panel" && panelPreset !== "custom"
+      ? MOE_PANEL_PRESET_META[panelPreset].label
+      : MOE_PANEL_PRESET_META["product-design"].label;
 
   const templateExperts: MoeExpertId[] = useMemo(() => {
     if (mode === "single") return [singleExpert];
@@ -244,7 +254,20 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
         <p className="mt-3 text-center text-base text-muted-foreground">
           Ask any question and have one expert, an auto-routed group, or a full panel weigh in.
         </p>
+        <div className="mt-5 w-full max-w-[720px]">
+          <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-border bg-muted/20">
+            <img
+              src={panelImage}
+              alt={`${panelImageLabel} panel`}
+              width={720}
+              height={540}
+              loading="eager"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
       </div>
+
 
 
       {/* Mode tabs */}
@@ -343,10 +366,6 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
             <div className="space-y-2 rounded-md border border-border bg-muted/20 p-3">
               <div className="text-xs text-foreground">
                 {MOE_PANEL_PRESET_META[panelPreset].description}
-              </div>
-              <div className="text-[11px] text-muted-foreground">
-                <span className="font-semibold">Best for:</span>{" "}
-                {MOE_PANEL_PRESET_META[panelPreset].bestFor}
               </div>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {MOE_PANEL_PRESETS[panelPreset].map((id) => (
@@ -529,8 +548,8 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question for the experts…"
-          rows={5}
-          className="min-h-[120px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          rows={3}
+          className="min-h-[72px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
         <button
           type="button"

@@ -123,6 +123,16 @@ export const PANEL_PRESET_ORDER: PanelPresetId[] = [
   "technical-feasibility",
 ];
 
+export const MOE_PANEL_PRESET_IMAGES: Record<PanelPresetId, string> = {
+  education: "/moe/education-moe.png",
+  "higher-education": "/moe/higher-ed-moe.png",
+  "product-design": "/moe/product-design-moe.png",
+  "implementation-strategy": "/moe/implementation-strategy-moe.png",
+  "technical-feasibility": "/moe/technical-feasibility-moe.png",
+  default: "/moe/product-design-moe.png",
+};
+
+
 export const MOE_ROUTER_SYSTEM_PROMPT = `You are an expert router inside Deep Researcher Agent.
 
 The user has completed a deep research report and is now asking a follow-up question. Select the best expert personas to answer.
