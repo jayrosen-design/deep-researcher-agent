@@ -18,3 +18,6 @@ export const DEFAULT_INVESTIGATOR_MODEL: NavigatorModel = "llama-3.1-8b-instruct
 
 // Larger model reserved for the synthesizer (long-form prose + reasoning).
 export const DEFAULT_SYNTHESIS_MODEL: NavigatorModel = "gpt-oss-120b";
+
+// Model for the planner / strategist agent.
+export const DEFAULT_PLAN_MODEL: NavigatorModel = "gpt-oss-120b";
