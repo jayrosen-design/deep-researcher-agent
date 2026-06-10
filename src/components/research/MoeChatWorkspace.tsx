@@ -98,14 +98,15 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const [mode, setMode] = useState<MoeMode>("auto");
+  const [mode, setMode] = useState<MoeMode>("panel");
   const [singleExpert, setSingleExpert] = useState<MoeExpertId>(roleId ?? "researcher");
-  const [panelPreset, setPanelPreset] = useState<PanelPreset>("default");
+  const [panelPreset, setPanelPreset] = useState<PanelPreset>("education");
   const [customPanel, setCustomPanel] = useState<MoeExpertId[]>([
     "researcher",
     "experience-designer",
     "software-developer",
   ]);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   useEffect(() => {
     setMessages([]);
