@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { BrandLockup } from "@/components/research/BrandLockup";
 import { ThemeToggle } from "@/components/research/ThemeToggle";
+import { AGENT_IMAGES } from "@/lib/persona-images";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
@@ -38,6 +39,15 @@ function HowItWorks() {
         </Link>
       </div>
 
+      <div className="mt-4 flex justify-center">
+        <img
+          src={AGENT_IMAGES.workingTogether}
+          alt="Strategist, Searcher, and Writer octopus agents working together"
+          className="h-64 w-auto object-contain dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.35)]"
+        />
+      </div>
+      <div className="sonar-divider my-6" />
+
       <h1 className="text-4xl font-semibold tracking-tight text-foreground">
         How it Works
       </h1>
@@ -54,43 +64,64 @@ function HowItWorks() {
           focused and the outputs stay reliable.
         </p>
         <div className="mt-5 space-y-4">
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="text-sm font-semibold text-foreground">
-              1. Strategist
+          <div className="flex gap-4 rounded-xl border border-border bg-card p-5">
+            <img
+              src={AGENT_IMAGES.strategist}
+              alt="Strategist octopus agent"
+              className="hidden h-28 w-28 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.3)]"
+            />
+            <div>
+              <div className="text-sm font-semibold text-foreground">
+                1. Strategist
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Reads your question and drafts a structured research plan:
+                objective, temporal scope, 3–5 search queries, target domains,
+                pitfalls to avoid, and the exact section headers the final report
+                must use. You can edit or regenerate the plan before research
+                starts.
+              </p>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Reads your question and drafts a structured research plan:
-              objective, temporal scope, 3–5 search queries, target domains,
-              pitfalls to avoid, and the exact section headers the final report
-              must use. You can edit or regenerate the plan before research
-              starts.
-            </p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="text-sm font-semibold text-foreground">
-              2. Searcher
+          <div className="flex gap-4 rounded-xl border border-border bg-card p-5">
+            <img
+              src={AGENT_IMAGES.searcher}
+              alt="Searcher octopus agent"
+              className="hidden h-28 w-28 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.3)]"
+            />
+            <div>
+              <div className="text-sm font-semibold text-foreground">
+                2. Searcher
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Runs a strict ReAct loop. On every turn it emits a single JSON
+                object choosing one tool: <code>web_search</code> (Tavily),{" "}
+                <code>read_url</code> (full-page extract), or <code>finish</code>.
+                It must do at least two searches and read at least one page
+                before finishing, and it tracks its remaining step budget on each
+                turn.
+              </p>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Runs a strict ReAct loop. On every turn it emits a single JSON
-              object choosing one tool: <code>web_search</code> (Tavily),{" "}
-              <code>read_url</code> (full-page extract), or <code>finish</code>.
-              It must do at least two searches and read at least one page
-              before finishing, and it tracks its remaining step budget on each
-              turn.
-            </p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-5">
-            <div className="text-sm font-semibold text-foreground">
-              3. Writer
+          <div className="flex gap-4 rounded-xl border border-border bg-card p-5">
+            <img
+              src={AGENT_IMAGES.writer}
+              alt="Writer octopus agent"
+              className="hidden h-28 w-28 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.3)]"
+            />
+            <div>
+              <div className="text-sm font-semibold text-foreground">
+                3. Writer
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                A separate call that receives the plan and all gathered sources,
+                then writes the final Markdown report using the plan's exact
+                section headers and inline{" "}
+                <code>[title](url)</code> citations. A post-processing filter
+                strips any citation whose URL was not actually gathered, so
+                hallucinated links can't reach the final report.
+              </p>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              A separate call that receives the plan and all gathered sources,
-              then writes the final Markdown report using the plan's exact
-              section headers and inline{" "}
-              <code>[title](url)</code> citations. A post-processing filter
-              strips any citation whose URL was not actually gathered, so
-              hallucinated links can't reach the final report.
-            </p>
           </div>
         </div>
       </section>
