@@ -40,26 +40,27 @@ export function PromptInput({
   const personaImage = PERSONA_IMAGES[activeRoleId];
 
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-4xl flex-col items-center justify-center px-6">
-      <div className="relative w-full">
+    <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-8 pb-12">
+      <div className="flex w-full flex-col items-center">
         <img
           key={activeRoleId}
           src={personaImage}
           alt={`${activeRole.label} octopus persona`}
-          className="pointer-events-none absolute right-full top-1/2 hidden h-[32rem] w-auto -translate-y-1/2 -translate-x-4 object-contain transition-opacity duration-500 lg:block dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
+          className="pointer-events-none h-[300px] w-auto object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
         />
         <div className="flex w-full flex-col items-center justify-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+          <div className="mt-4 mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
             Deep Researcher Agent · {activeRole.label}
           </div>
-          <h1 className="text-center text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          <h1 className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             What should we research?
           </h1>
-          <p className="mt-3 text-center text-base text-muted-foreground">
+          <p className="mt-2 text-center text-sm text-muted-foreground">
             Multi-agents work together to plan, search the web, and synthesize a cited report.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-10 w-full">
+
+          <form onSubmit={handleSubmit} className="mt-6 w-full">
             <div className="relative rounded-2xl border border-border bg-card shadow-sm transition focus-within:border-foreground/30 focus-within:shadow-md">
               <textarea
                 value={value}
