@@ -82,6 +82,11 @@ export const DEFAULT_SETTINGS: UserSettings = {
   synthesisSystemPrompt: SYNTHESIS_SYSTEM_PROMPT,
   personaChatBasePrompt: PERSONA_CHAT_BASE_SYSTEM_PROMPT,
   personaChat: defaultPersonaChat(),
+  moeRouterModel: DEFAULT_SYNTHESIS_MODEL,
+  moeModeratorModel: DEFAULT_SYNTHESIS_MODEL,
+  moeRouterPrompt: MOE_ROUTER_SYSTEM_PROMPT,
+  moeExpertPrompt: MOE_EXPERT_ANSWER_INSTRUCTIONS,
+  moeModeratorPrompt: MOE_MODERATOR_SYSTEM_PROMPT,
 };
 
 export const SOURCE_COUNT_OPTIONS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
