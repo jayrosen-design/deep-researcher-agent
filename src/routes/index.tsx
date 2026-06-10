@@ -181,7 +181,7 @@ function Index() {
       savedReportRef.current = report;
       return;
     }
-    const entry = saveEntry({ prompt, plan, report, sources });
+    const entry = saveEntry({ prompt, plan, report, sources, roleId });
     savedReportRef.current = report;
     setActiveHistoryId(entry.id);
     setHistoryRefresh((n) => n + 1);
