@@ -283,10 +283,10 @@ export function PromptInput({
                         key={template.id}
                         type="button"
                         onClick={() => setValue(template.prompt)}
-                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
+                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
                       >
-                        <div className="text-sm font-medium text-foreground">{template.label}</div>
-                        <div className="text-xs text-muted-foreground">{template.description}</div>
+                        <div className="text-sm font-medium text-foreground group-hover:text-background">{template.label}</div>
+                        <div className="text-xs text-muted-foreground group-hover:text-background/80">{template.description}</div>
                       </button>
                     ))}
                   </div>
