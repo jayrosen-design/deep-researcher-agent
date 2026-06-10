@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { MessageSquare, Send, Plus, X, Loader2, BookOpen, Minus, ChevronDown, AlertTriangle } from "lucide-react";
+import { MessageSquare, Send, Plus, X, Loader2, BookOpen, Minus, ChevronDown, AlertTriangle, Maximize2, Minimize2 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
 import { loadHistory, type HistoryEntry } from "@/lib/research-history";
@@ -290,6 +290,7 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   };
 
   const [open, setOpen] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   if (!open) {
     return (
@@ -311,8 +312,14 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
     synthesizing: "Synthesizing answer…",
   };
 
+  const panelSize = expanded
+    ? "inset-4 h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]"
+    : "bottom-6 right-6 h-[min(720px,calc(100vh-3rem))] w-[min(480px,calc(100vw-3rem))]";
+
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex h-[min(720px,calc(100vh-3rem))] w-[min(480px,calc(100vw-3rem))] flex-col rounded-xl border border-border bg-card shadow-2xl">
+    <div
+      className={`fixed z-40 flex flex-col rounded-xl border border-border bg-background shadow-2xl ${panelSize}`}
+    >
       <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
           <MessageSquare className="size-4 text-foreground" />
@@ -320,14 +327,25 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
             Chat with this report
           </h2>
         </div>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-          aria-label="Minimize chat"
-        >
-          <Minus className="size-4" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+            aria-label={expanded ? "Collapse chat" : "Expand chat"}
+            title={expanded ? "Collapse" : "Expand"}
+          >
+            {expanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+          </button>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+            aria-label="Minimize chat"
+          >
+            <Minus className="size-4" />
+          </button>
+        </div>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4">
