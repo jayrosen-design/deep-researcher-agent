@@ -344,10 +344,6 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
               <div className="text-xs text-foreground">
                 {MOE_PANEL_PRESET_META[panelPreset].description}
               </div>
-              <div className="text-[11px] text-muted-foreground">
-                <span className="font-semibold">Best for:</span>{" "}
-                {MOE_PANEL_PRESET_META[panelPreset].bestFor}
-              </div>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {MOE_PANEL_PRESETS[panelPreset].map((id) => (
                   <ExpertChip key={id} expertId={id} />
