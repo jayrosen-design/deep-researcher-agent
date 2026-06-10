@@ -132,6 +132,183 @@ export const MOE_PANEL_PRESET_IMAGES: Record<PanelPresetId, string> = {
   default: "/moe/product-design-moe.png",
 };
 
+export type MoePanelTemplate = { id: string; label: string; description: string; prompt: string };
+
+export const MOE_PANEL_TEMPLATES: Record<Exclude<PanelPresetId, "default">, MoePanelTemplate[]> = {
+  education: [
+    {
+      id: "edu-evaluate",
+      label: "Evaluate [TOPIC] for classroom use",
+      description:
+        "Research support, real K-12 classroom fit, instructional design, and leader considerations.",
+      prompt:
+        "Evaluate [TOPIC] for classroom use.\nDiscuss whether [TOPIC] is supported by the research, how it would work in a real K-12 classroom, what instructional design considerations matter, and what school leaders should consider before adopting it.",
+    },
+    {
+      id: "edu-implementation",
+      label: "Create a practical classroom implementation plan for [TOPIC]",
+      description:
+        "Grade level, subject, student needs, workload, materials, assessment, and rollout steps.",
+      prompt:
+        "Create a practical classroom implementation plan for [TOPIC].\nFocus on grade level [GRADE LEVEL], subject area [SUBJECT], student needs [STUDENT NEEDS], teacher workload, materials, assessment, and rollout steps.",
+    },
+    {
+      id: "edu-risks",
+      label: "Biggest risks and limitations of using [TOPIC] in schools",
+      description:
+        "Evidence gaps, classroom barriers, equity, accessibility, families, policy, and implementation.",
+      prompt:
+        "What are the biggest risks and limitations of using [TOPIC] in schools?\nAnalyze evidence gaps, classroom barriers, equity concerns, accessibility, family communication, policy issues, and implementation challenges.",
+    },
+    {
+      id: "edu-recommendations",
+      label: "Turn this research on [TOPIC] into recommendations for educators",
+      description:
+        "Recommendations for teachers, designers, and leaders: do now, pilot, and needs more evidence.",
+      prompt:
+        "Turn this research on [TOPIC] into recommendations for educators.\nProvide clear recommendations for teachers, instructional designers, and education leaders, with separate sections for what to do now, what to pilot, and what needs more evidence.",
+    },
+  ],
+  "higher-education": [
+    {
+      id: "he-evaluate",
+      label: "Evaluate [TOPIC] for college or university teaching",
+      description:
+        "Evidence, course design, assessment, student experience, accessibility, instructor workload.",
+      prompt:
+        "Evaluate [TOPIC] for college or university teaching.\nDiscuss the evidence, course design implications, assessment concerns, student experience, accessibility, and instructor workload.",
+    },
+    {
+      id: "he-activity",
+      label: "Design a higher education learning activity around [TOPIC]",
+      description:
+        "Course, student level, modality, learning goal, and assessment type.",
+      prompt:
+        "Design a higher education learning activity around [TOPIC].\nUse this context: course [COURSE NAME], student level [UNDERGRAD/GRAD], modality [IN-PERSON/ONLINE/HYBRID], learning goal [LEARNING GOAL], and assessment type [ASSESSMENT].",
+    },
+    {
+      id: "he-integrate",
+      label: "How should instructors responsibly integrate [TOPIC] into a course?",
+      description:
+        "Academic integrity, engagement, outcomes, equity, accessibility, feedback, and constraints.",
+      prompt:
+        "How should instructors responsibly integrate [TOPIC] into a course?\nAddress academic integrity, student engagement, learning outcomes, equity, accessibility, feedback, and realistic implementation constraints.",
+    },
+    {
+      id: "he-brief",
+      label: "Create a faculty-facing guidance brief for [TOPIC]",
+      description:
+        "What faculty need to know, evidence, risks to avoid, and how to pilot.",
+      prompt:
+        "Create a faculty-facing guidance brief for [TOPIC].\nSummarize what faculty need to know, what the evidence supports, what risks to avoid, and how to pilot this in a course or program.",
+    },
+  ],
+  "product-design": [
+    {
+      id: "pd-concept",
+      label: "Turn [TOPIC] into a product concept",
+      description:
+        "Users, core journey, key features, technical feasibility, positioning, and operations.",
+      prompt:
+        "Turn [TOPIC] into a product concept.\nDiscuss the target users, core user journey, key features, technical feasibility, market positioning, and operational requirements.",
+    },
+    {
+      id: "pd-ux-strategy",
+      label: "Evaluate the UX and product strategy for [TOPIC]",
+      description:
+        "Audience, pain points, goal, product format, and success metrics.",
+      prompt:
+        "Evaluate the user experience and product strategy for [TOPIC].\nFocus on audience [AUDIENCE], user pain points [PAIN POINTS], desired outcome [GOAL], product format [APP/WEBSITE/TOOL/SERVICE], and success metrics [METRICS].",
+    },
+    {
+      id: "pd-mvp",
+      label: "What should the MVP for [TOPIC] include?",
+      description:
+        "Smallest useful version, essential features, flows, architecture, messaging, costs.",
+      prompt:
+        "What should the MVP for [TOPIC] include?\nIdentify the smallest useful version, essential features, user flows, technical architecture, messaging, cost considerations, and what should be deferred.",
+    },
+    {
+      id: "pd-launch",
+      label: "Create a product launch plan for [TOPIC]",
+      description:
+        "UX priorities, build phases, messaging, onboarding, support, ops risks, and metrics.",
+      prompt:
+        "Create a product launch plan for [TOPIC].\nInclude UX priorities, technical build phases, audience messaging, onboarding, support needs, operational risks, and launch success metrics.",
+    },
+  ],
+  "implementation-strategy": [
+    {
+      id: "imp-strategy",
+      label: "Create an implementation strategy for [TOPIC]",
+      description:
+        "Evidence, buy-in, policy alignment, cost, staffing, comms, rollout phases, and metrics.",
+      prompt:
+        "Create an implementation strategy for [TOPIC].\nDiscuss evidence strength, stakeholder buy-in, policy alignment, cost, staffing, communication strategy, rollout phases, and evaluation metrics.",
+    },
+    {
+      id: "imp-adopt",
+      label: "Should an organization adopt [TOPIC]?",
+      description:
+        "Benefits, risks, resources, leadership concerns, ops burden, comms, and evidence gaps.",
+      prompt:
+        "Should an organization adopt [TOPIC]?\nAnalyze benefits, risks, required resources, leadership concerns, operational burden, communication needs, and what evidence is still missing.",
+    },
+    {
+      id: "imp-pilot",
+      label: "Design a pilot program for [TOPIC]",
+      description:
+        "Goals, setting, participants, timeline, budget, success metrics, and scale criteria.",
+      prompt:
+        "Design a pilot program for [TOPIC].\nInclude pilot goals [GOALS], setting [SETTING], participants [PARTICIPANTS], timeline [TIMELINE], budget constraints [BUDGET], success metrics, and decision criteria for scaling.",
+    },
+    {
+      id: "imp-briefing",
+      label: "Prepare a stakeholder briefing on [TOPIC]",
+      description:
+        "Leadership-ready summary of why it matters, evidence, who is affected, risks, next steps.",
+      prompt:
+        "Prepare a stakeholder briefing on [TOPIC].\nCreate a leadership-ready summary explaining why it matters, what the evidence says, who is affected, what risks exist, and what next steps should be approved.",
+    },
+  ],
+  "technical-feasibility": [
+    {
+      id: "tf-evaluate",
+      label: "Evaluate the technical feasibility of [TOPIC]",
+      description:
+        "Evidence, what can be built, architecture, UX, cost, staffing, privacy, security, maintenance.",
+      prompt:
+        "Evaluate the technical feasibility of [TOPIC].\nDiscuss what the evidence supports, what can realistically be built, architecture options, UX constraints, cost, staffing, privacy, security, and maintenance.",
+    },
+    {
+      id: "tf-build-plan",
+      label: "Create a build plan for [TOPIC]",
+      description:
+        "Users, features, platform, data, integrations, constraints, and development phases.",
+      prompt:
+        "Create a build plan for [TOPIC].\nInclude target users [USERS], core features [FEATURES], platform [PLATFORM], data needs [DATA], integrations [INTEGRATIONS], constraints [CONSTRAINTS], and recommended development phases.",
+    },
+    {
+      id: "tf-risks",
+      label: "Technical and operational risks of [TOPIC]",
+      description:
+        "Complexity, scalability, security, privacy, accessibility, vendor lock-in, maintenance, costs.",
+      prompt:
+        "What are the technical and operational risks of [TOPIC]?\nAnalyze system complexity, scalability, security, privacy, accessibility, vendor dependency, maintenance burden, user adoption, and hidden costs.",
+    },
+    {
+      id: "tf-mvp-arch",
+      label: "Define an MVP and architecture for [TOPIC]",
+      description:
+        "Minimum feature set, architecture, data flow, UX, testing, staffing, validation.",
+      prompt:
+        "Define an MVP and architecture for [TOPIC].\nRecommend the minimum viable feature set, technical architecture, data flow, user experience, testing plan, staffing needs, and what should be validated before full development.",
+    },
+  ],
+};
+
+
+
 
 export const MOE_ROUTER_SYSTEM_PROMPT = `You are an expert router inside Deep Researcher Agent.
 
