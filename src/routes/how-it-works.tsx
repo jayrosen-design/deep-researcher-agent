@@ -3,7 +3,8 @@ import { ArrowLeft } from "lucide-react";
 import { BrandLockup } from "@/components/research/BrandLockup";
 import { ThemeToggle } from "@/components/research/ThemeToggle";
 import { AGENT_IMAGES } from "@/lib/persona-images";
-import apiKeysScreenshot from "@/assets/api-keys-screenshot.png";
+import navigatorKeyImg from "@/assets/navigator-key.png.asset.json";
+import searchKeyImg from "@/assets/search-key.png.asset.json";
 
 
 export const Route = createFileRoute("/how-it-works")({
@@ -211,7 +212,7 @@ function HowItWorks() {
                 </ol>
               </div>
               <img
-                src={apiKeysScreenshot}
+                src={navigatorKeyImg.url}
                 alt="UF NaviGator API key screenshot"
                 className="mx-auto h-64 w-auto rounded-lg border border-border object-contain shadow-sm lg:mx-0 lg:h-80"
               />
@@ -275,7 +276,7 @@ function HowItWorks() {
                 </div>
               </div>
               <img
-                src={apiKeysScreenshot}
+                src={searchKeyImg.url}
                 alt="Tavily API key screenshot"
                 className="mx-auto h-64 w-auto rounded-lg border border-border object-contain shadow-sm lg:mx-0 lg:h-80"
               />
