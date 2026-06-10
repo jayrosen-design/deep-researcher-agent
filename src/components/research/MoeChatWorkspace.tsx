@@ -261,10 +261,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                 src={PERSONA_IMAGES[id]}
                 alt={MOE_EXPERT_LABELS[id]}
                 loading="eager"
-                className={
-                  (messages.length === 0 ? "h-[220px] " : "h-[80px] ") +
-                  "w-auto object-contain transition-opacity duration-300 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
-                }
+                className="h-[220px] w-auto object-contain transition-opacity duration-300 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
               />
             ))}
           </div>
@@ -275,7 +272,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
             alt={`${heroLabel}${isSingle ? "" : " panel"}`}
             loading="eager"
             className={
-              (messages.length === 0 ? "h-[300px] " : "h-[160px] ") + "w-auto object-contain transition-opacity duration-300 " +
+              "h-[300px] w-auto object-contain transition-opacity duration-300 " +
               (isSingle ? "dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]" : "rounded-xl")
             }
           />
