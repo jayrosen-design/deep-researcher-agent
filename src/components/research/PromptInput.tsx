@@ -415,28 +415,30 @@ export function PromptInput({
           </DialogHeader>
 
           {/* Tab toggle */}
-          <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 text-xs">
-            {([
-              { id: "research", label: "Deep Research" },
-              { id: "chat", label: "Chat" },
-            ] as const).map((tab) => {
-              const active = promptsTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setPromptsTab(tab.id)}
-                  className={
-                    "rounded-full px-3 py-1.5 transition " +
-                    (active
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:text-foreground")
-                  }
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 p-1.5 text-sm">
+              {([
+                { id: "research", label: "Deep Research" },
+                { id: "chat", label: "Chat" },
+              ] as const).map((tab) => {
+                const active = promptsTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setPromptsTab(tab.id)}
+                    className={
+                      "rounded-full px-5 py-2 transition " +
+                      (active
+                        ? "bg-foreground text-background"
+                        : "text-muted-foreground hover:text-foreground")
+                    }
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="space-y-4">
