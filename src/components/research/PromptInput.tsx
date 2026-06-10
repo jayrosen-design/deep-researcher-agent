@@ -141,7 +141,7 @@ export function PromptInput({
                     persistDraft({ ...draft, investigatorModel: e.target.value as NavigatorModel })
                   }
                   title="Smaller/faster model for the ReAct JSON loop"
-                  className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                  className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
                 >
                   {modelOptions.map((m) => (
                     <option key={m} value={m}>
@@ -159,7 +159,7 @@ export function PromptInput({
                     persistDraft({ ...draft, synthesisModel: e.target.value as NavigatorModel })
                   }
                   title="Larger model for the final Markdown report"
-                  className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                  className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
                 >
                   {modelOptions.map((m) => (
                     <option key={m} value={m}>
@@ -192,7 +192,7 @@ export function PromptInput({
                     onChange={(e) =>
                       persistDraft({ ...draft, maxSources: Number(e.target.value) })
                     }
-                    className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                    className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
                   >
                     {SOURCE_COUNT_OPTIONS.map((n) => (
                       <option key={n} value={n}>
@@ -257,7 +257,7 @@ export function PromptInput({
                       "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition " +
                       (isActive
                         ? "border-foreground/40 bg-foreground text-background"
-                        : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground")
+                        : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
                     }
                   >
                     <RoleIcon className="size-3.5" />
@@ -283,10 +283,10 @@ export function PromptInput({
                         key={template.id}
                         type="button"
                         onClick={() => setValue(template.prompt)}
-                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/30 hover:bg-accent"
+                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
                       >
-                        <div className="text-sm font-medium text-foreground">{template.label}</div>
-                        <div className="text-xs text-muted-foreground">{template.description}</div>
+                        <div className="text-sm font-medium text-foreground group-hover:text-background">{template.label}</div>
+                        <div className="text-xs text-muted-foreground group-hover:text-background/80">{template.description}</div>
                       </button>
                     ))}
                   </div>
@@ -338,7 +338,7 @@ export function PromptInput({
                   persistDraft({ ...draft, navigatorApiKey: e.target.value.trim() })
                 }
                 placeholder="sk-…"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               />
             </label>
             <label className="block">
@@ -356,7 +356,7 @@ export function PromptInput({
                     searchProvider: e.target.value as "firecrawl" | "tavily",
                   })
                 }
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               >
                 <option value="firecrawl">Firecrawl (default)</option>
                 <option value="tavily">Tavily</option>
@@ -381,7 +381,7 @@ export function PromptInput({
                   persistDraft({ ...draft, firecrawlApiKey: e.target.value.trim() })
                 }
                 placeholder="fc-…"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               />
             </label>
             <label className="block">
@@ -403,7 +403,7 @@ export function PromptInput({
                   persistDraft({ ...draft, tavilyApiKey: e.target.value.trim() })
                 }
                 placeholder="tvly-…"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none"
+                className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
               />
             </label>
           </div>
@@ -480,7 +480,7 @@ export function PromptInput({
                     value={value}
                     onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
                     rows={10}
-                    className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none"
+                    className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
                   />
                 </label>
               );
