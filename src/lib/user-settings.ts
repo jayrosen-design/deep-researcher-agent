@@ -38,6 +38,11 @@ export type UserSettings = {
   synthesisSystemPrompt: string;
   personaChatBasePrompt: string;
   personaChat: Record<PersonaChatRoleId, PersonaChatSetting>;
+  moeRouterModel: NavigatorModel;
+  moeModeratorModel: NavigatorModel;
+  moeRouterPrompt: string;
+  moeExpertPrompt: string;
+  moeModeratorPrompt: string;
 };
 
 const PERSONA_ROLE_IDS: PersonaChatRoleId[] = [
