@@ -1111,6 +1111,7 @@ function Index() {
             sources,
           }}
           settings={settings}
+          roleId={roleId}
         />
       )}
     </div>
