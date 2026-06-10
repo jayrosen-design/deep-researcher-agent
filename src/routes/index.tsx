@@ -13,6 +13,7 @@ import { ReportView } from "@/components/research/ReportView";
 import { SourcesPanel } from "@/components/research/SourcesPanel";
 import { Navbar } from "@/components/research/Navbar";
 import { HistorySidebar } from "@/components/research/HistorySidebar";
+import { StageHeader } from "@/components/research/StageHeader";
 import { ResearchChat } from "@/components/research/ResearchChat";
 import { saveEntry, updateEntry, type HistoryEntry } from "@/lib/research-history";
 
@@ -873,6 +874,9 @@ function Index() {
       <>
         <Navbar onSignOut={handleSignOut} />
         <WorkflowStepper steps={workflowSteps} />
+        <div className="mx-auto w-full max-w-4xl px-4 pt-6 sm:px-6">
+          <StageHeader stage="plan" title="Strategist is drafting your research plan" />
+        </div>
         <PlanReview
           prompt={prompt}
           plan={plan}
@@ -910,7 +914,12 @@ function Index() {
 
           {!isDone && (
             <div className="space-y-6">
+              <StageHeader
+                stage={reviewing ? "report" : "searching"}
+                title={reviewing ? "Writer is drafting the report" : "Searcher is investigating sources"}
+              />
               <section className="rounded-xl border border-border bg-card p-4 sm:p-6">
+
 
                 <div className="mb-4 flex items-center justify-between">
                   <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -975,6 +984,7 @@ function Index() {
 
           {isDone && report && (
             <div className="space-y-8">
+              <StageHeader stage="final" title="Your research team's final report" />
               <section className="rounded-xl border border-border bg-card p-4 sm:p-8">
                 <ReportView markdown={report} sources={sources} prompt={prompt} />
               </section>

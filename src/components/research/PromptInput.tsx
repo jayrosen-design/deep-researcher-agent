@@ -19,6 +19,7 @@ import {
 } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates";
 import { listNavigatorModels } from "@/lib/navigator-models.functions";
+import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
 
 const RECOMMENDED_INVESTIGATOR = new Set<string>([
   "llama-3.1-8b-instruct",
@@ -104,14 +105,25 @@ export function PromptInput({
     onSettingsChange(next);
   };
 
+  const activeRole =
+    RESEARCH_ROLE_GROUPS.find((r) => r.id === activeRoleId) ?? RESEARCH_ROLE_GROUPS[0];
+  const personaImage = PERSONA_IMAGES[activeRoleId];
+
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-4xl flex-col items-center justify-center px-6">
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-6xl flex-row items-center justify-center gap-8 px-6">
+      <div className="hidden shrink-0 md:block">
+        <img
+          key={activeRoleId}
+          src={personaImage}
+          alt={`${activeRole.label} octopus persona`}
+          className="h-56 w-56 object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_28px_rgba(0,242,254,0.35)]"
+        />
+      </div>
+      <div className="flex w-full max-w-4xl flex-col items-center justify-center">
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
-        Deep Researcher Agent
+        Deep Researcher Agent · {activeRole.label}
       </div>
       <h1 className="text-center text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-
-
         What should we research?
       </h1>
       <p className="mt-3 text-center text-base text-muted-foreground">
@@ -266,33 +278,27 @@ export function PromptInput({
                 );
               })}
             </div>
-            {(() => {
-              const activeRole =
-                RESEARCH_ROLE_GROUPS.find((r) => r.id === activeRoleId) ?? RESEARCH_ROLE_GROUPS[0];
-              return (
-                <div className="rounded-xl border border-border bg-card p-5">
-                  <div className="mb-3">
-                    <div className="text-sm font-semibold text-foreground">{activeRole.label} templates</div>
-                    <div className="text-xs text-muted-foreground">
-                      {activeRole.description}. Click one to load it, then replace [PLACEHOLDERS] with your specifics.
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {activeRole.templates.map((template) => (
-                      <button
-                        key={template.id}
-                        type="button"
-                        onClick={() => setValue(template.prompt)}
-                        className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
-                      >
-                        <div className="text-sm font-medium text-foreground group-hover:text-background">{template.label}</div>
-                        <div className="text-xs text-muted-foreground group-hover:text-background/80">{template.description}</div>
-                      </button>
-                    ))}
-                  </div>
+            <div className="rounded-xl border border-border bg-card p-5">
+              <div className="mb-3">
+                <div className="text-sm font-semibold text-foreground">{activeRole.label} templates</div>
+                <div className="text-xs text-muted-foreground">
+                  {activeRole.description}. Click one to load it, then replace [PLACEHOLDERS] with your specifics.
                 </div>
-              );
-            })()}
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {activeRole.templates.map((template) => (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => setValue(template.prompt)}
+                    className="group flex flex-col items-start gap-1 rounded-lg border border-border bg-background p-3 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
+                  >
+                    <div className="text-sm font-medium text-foreground group-hover:text-background">{template.label}</div>
+                    <div className="text-xs text-muted-foreground group-hover:text-background/80">{template.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -444,50 +450,61 @@ export function PromptInput({
                 label: "Strategist (plan)",
                 hint: "Drafts the structured research plan.",
                 defaultValue: DEFAULT_SETTINGS.planSystemPrompt,
+                image: AGENT_IMAGES.strategist,
               },
               {
                 key: "agentSystemPrompt",
                 label: "Searcher (ReAct loop)",
                 hint: "JSON-only tool-calling loop. Edit with care.",
                 defaultValue: DEFAULT_SETTINGS.agentSystemPrompt,
+                image: AGENT_IMAGES.searcher,
               },
               {
                 key: "synthesisSystemPrompt",
                 label: "Writer (final report)",
                 hint: "Writes the final Markdown report from gathered sources.",
                 defaultValue: DEFAULT_SETTINGS.synthesisSystemPrompt,
+                image: AGENT_IMAGES.writer,
               },
             ] as const).map((field) => {
               const value = draft[field.key];
               const isDefault = value === field.defaultValue;
               return (
-                <label key={field.key} className="block">
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>
-                      <span className="text-foreground">{field.label}</span> — {field.hint}
-                    </span>
-                    <button
-                      type="button"
-                      disabled={isDefault}
-                      onClick={() => persistDraft({ ...draft, [field.key]: field.defaultValue })}
-                      className="inline-flex items-center gap-1 underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
-                    >
-                      <RotateCcw className="size-3" />
-                      Reset
-                    </button>
-                  </div>
-                  <textarea
-                    value={value}
-                    onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
-                    rows={10}
-                    className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                <div key={field.key} className="flex gap-3">
+                  <img
+                    src={field.image}
+                    alt={`${field.label} octopus agent`}
+                    className="hidden h-24 w-24 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_18px_rgba(0,242,254,0.3)]"
                   />
-                </label>
+                  <label className="block flex-1">
+                    <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                      <span>
+                        <span className="text-foreground">{field.label}</span> — {field.hint}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={isDefault}
+                        onClick={() => persistDraft({ ...draft, [field.key]: field.defaultValue })}
+                        className="inline-flex items-center gap-1 underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
+                      >
+                        <RotateCcw className="size-3" />
+                        Reset
+                      </button>
+                    </div>
+                    <textarea
+                      value={value}
+                      onChange={(e) => persistDraft({ ...draft, [field.key]: e.target.value })}
+                      rows={10}
+                      className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                    />
+                  </label>
+                </div>
               );
             })}
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }
