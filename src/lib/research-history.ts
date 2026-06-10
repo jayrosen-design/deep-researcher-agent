@@ -2,6 +2,7 @@
 // Stored only in the browser's localStorage (per-device, never sent to the server).
 
 import type { SearchResult } from "./web-search.functions";
+import type { UserRoleId } from "./research-templates";
 
 const KEY = "dr-history-v1";
 const MAX_ENTRIES = 100;
@@ -14,6 +15,7 @@ export type HistoryEntry = {
   report: string;
   sources: SearchResult[];
   createdAt: number;
+  roleId?: UserRoleId;
 };
 
 function safeParse(raw: string | null): HistoryEntry[] {
