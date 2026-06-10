@@ -60,7 +60,7 @@ export function PromptInput({
           </p>
 
 
-          <form onSubmit={handleSubmit} className="mt-10 w-full">
+          <form onSubmit={handleSubmit} className="mt-6 w-full">
             <div className="relative rounded-2xl border border-border bg-card shadow-sm transition focus-within:border-foreground/30 focus-within:shadow-md">
               <textarea
                 value={value}
