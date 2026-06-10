@@ -105,7 +105,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="rounded-md p-1 text-muted-foreground hover:bg-foreground hover:text-background"
           title="Collapse sidebar"
         >
           <PanelLeftClose className="size-4" />
