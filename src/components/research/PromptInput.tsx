@@ -4,7 +4,7 @@ import { ArrowUp, LayoutTemplate } from "lucide-react";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { SOURCE_COUNT_OPTIONS, type UserSettings } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates";
-import { PERSONA_IMAGES } from "@/lib/persona-images";
+import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
 
 export function PromptInput({
   onSubmit,
@@ -42,12 +42,19 @@ export function PromptInput({
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-8 pb-12">
       <div className="flex w-full flex-col items-center">
-        <img
-          key={activeRoleId}
-          src={personaImage}
-          alt={`${activeRole.label} octopus persona`}
-          className="pointer-events-none h-[300px] w-auto object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
-        />
+        <div className="flex w-full items-center justify-center gap-6">
+          <img
+            key={activeRoleId}
+            src={personaImage}
+            alt={`${activeRole.label} octopus persona`}
+            className="pointer-events-none h-[300px] w-auto object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
+          />
+          <img
+            src={AGENT_IMAGES.workingTogether}
+            alt="Agents working together"
+            className="pointer-events-none h-[300px] w-auto object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
+          />
+        </div>
         <div className="flex w-full flex-col items-center justify-center">
           <div className="mt-4 mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
             Deep Researcher Agent · {activeRole.label}
