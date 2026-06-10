@@ -135,7 +135,7 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
     try {
       const { content } = await navigatorChat({
         data: {
-          model: settings.synthesisModel,
+          model: chatModel,
           temperature: 0.3,
           maxTokens: 4000,
           apiKey: settings.navigatorApiKey || undefined,
