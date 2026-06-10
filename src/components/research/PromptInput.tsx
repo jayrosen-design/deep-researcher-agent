@@ -159,7 +159,7 @@ export function PromptInput({
                     persistDraft({ ...draft, synthesisModel: e.target.value as NavigatorModel })
                   }
                   title="Larger model for the final Markdown report"
-                  className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30"
+                  className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
                 >
                   {modelOptions.map((m) => (
                     <option key={m} value={m}>
