@@ -245,7 +245,20 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
         <p className="mt-3 text-center text-base text-muted-foreground">
           Ask any question and have one expert, an auto-routed group, or a full panel weigh in.
         </p>
+        <div className="mt-5 w-full max-w-[720px]">
+          <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-border bg-muted/20">
+            <img
+              src={panelImage}
+              alt={`${panelImageLabel} panel`}
+              width={720}
+              height={540}
+              loading="eager"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
       </div>
+
 
 
       {/* Mode tabs */}
