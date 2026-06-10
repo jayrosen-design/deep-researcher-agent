@@ -145,7 +145,7 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   // Mode state
   const [mode, setMode] = useState<MoeMode>("single");
   const [singleExpert, setSingleExpert] = useState<MoeExpertId>(roleId ?? "researcher");
-  const [panelPreset, setPanelPreset] = useState<PanelPreset>("default");
+  const [panelPreset, setPanelPreset] = useState<PanelPreset>("education");
   const [customPanel, setCustomPanel] = useState<MoeExpertId[]>([
     "researcher",
     "experience-designer",

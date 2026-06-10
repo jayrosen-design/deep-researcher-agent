@@ -121,7 +121,6 @@ export const PANEL_PRESET_ORDER: PanelPresetId[] = [
   "product-design",
   "implementation-strategy",
   "technical-feasibility",
-  "default",
 ];
 
 export const MOE_ROUTER_SYSTEM_PROMPT = `You are an expert router inside Deep Researcher Agent.

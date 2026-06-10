@@ -236,13 +236,19 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-6 pb-8 sm:px-6">
-      <div className="flex items-center gap-2">
-        <MessagesSquare className="size-5 text-foreground" />
-        <h1 className="text-base font-semibold text-foreground">MoE Chat</h1>
-        <span className="text-xs text-muted-foreground">
-          Chat directly with experts — no research run required.
-        </span>
+      <div className="flex flex-col items-center text-center">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+          <MessagesSquare className="size-3.5" />
+          Mixture of Experts · No research run required
+        </div>
+        <h1 className="text-center text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          Chat with Mixture of Experts
+        </h1>
+        <p className="mt-3 text-center text-base text-muted-foreground">
+          Ask any question and have one expert, an auto-routed group, or a full panel weigh in.
+        </p>
       </div>
+
 
       {/* Mode tabs */}
       <div className="inline-flex w-full items-center rounded-full border border-border bg-muted/40 p-1 text-xs">
@@ -389,54 +395,6 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
         </div>
       )}
 
-      {/* Templates */}
-      <div className="space-y-2">
-        <div>
-          <button
-            type="button"
-            onClick={() => setShowTemplates((s) => !s)}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
-          >
-            <LayoutTemplate className="size-3.5" />
-            {showTemplates ? "Hide templates" : "Templates"}
-          </button>
-        </div>
-        <Collapsible open={showTemplates} onOpenChange={setShowTemplates}>
-          <CollapsibleContent className="collapsible-content">
-            <div className="rounded-lg border border-border bg-muted/20 p-3">
-              <div className="mb-2 text-[11px] text-muted-foreground">
-                Starter prompts for the {mode === "panel" ? "selected panel" : "selected expert"}.
-                Click one to load it into the composer.
-              </div>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {suggestedTemplates.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => {
-                      setInput(t.prompt);
-                      setShowTemplates(false);
-                    }}
-                    className="group flex flex-col items-start gap-1 rounded-md border border-border bg-background p-2 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
-                  >
-                    <div className="text-xs font-medium text-foreground group-hover:text-background">
-                      {t.label}
-                    </div>
-                    <div className="text-[11px] text-muted-foreground group-hover:text-background/80">
-                      {t.description}
-                    </div>
-                  </button>
-                ))}
-                {suggestedTemplates.length === 0 && (
-                  <div className="text-xs text-muted-foreground">
-                    No templates available for the current selection.
-                  </div>
-                )}
-              </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
 
 
       {/* Messages */}
@@ -582,8 +540,8 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question for the experts…"
-          rows={2}
-          className="min-h-[40px] flex-1 resize-none bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          rows={5}
+          className="min-h-[120px] flex-1 resize-y bg-transparent px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
         <button
           type="button"
@@ -595,6 +553,56 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           Send
         </button>
       </div>
+
+      {/* Templates (below composer so opening doesn't push the chat) */}
+      <div className="space-y-2">
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowTemplates((s) => !s)}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
+          >
+            <LayoutTemplate className="size-3.5" />
+            {showTemplates ? "Hide templates" : "Templates"}
+          </button>
+        </div>
+        <Collapsible open={showTemplates} onOpenChange={setShowTemplates}>
+          <CollapsibleContent className="collapsible-content">
+            <div className="rounded-lg border border-border bg-muted/20 p-3">
+              <div className="mb-2 text-[11px] text-muted-foreground">
+                Starter prompts for the {mode === "panel" ? "selected panel" : "selected expert"}.
+                Click one to load it into the composer.
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {suggestedTemplates.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      setInput(t.prompt);
+                      setShowTemplates(false);
+                    }}
+                    className="group flex flex-col items-start gap-1 rounded-md border border-border bg-background p-2 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
+                  >
+                    <div className="text-xs font-medium text-foreground group-hover:text-background">
+                      {t.label}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground group-hover:text-background/80">
+                      {t.description}
+                    </div>
+                  </button>
+                ))}
+                {suggestedTemplates.length === 0 && (
+                  <div className="text-xs text-muted-foreground">
+                    No templates available for the current selection.
+                  </div>
+                )}
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+
     </div>
   );
 }
