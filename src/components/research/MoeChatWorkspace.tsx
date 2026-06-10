@@ -395,54 +395,6 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
         </div>
       )}
 
-      {/* Templates */}
-      <div className="space-y-2">
-        <div>
-          <button
-            type="button"
-            onClick={() => setShowTemplates((s) => !s)}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
-          >
-            <LayoutTemplate className="size-3.5" />
-            {showTemplates ? "Hide templates" : "Templates"}
-          </button>
-        </div>
-        <Collapsible open={showTemplates} onOpenChange={setShowTemplates}>
-          <CollapsibleContent className="collapsible-content">
-            <div className="rounded-lg border border-border bg-muted/20 p-3">
-              <div className="mb-2 text-[11px] text-muted-foreground">
-                Starter prompts for the {mode === "panel" ? "selected panel" : "selected expert"}.
-                Click one to load it into the composer.
-              </div>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {suggestedTemplates.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => {
-                      setInput(t.prompt);
-                      setShowTemplates(false);
-                    }}
-                    className="group flex flex-col items-start gap-1 rounded-md border border-border bg-background p-2 text-left transition hover:border-foreground/40 hover:bg-foreground hover:text-background"
-                  >
-                    <div className="text-xs font-medium text-foreground group-hover:text-background">
-                      {t.label}
-                    </div>
-                    <div className="text-[11px] text-muted-foreground group-hover:text-background/80">
-                      {t.description}
-                    </div>
-                  </button>
-                ))}
-                {suggestedTemplates.length === 0 && (
-                  <div className="text-xs text-muted-foreground">
-                    No templates available for the current selection.
-                  </div>
-                )}
-              </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
 
 
       {/* Messages */}
