@@ -41,14 +41,23 @@ export function PromptInput({
   onSubmit,
   settings,
   onSettingsChange,
+  roleId,
+  onRoleChange,
 }: {
   onSubmit: (prompt: string) => void;
   settings: UserSettings;
   onSettingsChange: (s: UserSettings) => void;
+  roleId?: UserRoleId;
+  onRoleChange?: (id: UserRoleId) => void;
 }) {
   const [value, setValue] = useState("");
   const [showSettings, setShowSettings] = useState(false);
-  const [activeRoleId, setActiveRoleId] = useState<UserRoleId>("researcher");
+  const [internalRoleId, setInternalRoleId] = useState<UserRoleId>("researcher");
+  const activeRoleId = roleId ?? internalRoleId;
+  const setActiveRoleId = (id: UserRoleId) => {
+    setInternalRoleId(id);
+    onRoleChange?.(id);
+  };
   const [showPrompts, setShowPrompts] = useState(false);
   const [showTemplates, setShowTemplates] = useState(true);
   const [draft, setDraft] = useState<UserSettings>(settings);
