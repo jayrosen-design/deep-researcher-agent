@@ -653,6 +653,102 @@ export function PromptInput({
                     </div>
                   );
                 })}
+
+                {/* Mixture of Experts section */}
+                <div className="space-y-3 rounded-md border border-border bg-muted/20 p-3">
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">Mixture of Experts (MoE)</div>
+                    <div className="text-xs text-muted-foreground">
+                      Used for Auto-Pick and Expert Panel modes in post-report chat.
+                    </div>
+                  </div>
+
+                  {([
+                    {
+                      key: "moeRouterPrompt" as const,
+                      modelKey: "moeRouterModel" as const,
+                      label: "Expert router",
+                      hint: "Selects 1–3 experts (or 4–6 for panel questions) based on the user's question.",
+                      defaultPrompt: MOE_ROUTER_SYSTEM_PROMPT,
+                      showModel: true,
+                    },
+                    {
+                      key: "moeExpertPrompt" as const,
+                      modelKey: null,
+                      label: "Expert answer instructions",
+                      hint: "Appended to each persona's prompt. Each expert uses its own model from the persona above.",
+                      defaultPrompt: MOE_EXPERT_ANSWER_INSTRUCTIONS,
+                      showModel: false,
+                    },
+                    {
+                      key: "moeModeratorPrompt" as const,
+                      modelKey: "moeModeratorModel" as const,
+                      label: "Moderator / synthesizer",
+                      hint: "Combines expert responses into a single grounded answer.",
+                      defaultPrompt: MOE_MODERATOR_SYSTEM_PROMPT,
+                      showModel: true,
+                    },
+                  ]).map((f) => {
+                    const value = draft[f.key];
+                    const isDefault = value === f.defaultPrompt &&
+                      (!f.showModel || draft[f.modelKey!] === DEFAULT_SETTINGS[f.modelKey!]);
+                    return (
+                      <div key={f.key} className="rounded-md border border-border bg-background p-3">
+                        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-semibold text-foreground">{f.label}</span>
+                            <span className="text-xs text-muted-foreground">{f.hint}</span>
+                            {f.showModel && f.modelKey && (
+                              <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <span>Model</span>
+                                <select
+                                  value={draft[f.modelKey]}
+                                  onChange={(e) =>
+                                    persistDraft({
+                                      ...draft,
+                                      [f.modelKey!]: e.target.value as NavigatorModel,
+                                    } as UserSettings)
+                                  }
+                                  className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
+                                >
+                                  {modelOptions.map((m) => (
+                                    <option key={m} value={m}>
+                                      {m}
+                                      {RECOMMENDED_SYNTHESIZER.has(m) ? " (Recommended)" : ""}
+                                    </option>
+                                  ))}
+                                </select>
+                              </label>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            disabled={isDefault}
+                            onClick={() => {
+                              const next: UserSettings = { ...draft, [f.key]: f.defaultPrompt } as UserSettings;
+                              if (f.showModel && f.modelKey) {
+                                (next as Record<string, unknown>)[f.modelKey] = DEFAULT_SETTINGS[f.modelKey];
+                              }
+                              persistDraft(next);
+                            }}
+                            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
+                          >
+                            <RotateCcw className="size-3" />
+                            Reset
+                          </button>
+                        </div>
+                        <textarea
+                          value={value}
+                          onChange={(e) =>
+                            persistDraft({ ...draft, [f.key]: e.target.value } as UserSettings)
+                          }
+                          rows={8}
+                          className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
