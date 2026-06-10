@@ -116,8 +116,7 @@ export function PromptInput({
           key={activeRoleId}
           src={personaImage}
           alt={`${activeRole.label} octopus persona`}
-          className="h-56 w-56 object-contain opacity-0 transition-opacity duration-500 ease-out [animation:fadeIn_0.5s_ease-out_forwards] dark:drop-shadow-[0_0_28px_rgba(0,242,254,0.35)]"
-          style={{ animation: "fadeIn 0.5s ease-out forwards" }}
+          className="h-56 w-56 object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_28px_rgba(0,242,254,0.35)]"
         />
       </div>
       <div className="flex w-full max-w-4xl flex-col items-center justify-center">
