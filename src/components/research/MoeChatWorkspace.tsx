@@ -236,13 +236,19 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-6 pb-8 sm:px-6">
-      <div className="flex items-center gap-2">
-        <MessagesSquare className="size-5 text-foreground" />
-        <h1 className="text-base font-semibold text-foreground">MoE Chat</h1>
-        <span className="text-xs text-muted-foreground">
-          Chat directly with experts — no research run required.
-        </span>
+      <div className="flex flex-col items-center text-center">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+          <MessagesSquare className="size-3.5" />
+          Mixture of Experts · No research run required
+        </div>
+        <h1 className="text-center text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          Chat with Mixture of Experts
+        </h1>
+        <p className="mt-3 text-center text-base text-muted-foreground">
+          Ask any question and have one expert, an auto-routed group, or a full panel weigh in.
+        </p>
       </div>
+
 
       {/* Mode tabs */}
       <div className="inline-flex w-full items-center rounded-full border border-border bg-muted/40 p-1 text-xs">
