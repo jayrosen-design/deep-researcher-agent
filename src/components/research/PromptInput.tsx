@@ -257,7 +257,7 @@ export function PromptInput({
                       "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition " +
                       (isActive
                         ? "border-foreground/40 bg-foreground text-background"
-                        : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground")
+                        : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
                     }
                   >
                     <RoleIcon className="size-3.5" />
