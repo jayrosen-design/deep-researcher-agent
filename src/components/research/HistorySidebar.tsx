@@ -115,7 +115,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={onNew}
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium text-foreground hover:bg-accent"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
         >
           <Plus className="size-3.5" />
           New research
