@@ -139,7 +139,10 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
     return [roleId ?? singleExpert ?? "researcher"];
   }, [mode, singleExpert, effectivePanel, roleId]);
 
-  const suggestedTemplates: ResearchTemplate[] = useMemo(() => {
+  const suggestedTemplates: Array<MoePanelTemplate | ResearchTemplate> = useMemo(() => {
+    if (mode === "panel" && panelPreset !== "custom" && panelPreset !== "default") {
+      return MOE_PANEL_TEMPLATES[panelPreset];
+    }
     const ids = new Set<UserRoleId>(templateExperts);
     const list: ResearchTemplate[] = [];
     const seen = new Set<string>();
@@ -152,7 +155,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
       }
     }
     return list.slice(0, 8);
-  }, [templateExperts]);
+  }, [mode, panelPreset, templateExperts]);
 
   const stageLabel: Record<Exclude<LoadingStage, null>, string> = {
     routing: "Routing question…",
