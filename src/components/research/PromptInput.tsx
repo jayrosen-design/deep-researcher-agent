@@ -90,8 +90,9 @@ export function PromptInput({
     const merged = new Set<string>(base);
     merged.add(settings.investigatorModel);
     merged.add(settings.synthesisModel);
+    merged.add(settings.planModel);
     return Array.from(merged).sort();
-  }, [remoteModels, settings.investigatorModel, settings.synthesisModel]);
+  }, [remoteModels, settings.investigatorModel, settings.synthesisModel, settings.planModel]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -364,7 +365,7 @@ export function PromptInput({
       </Dialog>
 
       <Dialog open={showPrompts} onOpenChange={setShowPrompts}>
-        <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
+        <DialogContent className="max-h-[85vh] max-w-[90vw] overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -378,6 +379,7 @@ export function PromptInput({
                 onClick={() =>
                   persistDraft({
                     ...draft,
+                    planModel: DEFAULT_SETTINGS.planModel,
                     planSystemPrompt: DEFAULT_SETTINGS.planSystemPrompt,
                     agentSystemPrompt: DEFAULT_SETTINGS.agentSystemPrompt,
                     synthesisSystemPrompt: DEFAULT_SETTINGS.synthesisSystemPrompt,
@@ -407,6 +409,8 @@ export function PromptInput({
                 hint: "Drafts the structured research plan.",
                 defaultValue: DEFAULT_SETTINGS.planSystemPrompt,
                 image: AGENT_IMAGES.strategist,
+                modelKey: "planModel",
+                recommendedSet: RECOMMENDED_PLANNER,
               },
               {
                 key: "agentSystemPrompt",
