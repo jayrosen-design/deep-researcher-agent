@@ -248,29 +248,28 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-6 pb-8 sm:px-6">
       <div className="flex flex-col items-center text-center">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
+        <img
+          key={heroImage}
+          src={heroImage}
+          alt={`${heroLabel}${isSingle ? "" : " panel"}`}
+          loading="eager"
+          className={
+            "h-[300px] w-auto object-contain transition-opacity duration-300 " +
+            (isSingle ? "dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]" : "rounded-xl")
+          }
+        />
+        <div className="mt-3 mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
           <MessagesSquare className="size-3.5" />
           Mixture of Experts · No research run required
         </div>
-        <h1 className="text-center text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+        <h1 className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Chat with Mixture of Experts
         </h1>
-        <p className="mt-3 text-center text-base text-muted-foreground">
+        <p className="mt-2 text-center text-sm text-muted-foreground">
           Ask any question and have one expert, an auto-routed group, or a full panel weigh in.
         </p>
-        <div className="mt-5 w-full max-w-[720px]">
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-border bg-muted/20">
-            <img
-              src={panelImage}
-              alt={`${panelImageLabel} panel`}
-              width={720}
-              height={540}
-              loading="eager"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
       </div>
+
 
 
 
