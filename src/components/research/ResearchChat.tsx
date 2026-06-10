@@ -180,7 +180,15 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
     <div className="fixed bottom-6 right-6 z-40 flex h-[min(620px,calc(100vh-3rem))] w-[min(420px,calc(100vw-3rem))] flex-col rounded-xl border border-border bg-card shadow-2xl">
       <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
-          <MessageSquare className="size-4 text-foreground" />
+          {roleId && PERSONA_IMAGES[roleId] ? (
+            <img
+              src={PERSONA_IMAGES[roleId]}
+              alt="Your persona"
+              className="size-7 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <MessageSquare className="size-4 text-foreground" />
+          )}
           <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground">
             Chat with research
           </h2>
