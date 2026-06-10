@@ -13,8 +13,11 @@ import {
   MOE_EXPERT_IDS,
   MOE_EXPERT_LABELS,
   MOE_PANEL_PRESETS,
+  MOE_PANEL_PRESET_META,
+  PANEL_PRESET_ORDER,
   type ExpertAnswer,
   type MoeExpertId,
+  type PanelPresetId,
   type RouterRoute,
 } from "@/lib/moe-prompts";
 import { runMoeTurn, type MoeMode } from "@/lib/moe-chat";
