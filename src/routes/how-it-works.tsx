@@ -3,6 +3,8 @@ import { ArrowLeft } from "lucide-react";
 import { BrandLockup } from "@/components/research/BrandLockup";
 import { ThemeToggle } from "@/components/research/ThemeToggle";
 import { AGENT_IMAGES } from "@/lib/persona-images";
+import apiKeysScreenshot from "@/assets/api-keys-screenshot.png";
+
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
