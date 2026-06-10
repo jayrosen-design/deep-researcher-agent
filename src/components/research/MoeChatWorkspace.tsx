@@ -259,7 +259,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           alt={`${heroLabel}${isSingle ? "" : " panel"}`}
           loading="eager"
           className={
-            "h-[160px] w-auto object-contain transition-opacity duration-300 " +
+            (messages.length === 0 ? "h-[300px] " : "h-[160px] ") + "w-auto object-contain transition-opacity duration-300 " +
             (isSingle ? "dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]" : "rounded-xl")
           }
         />
@@ -418,7 +418,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="min-h-[120px] flex-1 overflow-y-auto rounded-lg border border-border bg-background p-3"
+        className={(messages.length === 0 ? "min-h-[120px] " : "min-h-[500px] ") + "flex-1 overflow-y-auto rounded-lg border border-border bg-background p-3"}
       >
         {messages.length === 0 && !sending && (
           <div className="py-8 text-center text-sm text-muted-foreground">
