@@ -146,6 +146,11 @@ export function loadSettings(): UserSettings {
       synthesisSystemPrompt: coerceString(parsed.synthesisSystemPrompt, SYNTHESIS_SYSTEM_PROMPT),
       personaChatBasePrompt: coerceString(parsed.personaChatBasePrompt, PERSONA_CHAT_BASE_SYSTEM_PROMPT),
       personaChat: coercePersonaChat(parsed.personaChat),
+      moeRouterModel: coerceModel(parsed.moeRouterModel, DEFAULT_SYNTHESIS_MODEL),
+      moeModeratorModel: coerceModel(parsed.moeModeratorModel, DEFAULT_SYNTHESIS_MODEL),
+      moeRouterPrompt: coerceString(parsed.moeRouterPrompt, MOE_ROUTER_SYSTEM_PROMPT),
+      moeExpertPrompt: coerceString(parsed.moeExpertPrompt, MOE_EXPERT_ANSWER_INSTRUCTIONS),
+      moeModeratorPrompt: coerceString(parsed.moeModeratorPrompt, MOE_MODERATOR_SYSTEM_PROMPT),
     };
   } catch {
     return DEFAULT_SETTINGS;
