@@ -32,9 +32,6 @@ const RECOMMENDED_SYNTHESIZER = new Set<string>([
   "nemotron-3-super-120b-a12b",
 ]);
 
-
-
-
 export function PromptInput({
   onSubmit,
   settings,
@@ -53,7 +50,6 @@ export function PromptInput({
   const [remoteModels, setRemoteModels] = useState<string[] | null>(null);
   const [modelsLoading, setModelsLoading] = useState(false);
   const [modelsError, setModelsError] = useState<string | null>(null);
-
 
   useEffect(() => {
     setDraft(settings);
@@ -142,58 +138,6 @@ export function PromptInput({
             className="w-full resize-none rounded-2xl bg-transparent px-5 py-4 text-base text-foreground placeholder:text-muted-foreground/70 focus:outline-none"
           />
           <div className="flex flex-col gap-2 border-t border-border px-3 py-2">
-            {/* Row 1: model selectors */}
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Searcher</span>
-                <select
-                  value={settings.investigatorModel}
-                  onChange={(e) =>
-                    persistDraft({ ...draft, investigatorModel: e.target.value as NavigatorModel })
-                  }
-                  title="Smaller/faster model for the ReAct JSON loop"
-                  className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
-                >
-                  {modelOptions.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                      {RECOMMENDED_INVESTIGATOR.has(m) ? " (Recommended)" : ""}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="px-1">Writer</span>
-                <select
-                  value={settings.synthesisModel}
-                  onChange={(e) =>
-                    persistDraft({ ...draft, synthesisModel: e.target.value as NavigatorModel })
-                  }
-                  title="Larger model for the final Markdown report"
-                  className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
-                >
-                  {modelOptions.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                      {RECOMMENDED_SYNTHESIZER.has(m) ? " (Recommended)" : ""}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <span className="text-[11px] text-muted-foreground/80">
-                {modelsLoading
-                  ? "Loading models…"
-                  : remoteModels
-                    ? `${remoteModels.length} models available for your key`
-                    : modelsError
-                      ? "Using bundled defaults (key has no model list)"
-                      : "Using bundled defaults"}
-              </span>
-            </div>
-
-
-            {/* Row 2: max sources + templates + api keys, with submit on the right */}
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-3">
                 <label className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -301,7 +245,6 @@ export function PromptInput({
           </div>
         </CollapsibleContent>
       </Collapsible>
-
 
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent className="max-w-2xl">
@@ -443,6 +386,15 @@ export function PromptInput({
             </div>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="text-[11px] text-muted-foreground/80">
+              {modelsLoading
+                ? "Loading models…"
+                : remoteModels
+                  ? `${remoteModels.length} models available for your key`
+                  : modelsError
+                    ? "Using bundled defaults (key has no model list)"
+                    : "Using bundled defaults"}
+            </div>
             {([
               {
                 key: "planSystemPrompt",
@@ -457,6 +409,8 @@ export function PromptInput({
                 hint: "JSON-only tool-calling loop. Edit with care.",
                 defaultValue: DEFAULT_SETTINGS.agentSystemPrompt,
                 image: AGENT_IMAGES.searcher,
+                modelKey: "investigatorModel",
+                recommendedSet: RECOMMENDED_INVESTIGATOR,
               },
               {
                 key: "synthesisSystemPrompt",
@@ -464,6 +418,8 @@ export function PromptInput({
                 hint: "Writes the final Markdown report from gathered sources.",
                 defaultValue: DEFAULT_SETTINGS.synthesisSystemPrompt,
                 image: AGENT_IMAGES.writer,
+                modelKey: "synthesisModel",
+                recommendedSet: RECOMMENDED_SYNTHESIZER,
               },
             ] as const).map((field) => {
               const value = draft[field.key];
@@ -475,16 +431,39 @@ export function PromptInput({
                     alt={`${field.label} octopus agent`}
                     className="hidden h-24 w-24 shrink-0 object-contain sm:block dark:drop-shadow-[0_0_18px_rgba(0,242,254,0.3)]"
                   />
-                  <label className="block flex-1">
-                    <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                      <span>
-                        <span className="text-foreground">{field.label}</span> — {field.hint}
-                      </span>
+                  <div className="flex-1">
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-base font-semibold text-foreground">{field.label}</span>
+                        <span className="text-xs text-muted-foreground">{field.hint}</span>
+                        {"modelKey" in field && (
+                          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <span>Model</span>
+                            <select
+                              value={settings[field.modelKey]}
+                              onChange={(e) =>
+                                persistDraft({
+                                  ...draft,
+                                  [field.modelKey]: e.target.value as NavigatorModel,
+                                } as UserSettings)
+                              }
+                              className="rounded-md border border-border bg-white px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-foreground/30 dark:bg-background"
+                            >
+                              {modelOptions.map((m) => (
+                                <option key={m} value={m}>
+                                  {m}
+                                  {field.recommendedSet?.has(m) ? " (Recommended)" : ""}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                        )}
+                      </div>
                       <button
                         type="button"
                         disabled={isDefault}
                         onClick={() => persistDraft({ ...draft, [field.key]: field.defaultValue })}
-                        className="inline-flex items-center gap-1 underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline disabled:opacity-40 disabled:no-underline"
                       >
                         <RotateCcw className="size-3" />
                         Reset
@@ -496,7 +475,7 @@ export function PromptInput({
                       rows={10}
                       className="w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-mono text-xs leading-relaxed text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
                     />
-                  </label>
+                  </div>
                 </div>
               );
             })}
