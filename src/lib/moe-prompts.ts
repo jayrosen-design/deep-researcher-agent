@@ -26,20 +26,103 @@ export const MOE_EXPERT_LABELS: Record<MoeExpertId, string> = {
   "business-operations": "Business & Operations",
 };
 
-export const MOE_PANEL_PRESETS: Record<"default" | "education", MoeExpertId[]> = {
+export type PanelPresetId =
+  | "education"
+  | "higher-education"
+  | "product-design"
+  | "implementation-strategy"
+  | "technical-feasibility"
+  | "default";
+
+export const MOE_PANEL_PRESETS: Record<PanelPresetId, MoeExpertId[]> = {
+  education: ["researcher", "school-teacher", "instructional-designer", "education-leader"],
+  "higher-education": [
+    "researcher",
+    "higher-education-instructor",
+    "instructional-designer",
+    "experience-designer",
+  ],
+  "product-design": [
+    "experience-designer",
+    "software-developer",
+    "communications-marketing",
+    "business-operations",
+  ],
+  "implementation-strategy": [
+    "researcher",
+    "education-leader",
+    "business-operations",
+    "communications-marketing",
+  ],
+  "technical-feasibility": [
+    "researcher",
+    "software-developer",
+    "experience-designer",
+    "business-operations",
+  ],
   default: [
     "researcher",
     "experience-designer",
     "software-developer",
     "business-operations",
   ],
-  education: [
-    "researcher",
-    "school-teacher",
-    "instructional-designer",
-    "education-leader",
-  ],
 };
+
+export const MOE_PANEL_PRESET_META: Record<
+  PanelPresetId,
+  { label: string; bestFor: string; description: string }
+> = {
+  education: {
+    label: "Education Panel",
+    bestFor:
+      "K-12 learning, classroom use, curriculum decisions, instructional strategy, school implementation.",
+    description:
+      "Evaluates research through classroom practice, learning design, and education leadership perspectives.",
+  },
+  "higher-education": {
+    label: "Higher Education Panel",
+    bestFor:
+      "College teaching, online courses, academic integrity, student engagement, course design, and assessment.",
+    description:
+      "Combines research evidence, university teaching practice, learning design, and student experience.",
+  },
+  "product-design": {
+    label: "Product Design Panel",
+    bestFor:
+      "Turning research into an app, website, platform, prototype, or user-facing product.",
+    description:
+      "Reviews the idea from UX, technical feasibility, audience positioning, and operational sustainability.",
+  },
+  "implementation-strategy": {
+    label: "Implementation Strategy Panel",
+    bestFor:
+      "Adoption planning, stakeholder buy-in, funding, rollout strategy, policy alignment, and organizational change.",
+    description:
+      "Translates research into a practical implementation plan with leadership, communication, and operational considerations.",
+  },
+  "technical-feasibility": {
+    label: "Technical Feasibility Panel",
+    bestFor:
+      "Evaluating whether an idea can realistically be built, scaled, maintained, and supported.",
+    description:
+      "Assesses evidence, system architecture, user experience, cost, staffing, privacy, security, and long-term maintainability.",
+  },
+  default: {
+    label: "Default Panel",
+    bestFor: "General multi-perspective analysis.",
+    description:
+      "Balanced cross-functional panel covering research, UX, engineering, and operations.",
+  },
+};
+
+export const PANEL_PRESET_ORDER: PanelPresetId[] = [
+  "education",
+  "higher-education",
+  "product-design",
+  "implementation-strategy",
+  "technical-feasibility",
+  "default",
+];
 
 export const MOE_ROUTER_SYSTEM_PROMPT = `You are an expert router inside Deep Researcher Agent.
 
