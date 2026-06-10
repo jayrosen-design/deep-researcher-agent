@@ -8,6 +8,7 @@ import {
   type HistoryEntry,
 } from "@/lib/research-history";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PERSONA_IMAGES } from "@/lib/persona-images";
 import { ThemeToggle } from "./ThemeToggle";
 
 type Props = {
