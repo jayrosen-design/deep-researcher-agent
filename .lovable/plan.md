@@ -1,52 +1,76 @@
-## 1. Make "Chat with this report" window opaque and expandable
+## 1. Move "API keys" and "System prompts" to the top navbar
 
-File: `src/components/research/ResearchChat.tsx`
+- Lift `showSettings` and `showPrompts` state (and the two `<Dialog>` modals) out of `PromptInput.tsx` into a new shared component `src/components/research/SettingsMenu.tsx` that renders two navbar buttons + both dialogs. It receives `settings`, `onSettingsChange` (and the model list it currently fetches).
+- Update `Navbar.tsx` to accept `settings` + `onSettingsChange` props and render `<SettingsMenu />` alongside Theme/How-it-works/Sign out, so the buttons are visible in every workflow mode (Deep Research, plan, research, and MoE Chat).
+- Remove the "API keys" and "System prompts" buttons (and the two `<Dialog>` blocks) from `PromptInput.tsx`. The "Templates" button stays in the Deep Research prompt bar.
+- In `routes/index.tsx`, pass `settings`/`setSettings` into `<Navbar>` everywhere it's rendered.
 
-- The floating panel uses `bg-card` which can read as translucent over the report. Swap to a fully opaque surface (`bg-background`) and add a stronger border + shadow so it visibly separates from the page.
-- Add an `expanded` state alongside the existing `open` state. New header control next to the minimize button:
-  - Collapsed (default): current size — `h-[min(720px,calc(100vh-3rem))] w-[min(480px,calc(100vw-3rem))]` anchored bottom-right.
-  - Expanded: near-fullscreen — `inset-4` (or `h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]`) centered, same opaque surface.
-- Use `Maximize2` / `Minimize2` icons from `lucide-react` for the toggle, with proper aria-labels.
-- Keep the minimized "Chat with this report" pill button unchanged.
+## 2. Templates button under MoE Chat
 
-## 2. Home page workflow mode toggle: Deep Research vs MoE Chat
+- Add a `<LayoutTemplate>` "Templates" button at the top of `MoeChatWorkspace.tsx` (next to the mode tabs).
+- Clicking opens a collapsible panel that lists curated MoE conversation starters. Source the list from `RESEARCH_ROLE_GROUPS` in `src/lib/research-templates.ts`:
+  - **Single mode**: show the templates for the currently selected single expert.
+  - **Auto mode**: show templates from the user's preferred `roleId` (fallback Researcher).
+  - **Panel mode**: show a merged, deduped set from all experts in the active preset (cap ~8 items).
+- Clicking a template fills the textarea (`setInput(template.prompt)`) and collapses the panel.
 
-Goal: from the landing screen, the user can flip between the existing Deep Research workflow and a standalone MoE Chat workspace (same MoE experience as the post-report chat, but with no prior report — user just types a topic/question and the experts respond).
+## 3. New MoE panel presets + descriptions
 
-### UI
+Update `src/lib/moe-prompts.ts`:
 
-File: `src/routes/index.tsx`
+```ts
+export type PanelPresetId =
+  | "education"
+  | "higher-education"
+  | "product-design"
+  | "implementation-strategy"
+  | "technical-feasibility"
+  | "default";
 
-- Add a centered pill toggle (mirroring the Deep Research / Chat toggle inside the System Prompts modal) directly under `<Navbar>` on the input phase, with two options: **Deep Research** and **MoE Chat**.
-- New local state `workflowMode: "research" | "moe"`, default `"research"`. Only shown when `phase === "input"` (once a research run starts, the workflow is locked in).
-- When `workflowMode === "research"`: render the existing `WorkflowStepper` + `PromptInput` flow unchanged.
-- When `workflowMode === "moe"`: render a new `<MoeChatWorkspace />` component instead of the stepper/prompt. Keep `Navbar`, `HistorySidebar`, and `Disclaimer` around it.
+export const MOE_PANEL_PRESETS: Record<PanelPresetId, MoeExpertId[]> = {
+  education: ["researcher","school-teacher","instructional-designer","education-leader"],
+  "higher-education": ["researcher","higher-education-instructor","instructional-designer","experience-designer"],
+  "product-design": ["experience-designer","software-developer","communications-marketing","business-operations"],
+  "implementation-strategy": ["researcher","education-leader","business-operations","communications-marketing"],
+  "technical-feasibility": ["researcher","software-developer","experience-designer","business-operations"],
+  default: ["researcher","experience-designer","software-developer","business-operations"],
+};
 
-### New component
+export const MOE_PANEL_PRESET_META: Record<PanelPresetId, { label: string; bestFor: string; description: string }> = {
+  education: { label: "Education Panel",
+    bestFor: "K-12 learning, classroom use, curriculum decisions, instructional strategy, school implementation.",
+    description: "Evaluates research through classroom practice, learning design, and education leadership perspectives." },
+  "higher-education": { label: "Higher Education Panel",
+    bestFor: "College teaching, online courses, academic integrity, student engagement, course design, and assessment.",
+    description: "Combines research evidence, university teaching practice, learning design, and student experience." },
+  "product-design": { label: "Product Design Panel",
+    bestFor: "Turning research into an app, website, platform, prototype, or user-facing product.",
+    description: "Reviews the idea from UX, technical feasibility, audience positioning, and operational sustainability." },
+  "implementation-strategy": { label: "Implementation Strategy Panel",
+    bestFor: "Adoption planning, stakeholder buy-in, funding, rollout strategy, policy alignment, and organizational change.",
+    description: "Translates research into a practical implementation plan with leadership, communication, and operational considerations." },
+  "technical-feasibility": { label: "Technical Feasibility Panel",
+    bestFor: "Evaluating whether an idea can realistically be built, scaled, maintained, and supported.",
+    description: "Assesses evidence, system architecture, user experience, cost, staffing, privacy, security, and long-term maintainability." },
+  default: { label: "Default Panel", bestFor: "General multi-perspective analysis.",
+    description: "Balanced cross-functional panel covering research, UX, engineering, and operations." },
+};
+```
 
-File: `src/components/research/MoeChatWorkspace.tsx` (new)
+## 4. Render presets + default to Expert Panel / Education
 
-- Full-page chat surface (max-w-4xl, vertical layout) reusing the MoE logic already in `ResearchChat`:
-  - Mode tabs: Single Expert / Auto-Pick / Expert Panel.
-  - Persona buttons / panel preset chips identical to `ResearchChat`.
-  - Message list + composer styled like `ResearchChat`'s body but sized for full page.
-- Calls `runMoeTurn` from `@/lib/moe-chat` with an **empty docs array** (no report grounding). For Single mode, calls `navigatorChat` with the persona's chat system prompt from `settings` (same path `ResearchChat` uses today) and no docs block.
-- Passes `settings` and optional initial `roleId` as props; reuses `PERSONA_IMAGES`, `MOE_EXPERT_*` constants.
-- Refactor: extract the shared rendering pieces (`MarkdownBlock`, `ExpertChip`, expert-answer accordion) from `ResearchChat.tsx` into `src/components/research/moe-shared.tsx` so both `ResearchChat` and `MoeChatWorkspace` import them. No behavior change to `ResearchChat`.
+In both `MoeChatWorkspace.tsx` and `ResearchChat.tsx`:
 
-### Prompts/grounding
+- Replace the hard-coded `[default, education, custom]` button list with a loop over `MOE_PANEL_PRESET_META` (custom appended last). Each button shows the preset label; below the chips, render the active preset's **description** and a small "Best for: …" line, pulled from `MOE_PANEL_PRESET_META`.
+- `panelPreset` state type becomes `PanelPresetId | "custom"`.
 
-File: `src/lib/moe-prompts.ts` (small tweak)
+In `MoeChatWorkspace.tsx`:
+- Change default mode: `useState<MoeMode>("panel")` (was `"auto"`).
+- Change default preset: `useState<PanelPresetId | "custom">("education")` (was `"default"`).
 
-- `buildExpertContextBlock` (and any equivalents) already accept a docs array. When called with `[]`, ensure the assembled system prompt tells experts to answer from general expertise since no report is provided (small wording branch). No schema changes.
+`ResearchChat.tsx` keeps its current defaults (it already opens to "auto" for report chat); only the preset list/description rendering changes there.
 
-### History
+## Out of scope
 
-- Out of scope for this turn — MoE Chat workspace sessions are ephemeral. Existing research history sidebar still shows research entries only.
-
-## Technical notes
-
-- No new dependencies.
-- No server function changes; reuses `navigatorChat` / `runMoeTurn`.
-- `ResearchChat`'s post-report behavior is unchanged except for the opaque background and the new expand/collapse control.
-- Mode toggle styling reuses the same Tailwind pattern already used by the System Prompts modal's Deep Research / Chat switch for visual consistency.
+- No backend, schema, or routing changes.
+- No edits to existing research workflow logic.
