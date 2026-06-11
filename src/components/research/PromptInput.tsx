@@ -130,13 +130,13 @@ export function PromptInput({
                         type="button"
                         onClick={() => setActiveRoleId(role.id)}
                         className={
-                          "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition " +
+                          "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition " +
                           (isActive
                             ? "border-foreground/40 bg-foreground text-background"
                             : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
                         }
                       >
-                        <RoleIcon className="size-3.5" />
+                        <RoleIcon className="size-4" />
                         {role.label}
                       </button>
                     );
