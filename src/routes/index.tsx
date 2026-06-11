@@ -732,6 +732,12 @@ function Index() {
     setMoeInitialEntry(null);
   }, []);
 
+  useEffect(() => {
+    const onReset = () => handleReset();
+    window.addEventListener("app:reset-home", onReset);
+    return () => window.removeEventListener("app:reset-home", onReset);
+  }, [handleReset]);
+
   const handleSelectHistory = useCallback((entry: HistoryEntry) => {
     cancelled.current = true;
     setRunning(false);
