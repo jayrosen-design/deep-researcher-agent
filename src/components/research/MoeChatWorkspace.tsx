@@ -439,7 +439,7 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
 
 
       {/* Mode tabs */}
-      <div className="inline-flex w-full items-center rounded-full border border-border bg-muted/40 p-1 text-xs">
+      <div className="clay-toggle w-full">
         {([
           { id: "single", label: "Single Expert" },
           { id: "auto", label: "Auto-Pick" },
@@ -452,10 +452,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
               type="button"
               onClick={() => handleModeChange(t.id)}
               className={
-                "flex-1 rounded-full px-3 py-1.5 font-medium transition " +
-                (active
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:text-foreground")
+                "flex-1 " +
+                (active ? "clay-dark rounded-full px-3 py-1.5 text-xs" : "clay-toggle-item")
               }
             >
               {t.label}
