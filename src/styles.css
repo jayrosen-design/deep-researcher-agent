@@ -158,20 +158,19 @@
 
   /* Deep-sea atmospheric background — light filtering down from above */
   body {
-    background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0, 210, 255, 0.18), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(112, 0, 255, 0.12), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 10% 80%, rgba(5, 255, 161, 0.08), transparent 60%),
-      linear-gradient(180deg, #050b14 0%, #03070f 50%, #02060c 100%);
+    background-image: url('/images/darkmode-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
     min-height: 100vh;
   }
 
   :root.light body {
-    background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0, 180, 220, 0.25), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(120, 80, 220, 0.10), transparent 60%),
-      linear-gradient(180deg, #e8f4fb 0%, #d6ecf5 60%, #c9e3ef 100%);
+    background-image: url('/images/lightmode-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
   }
 
