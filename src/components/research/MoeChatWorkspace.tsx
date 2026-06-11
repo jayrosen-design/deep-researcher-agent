@@ -62,9 +62,20 @@ type ChatMsg =
   | ExpertTurnMsg
   | ModeratorMsg;
 
+export type MoeSnapshot = {
+  mode: MoeMode;
+  panelPreset: PanelPresetId | "custom";
+  customPanel: MoeExpertId[];
+  singleExpert: MoeExpertId;
+  messages: ChatMsg[];
+};
+
 type Props = {
   settings: UserSettings;
   roleId?: UserRoleId;
+  initialEntry?: { id: string; moe?: import("@/lib/research-history").MoeHistoryPayload } | null;
+  onSnapshot?: (snapshot: MoeSnapshot) => void;
+  onResetEntry?: () => void;
 };
 
 type PanelPreset = PanelPresetId | "custom";
