@@ -98,7 +98,7 @@ export function PromptInput({
                     <button
                       type="button"
                       onClick={() => setShowTemplates((s) => !s)}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-foreground hover:text-background"
+                      className="clay-neutral inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
                     >
                       <LayoutTemplate className="size-3.5" />
                       Templates
@@ -107,7 +107,7 @@ export function PromptInput({
                   <button
                     type="submit"
                     disabled={!value.trim()}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="clay inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Start research
                     <ArrowUp className="size-4" />
