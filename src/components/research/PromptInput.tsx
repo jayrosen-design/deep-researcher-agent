@@ -56,9 +56,6 @@ export function PromptInput({
           />
         </div>
         <div className="flex w-full flex-col items-center justify-center">
-          <div className="mt-4 mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
-            Deep Researcher Agent · {activeRole.label}
-          </div>
           <h1 className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             What should we research?
           </h1>
