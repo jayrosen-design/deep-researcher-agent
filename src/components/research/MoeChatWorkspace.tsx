@@ -132,7 +132,7 @@ function buildMoeConversationHistory(messages: ChatMsg[]): string | undefined {
   return history || undefined;
 }
 
-export function MoeChatWorkspace({ settings, roleId }: Props) {
+export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, onResetEntry }: Props) {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -150,10 +150,41 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
   ]);
   const [showTemplates, setShowTemplates] = useState(false);
 
+  // Hydrate from a history entry when one is supplied (or its id changes).
+  const hydratedFor = useRef<string | null>(null);
   useEffect(() => {
+    const entryId = initialEntry?.id ?? null;
+    if (!entryId) {
+      hydratedFor.current = null;
+      return;
+    }
+    if (hydratedFor.current === entryId) return;
+    const p = initialEntry?.moe;
+    if (!p) return;
+    hydratedFor.current = entryId;
+    setMode(p.mode);
+    setMessages((p.messages as ChatMsg[]) ?? []);
+    if (p.panelPreset) setPanelPreset(p.panelPreset as PanelPreset);
+    if (p.customPanel) setCustomPanel(p.customPanel as MoeExpertId[]);
+    if (p.singleExpert) setSingleExpert(p.singleExpert as MoeExpertId);
+    setError(null);
+  }, [initialEntry?.id]);
+
+  // Persist snapshots upward whenever the transcript changes.
+  useEffect(() => {
+    if (!onSnapshot) return;
+    if (messages.length === 0) return;
+    onSnapshot({ mode, panelPreset, customPanel, singleExpert, messages });
+  }, [messages]);
+
+  const handleModeChange = (next: MoeMode) => {
+    if (next === mode) return;
+    setMode(next);
     setMessages([]);
     setError(null);
-  }, [mode]);
+    hydratedFor.current = null;
+    onResetEntry?.();
+  };
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
