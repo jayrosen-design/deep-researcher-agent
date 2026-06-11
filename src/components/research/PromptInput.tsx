@@ -47,12 +47,12 @@ export function PromptInput({
             key={activeRoleId}
             src={personaImage}
             alt={`${activeRole.label} octopus persona`}
-            className="pointer-events-none h-[300px] w-auto object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
+            className="pointer-events-none h-[200px] w-auto object-contain transition-opacity duration-500 sm:h-[300px] dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
           />
           <img
             src={AGENT_IMAGES.workingTogether}
             alt="Agents working together"
-            className="pointer-events-none h-[300px] w-auto object-contain transition-opacity duration-500 dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
+            className="pointer-events-none hidden h-[300px] w-auto object-contain transition-opacity duration-500 md:block dark:drop-shadow-[0_0_32px_rgba(0,242,254,0.4)]"
           />
         </div>
         <div className="flex w-full flex-col items-center justify-center">
