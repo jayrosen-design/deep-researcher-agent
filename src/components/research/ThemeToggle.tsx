@@ -44,7 +44,7 @@ export function ThemeToggle() {
       onClick={toggle}
       title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       aria-label="Toggle theme"
-      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-foreground hover:text-background"
+      className="clay-neutral inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
     >
       {theme === "dark" ? <Sun className="size-3.5" /> : <Moon className="size-3.5" />}
       {theme === "dark" ? "Light" : "Dark"}

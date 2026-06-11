@@ -391,13 +391,54 @@
     0 5px 10px rgba(0, 20, 36, 0.24);
 }
 
+/* Recessed clay "tray" for segmented toggles. Children are pill buttons —
+ * active child uses .clay-dark, inactive uses transparent .clay-toggle-item. */
+@utility clay-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(255,255,255,0.04));
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,0.28),
+    inset 0 -1px 1px rgba(255,255,255,0.10),
+    0 1px 0 rgba(255,255,255,0.06);
+}
+:root.light .clay-toggle {
+  background: linear-gradient(180deg, rgba(0, 40, 70, 0.10), rgba(255,255,255,0.20));
+  box-shadow:
+    inset 0 3px 6px rgba(0, 40, 70, 0.18),
+    inset 0 -1px 1px rgba(255,255,255,0.50),
+    0 1px 0 rgba(255,255,255,0.30);
+}
+
+@utility clay-toggle-item {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 140ms ease, background 140ms ease, transform 120ms ease;
+}
+.clay-toggle-item:hover {
+  color: var(--foreground);
+}
+.clay-toggle-item:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
 /* Subtle press feedback on every other button — feels responsive everywhere
  * without restyling each site. Opt out with [data-no-clay] / .no-clay. */
 @media (prefers-reduced-motion: no-preference) {
-  button:not(.clay):not(.clay-neutral):not(.clay-dark):not([data-no-clay]):not(.no-clay) {
+  button:not(.clay):not(.clay-neutral):not(.clay-dark):not(.clay-toggle-item):not([data-no-clay]):not(.no-clay) {
     transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease, background-color 120ms ease;
   }
-  button:not(.clay):not(.clay-neutral):not(.clay-dark):not([data-no-clay]):not(.no-clay):active:not(:disabled) {
+  button:not(.clay):not(.clay-neutral):not(.clay-dark):not(.clay-toggle-item):not([data-no-clay]):not(.no-clay):active:not(:disabled) {
     transform: translateY(1px);
   }
 }

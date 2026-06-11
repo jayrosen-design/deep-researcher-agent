@@ -934,7 +934,7 @@ function Index() {
       <>
         <Navbar onSignOut={handleSignOut} settings={settings} onSettingsChange={setSettings} />
         <div className="mx-auto mt-4 flex w-full max-w-4xl justify-center px-4 sm:px-6">
-          <div className="inline-flex items-center rounded-full border border-border bg-muted/40 p-1 text-sm">
+          <div className="clay-toggle">
             {([
               { id: "research", label: "Deep Research" },
               { id: "moe", label: "Chat" },
@@ -945,10 +945,7 @@ function Index() {
                   key={t.id}
                   type="button"
                   onClick={() => setWorkflowMode(t.id)}
-                  className={
-                    "rounded-full px-5 py-2 text-sm " +
-                    (active ? "clay-dark" : "clay-neutral")
-                  }
+                  className={active ? "clay-dark rounded-full px-5 py-2 text-sm" : "clay-toggle-item"}
                 >
                   {t.label}
                 </button>
