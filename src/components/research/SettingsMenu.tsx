@@ -102,7 +102,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
       <button
         type="button"
         onClick={() => setShowPrompts(true)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-foreground hover:text-background"
+        className="clay-neutral inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
         title="Settings"
       >
         <SettingsIcon className="size-3.5" />
