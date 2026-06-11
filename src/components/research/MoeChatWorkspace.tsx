@@ -401,7 +401,7 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
   };
 
   return (
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-3 px-4 pt-4 pb-6 sm:px-6">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-4 pt-4 pb-6 sm:px-6">
       <div className="flex flex-col items-center text-center">
         {mode === "panel" && panelPreset === "custom" ? (
           <div className="flex flex-wrap items-center justify-center gap-3">
