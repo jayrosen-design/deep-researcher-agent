@@ -443,6 +443,55 @@
   }
 }
 
+/* ===== Claymorphism panels =====
+ * Recipe adapted from claymorphism-css (codeAdrian/clay.css): one outset
+ * drop-shadow + an inset darker shadow + an inset light highlight, giving
+ * surfaces a plump, soft-clay feel. Applied broadly so every flat panel
+ * picks it up without per-component edits. */
+:root {
+  --clay-panel-radius: 20px;
+  --clay-panel-shadow:
+    10px 10px 24px rgba(0, 12, 28, 0.32),
+    inset -6px -6px 14px rgba(0, 0, 0, 0.22),
+    inset 6px 6px 14px rgba(255, 255, 255, 0.08);
+}
+:root.light {
+  --clay-panel-shadow:
+    10px 10px 26px rgba(0, 60, 90, 0.14),
+    inset -6px -6px 14px rgba(0, 60, 90, 0.07),
+    inset 6px 6px 14px rgba(255, 255, 255, 0.70);
+}
+
+@utility clay-panel {
+  border-radius: var(--clay-panel-radius);
+  box-shadow: var(--clay-panel-shadow);
+}
+
+/* Auto-apply to common surface utilities so existing panels become
+ * claymorphic with no per-component changes. */
+.bg-card,
+.bg-popover {
+  box-shadow: var(--clay-panel-shadow);
+}
+
+/* Inputs/textareas: soft inset only — fields read as recessed, not popped. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea,
+select {
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.18),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.05);
+}
+:root.light input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+:root.light textarea,
+:root.light select {
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 60, 90, 0.10),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.6);
+}
+
+
+
 @keyframes collapsible-down {
   from { height: 0; opacity: 0; }
   to { height: var(--radix-collapsible-content-height); opacity: 1; }
