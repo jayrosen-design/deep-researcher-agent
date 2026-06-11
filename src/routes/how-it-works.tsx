@@ -355,6 +355,7 @@ function HowItWorks() {
           .
         </p>
       </section>
+      </div>
     </div>
   );
 }
