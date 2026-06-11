@@ -226,26 +226,105 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           { role: "assistant", mode: "single", content: content.trim(), personaId: singleExpert },
         ]);
       } else {
-        const result = await runMoeTurn({
+        await runMoeTurnStreaming({
           mode,
           question: trimmed,
           docs: [],
           settings,
           preferredExpertId: mode === "auto" ? (roleId ?? singleExpert) : undefined,
           panelExperts: mode === "panel" ? effectivePanel : undefined,
-          onStage: (s) => setLoadingStage(s),
-        });
-        setMessages((m) => [
-          ...m,
-          {
-            role: "assistant",
-            mode,
-            content: result.synthesis,
-            selectedExperts: result.selectedExperts,
-            expertAnswers: result.expertAnswers,
-            failures: result.failures,
+          onEvent: (evt: MoeStreamEvent) => {
+            if (evt.type === "stage") {
+              setLoadingStage(
+                evt.stage === "round1"
+                  ? "consulting"
+                  : evt.stage === "round2"
+                    ? "consulting"
+                    : "synthesizing",
+              );
+              return;
+            }
+            if (evt.type === "routed") {
+              setMessages((m) => [
+                ...m,
+                { role: "panel-header", mode, selectedExperts: evt.selectedExperts },
+              ]);
+              return;
+            }
+            if (evt.type === "expertAnswer") {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: "expert",
+                  round: 1,
+                  expertId: evt.answer.expertId,
+                  content: evt.answer.answer,
+                  confidence: evt.answer.confidence,
+                  status: "done",
+                },
+              ]);
+              return;
+            }
+            if (evt.type === "reactionAnswer") {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: "expert",
+                  round: 2,
+                  expertId: evt.reaction.expertId,
+                  content: evt.reaction.content,
+                  status: "done",
+                },
+              ]);
+              return;
+            }
+            if (evt.type === "expertFailed") {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: "expert",
+                  round: evt.round,
+                  expertId: evt.expertId,
+                  content: `Couldn't respond: ${evt.error}`,
+                  status: "failed",
+                },
+              ]);
+              return;
+            }
+            if (evt.type === "moderatorStart") {
+              setMessages((m) => [...m, { role: "moderator", content: "", status: "streaming" }]);
+              return;
+            }
+            if (evt.type === "moderatorDelta") {
+              setMessages((m) => {
+                const next = m.slice();
+                for (let i = next.length - 1; i >= 0; i--) {
+                  const msg = next[i];
+                  if (msg.role === "moderator" && msg.status === "streaming") {
+                    next[i] = { ...msg, content: msg.content + evt.text };
+                    break;
+                  }
+                }
+                return next;
+              });
+              return;
+            }
+            if (evt.type === "moderatorDone") {
+              setMessages((m) => {
+                const next = m.slice();
+                for (let i = next.length - 1; i >= 0; i--) {
+                  const msg = next[i];
+                  if (msg.role === "moderator" && msg.status === "streaming") {
+                    next[i] = { ...msg, content: evt.fullText, status: "done" };
+                    break;
+                  }
+                }
+                return next;
+              });
+              return;
+            }
           },
-        ]);
+        });
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
