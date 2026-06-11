@@ -33,8 +33,7 @@ export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div className="relative min-h-screen w-full">
-      <header className="flex w-full items-center justify-between px-6 pt-4">
-        <BrandLockup />
+      <header className="flex w-full items-center justify-end px-6 pt-4">
         <div className="inline-flex items-center gap-2">
           <Link
             to="/how-it-works"
