@@ -39,6 +39,13 @@ function mergeDocs(docs: MoeDoc[]): {
   compiledReport: string;
   sources: SearchResult[];
 } {
+  if (docs.length === 0) {
+    return {
+      originalQuery: "(no original research run is attached to this MoE chat)",
+      compiledReport: "",
+      sources: [],
+    };
+  }
   if (docs.length === 1) {
     return {
       originalQuery: docs[0].prompt,
@@ -316,6 +323,24 @@ export async function runMoeTurn(args: {
 
 const MOE_TOTAL_ROUNDS = 4;
 
+function buildTurnConversationHistory(baseHistory: string | undefined, turnMessages: ExpertReaction[]): string | undefined {
+  const currentTurn = turnMessages
+    .map(
+      (msg) =>
+        `Round ${msg.round} — ${MOE_EXPERT_LABELS[msg.expertId] ?? msg.expertId}: ${msg.content}`,
+    )
+    .join("\n");
+
+  const combined = [baseHistory?.trim(), currentTurn.trim()].filter(Boolean).join("\n\n");
+  return combined || undefined;
+}
+
+function buildLatestPeerMessages(turnMessages: ExpertReaction[], expertId: MoeExpertId) {
+  const latestByExpert = new Map<MoeExpertId, { expertId: MoeExpertId; content: string }>();
+  for (const msg of turnMessages) latestByExpert.set(msg.expertId, { expertId: msg.expertId, content: msg.content });
+  return Array.from(latestByExpert.values()).filter((msg) => msg.expertId !== expertId);
+}
+
 export async function askExpertReaction(args: {
   expertId: MoeExpertId;
   round: number;
@@ -443,6 +468,7 @@ export async function runMoeTurnStreaming(args: {
   settings: UserSettings;
   preferredExpertId?: MoeExpertId;
   panelExperts?: MoeExpertId[];
+  conversationHistory?: string;
   onEvent: (e: MoeStreamEvent) => void;
 }): Promise<void> {
   let selectedExperts: RouterRoute[];
@@ -461,6 +487,7 @@ export async function runMoeTurnStreaming(args: {
       docs: args.docs,
       settings: args.settings,
       preferredExpertId: args.preferredExpertId,
+      conversationHistory: args.conversationHistory,
     });
   }
 
@@ -476,6 +503,7 @@ export async function runMoeTurnStreaming(args: {
           question: args.question,
           docs: args.docs,
           settings: args.settings,
+          conversationHistory: args.conversationHistory,
         });
         round1Answers.push(ans);
         args.onEvent({ type: "expertAnswer", round: 1, answer: ans });
@@ -494,30 +522,36 @@ export async function runMoeTurnStreaming(args: {
     throw new Error("All experts failed in round 1.");
   }
 
-  const reactions: ExpertReaction[] = [];
+  const discussion: ExpertReaction[] = round1Answers.map((ans) => ({
+    expertId: ans.expertId,
+    round: 1,
+    content: ans.answer,
+  }));
   if (round1Answers.length > 1) {
-    args.onEvent({ type: "stage", stage: "round2" });
-    await Promise.all(
-      round1Answers.map(async (a) => {
+    for (let round = 2; round <= MOE_TOTAL_ROUNDS; round++) {
+      args.onEvent({ type: "stage", stage: `round${round}` as "round2" | "round3" | "round4" });
+      for (const expert of selectedExperts) {
         try {
           const r = await askExpertReaction({
-            expertId: a.expertId,
+            expertId: expert.expertId,
+            round,
             question: args.question,
-            otherAnswers: round1Answers,
+            otherMessages: buildLatestPeerMessages(discussion, expert.expertId),
             settings: args.settings,
+            conversationHistory: buildTurnConversationHistory(args.conversationHistory, discussion),
           });
-          reactions.push(r);
-          args.onEvent({ type: "reactionAnswer", round: 2, reaction: r });
+          discussion.push(r);
+          args.onEvent({ type: "reactionAnswer", round: round as 2 | 3 | 4, reaction: r });
         } catch (e) {
           args.onEvent({
             type: "expertFailed",
-            round: 2,
-            expertId: a.expertId,
+            round: round as 2 | 3 | 4,
+            expertId: expert.expertId,
             error: e instanceof Error ? e.message : String(e),
           });
         }
-      }),
-    );
+      }
+    }
   }
 
   args.onEvent({ type: "stage", stage: "moderator" });
@@ -534,9 +568,10 @@ export async function runMoeTurnStreaming(args: {
     question: args.question,
     docs: args.docs,
     expertAnswers: round1Answers,
-    reactionAnswers: reactions,
+    discussionAnswers: discussion.filter((entry) => entry.round > 1),
     settings: args.settings,
     onDelta: (t) => args.onEvent({ type: "moderatorDelta", text: t }),
+    conversationHistory: buildTurnConversationHistory(args.conversationHistory, discussion),
   });
   args.onEvent({ type: "moderatorDone", fullText });
 }
