@@ -485,6 +485,7 @@ export function buildModeratorUserMessage(args: {
   context: string;
   userQuestion: string;
   expertAnswers: ExpertAnswer[];
+  reactionAnswers?: ExpertReaction[];
 }): string {
   const expertBlock = args.expertAnswers
     .map(
@@ -505,13 +506,66 @@ ${e.recommendations.map((x) => `- ${x}`).join("\n") || "- (none)"}`,
     )
     .join("\n\n");
 
+  const reactionBlock =
+    args.reactionAnswers && args.reactionAnswers.length > 0
+      ? `
+
+Discussion round (each expert responding to the others' first takes):
+${args.reactionAnswers
+  .map(
+    (r) =>
+      `--- ${MOE_EXPERT_LABELS[r.expertId] ?? r.expertId} reaction ---
+${r.content}`,
+  )
+  .join("\n\n")}`
+      : "";
+
   return `${args.context}
 
 User follow-up question:
 ${args.userQuestion}
 
 Expert responses:
-${expertBlock}
+${expertBlock}${reactionBlock}
 
-Synthesize these expert responses using the exact Markdown structure described in the system prompt.`;
+Synthesize these expert responses${
+    args.reactionAnswers && args.reactionAnswers.length > 0 ? " and the discussion round" : ""
+  } using the exact Markdown structure described in the system prompt.`;
+}
+
+export type ExpertReaction = {
+  expertId: MoeExpertId;
+  content: string;
+};
+
+export const MOE_EXPERT_REACTION_INSTRUCTIONS = `You have just seen the FIRST RESPONSES from the other experts on this panel.
+Respond in 1-2 short paragraphs, in first person, as your assigned persona. You may:
+- Agree with and reinforce specific points another expert made.
+- Respectfully push back on something you'd frame differently.
+- Build on another expert's idea with what your perspective uniquely adds.
+Address other experts by their role name (e.g. "I agree with the Researcher that..."). Be concrete and brief.
+Plain prose only. No headings. No JSON. No bullet lists. No preamble like "As a ...". Just the reaction.`;
+
+export function buildExpertReactionUserMessage(args: {
+  expertId: MoeExpertId;
+  userQuestion: string;
+  otherAnswers: ExpertAnswer[];
+}): string {
+  const others = args.otherAnswers
+    .filter((a) => a.expertId !== args.expertId)
+    .map(
+      (a) =>
+        `--- ${MOE_EXPERT_LABELS[a.expertId] ?? a.expertId} said ---
+${a.answer}`,
+    )
+    .join("\n\n");
+
+  return `User question:
+${args.userQuestion}
+
+Your own first response has already been delivered. Now react to the OTHER experts below.
+
+${others}
+
+Respond now as ${MOE_EXPERT_LABELS[args.expertId] ?? args.expertId}, following the reaction instructions in the system prompt.`;
 }

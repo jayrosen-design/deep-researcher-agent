@@ -1,15 +1,17 @@
 import { navigatorChat } from "./navigator-chat.functions";
 import type { UserSettings } from "./user-settings";
 import {
-  MOE_EXPERT_ANSWER_INSTRUCTIONS,
   MOE_EXPERT_IDS,
   MOE_EXPERT_LABELS,
+  MOE_EXPERT_REACTION_INSTRUCTIONS,
   buildExpertContextBlock,
+  buildExpertReactionUserMessage,
   buildExpertUserMessage,
   buildModeratorUserMessage,
   buildRouterUserMessage,
   isMoeExpertId,
   type ExpertAnswer,
+  type ExpertReaction,
   type MoeExpertId,
   type RouterRoute,
 } from "./moe-prompts";
@@ -301,3 +303,225 @@ export async function runMoeTurn(args: {
 
   return { selectedExperts, expertAnswers, failures, synthesis };
 }
+
+// ------------------------- Streaming group-chat orchestration -------------------------
+
+export async function askExpertReaction(args: {
+  expertId: MoeExpertId;
+  question: string;
+  otherAnswers: ExpertAnswer[];
+  settings: UserSettings;
+}): Promise<ExpertReaction> {
+  const personaCfg = args.settings.personaChat[args.expertId];
+  const system = `${args.settings.personaChatBasePrompt}
+
+${personaCfg.systemPrompt}
+
+${MOE_EXPERT_REACTION_INSTRUCTIONS}`;
+
+  const userMsg = buildExpertReactionUserMessage({
+    expertId: args.expertId,
+    userQuestion: args.question,
+    otherAnswers: args.otherAnswers,
+  });
+
+  const { content } = await navigatorChat({
+    data: {
+      model: personaCfg.model || args.settings.synthesisModel,
+      temperature: 0.5,
+      maxTokens: 600,
+      apiKey: args.settings.navigatorApiKey || undefined,
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: userMsg },
+      ],
+    },
+  });
+
+  return { expertId: args.expertId, content: content.trim() };
+}
+
+export type MoeStreamEvent =
+  | { type: "routed"; selectedExperts: RouterRoute[] }
+  | { type: "stage"; stage: "round1" | "round2" | "moderator" }
+  | { type: "expertAnswer"; round: 1; answer: ExpertAnswer }
+  | { type: "expertFailed"; round: 1 | 2; expertId: MoeExpertId; error: string }
+  | { type: "reactionAnswer"; round: 2; reaction: ExpertReaction }
+  | { type: "moderatorStart" }
+  | { type: "moderatorDelta"; text: string }
+  | { type: "moderatorDone"; fullText: string };
+
+export async function streamModeratorSynthesis(args: {
+  question: string;
+  docs: MoeDoc[];
+  expertAnswers: ExpertAnswer[];
+  reactionAnswers: ExpertReaction[];
+  settings: UserSettings;
+  onDelta: (text: string) => void;
+}): Promise<string> {
+  const merged = mergeDocs(args.docs);
+  const context = buildExpertContextBlock(merged);
+  const userMsg = buildModeratorUserMessage({
+    context,
+    userQuestion: args.question,
+    expertAnswers: args.expertAnswers,
+    reactionAnswers: args.reactionAnswers,
+  });
+
+  const res = await fetch("/api/navigator-stream", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: args.settings.moeModeratorModel || args.settings.synthesisModel,
+      temperature: 0.3,
+      maxTokens: 4000,
+      apiKey: args.settings.navigatorApiKey || undefined,
+      messages: [
+        { role: "system", content: args.settings.moeModeratorPrompt },
+        { role: "user", content: userMsg },
+      ],
+    }),
+  });
+
+  if (!res.ok || !res.body) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Moderator stream failed [${res.status}]: ${text.slice(0, 300)}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let full = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("data:")) continue;
+      const payload = trimmed.slice(5).trim();
+      if (!payload) continue;
+      try {
+        const evt = JSON.parse(payload) as { text?: string; done?: boolean; error?: string };
+        if (evt.error) throw new Error(evt.error);
+        if (evt.text) {
+          full += evt.text;
+          args.onDelta(evt.text);
+        }
+      } catch (e) {
+        if (e instanceof Error && e.message && !e.message.includes("JSON")) throw e;
+      }
+    }
+  }
+
+  return full;
+}
+
+export async function runMoeTurnStreaming(args: {
+  mode: Exclude<MoeMode, "single">;
+  question: string;
+  docs: MoeDoc[];
+  settings: UserSettings;
+  preferredExpertId?: MoeExpertId;
+  panelExperts?: MoeExpertId[];
+  onEvent: (e: MoeStreamEvent) => void;
+}): Promise<void> {
+  let selectedExperts: RouterRoute[];
+
+  if (args.mode === "panel") {
+    const list = (args.panelExperts ?? []).filter((id) => MOE_EXPERT_IDS.includes(id));
+    if (list.length === 0) throw new Error("No experts selected for the panel.");
+    selectedExperts = list.map((id, i) => ({
+      expertId: id,
+      reason: "Selected by user for expert panel.",
+      priority: i + 1,
+    }));
+  } else {
+    selectedExperts = await routeExperts({
+      question: args.question,
+      docs: args.docs,
+      settings: args.settings,
+      preferredExpertId: args.preferredExpertId,
+    });
+  }
+
+  args.onEvent({ type: "routed", selectedExperts });
+  args.onEvent({ type: "stage", stage: "round1" });
+
+  const round1Answers: ExpertAnswer[] = [];
+  await Promise.all(
+    selectedExperts.map(async (r) => {
+      try {
+        const ans = await askExpert({
+          expertId: r.expertId,
+          question: args.question,
+          docs: args.docs,
+          settings: args.settings,
+        });
+        round1Answers.push(ans);
+        args.onEvent({ type: "expertAnswer", round: 1, answer: ans });
+      } catch (e) {
+        args.onEvent({
+          type: "expertFailed",
+          round: 1,
+          expertId: r.expertId,
+          error: e instanceof Error ? e.message : String(e),
+        });
+      }
+    }),
+  );
+
+  if (round1Answers.length === 0) {
+    throw new Error("All experts failed in round 1.");
+  }
+
+  const reactions: ExpertReaction[] = [];
+  if (round1Answers.length > 1) {
+    args.onEvent({ type: "stage", stage: "round2" });
+    await Promise.all(
+      round1Answers.map(async (a) => {
+        try {
+          const r = await askExpertReaction({
+            expertId: a.expertId,
+            question: args.question,
+            otherAnswers: round1Answers,
+            settings: args.settings,
+          });
+          reactions.push(r);
+          args.onEvent({ type: "reactionAnswer", round: 2, reaction: r });
+        } catch (e) {
+          args.onEvent({
+            type: "expertFailed",
+            round: 2,
+            expertId: a.expertId,
+            error: e instanceof Error ? e.message : String(e),
+          });
+        }
+      }),
+    );
+  }
+
+  args.onEvent({ type: "stage", stage: "moderator" });
+  args.onEvent({ type: "moderatorStart" });
+
+  if (round1Answers.length === 1) {
+    const text = round1Answers[0].answer;
+    args.onEvent({ type: "moderatorDelta", text });
+    args.onEvent({ type: "moderatorDone", fullText: text });
+    return;
+  }
+
+  const fullText = await streamModeratorSynthesis({
+    question: args.question,
+    docs: args.docs,
+    expertAnswers: round1Answers,
+    reactionAnswers: reactions,
+    settings: args.settings,
+    onDelta: (t) => args.onEvent({ type: "moderatorDelta", text: t }),
+  });
+  args.onEvent({ type: "moderatorDone", fullText });
+}
+

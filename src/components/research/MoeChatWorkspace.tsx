@@ -4,7 +4,6 @@ import remarkGfm from "remark-gfm";
 import {
   Send,
   Loader2,
-  ChevronDown,
   AlertTriangle,
   MessagesSquare,
   LayoutTemplate,
@@ -30,7 +29,7 @@ import {
   type PanelPresetId,
   type RouterRoute,
 } from "@/lib/moe-prompts";
-import { runMoeTurn, type MoeMode } from "@/lib/moe-chat";
+import { runMoeTurnStreaming, type MoeMode, type MoeStreamEvent } from "@/lib/moe-chat";
 
 type SingleAssistantMsg = {
   role: "assistant";
@@ -38,18 +37,30 @@ type SingleAssistantMsg = {
   content: string;
   personaId: MoeExpertId;
 };
-type MoeAssistantMsg = {
-  role: "assistant";
+type PanelHeaderMsg = {
+  role: "panel-header";
   mode: "auto" | "panel";
-  content: string;
   selectedExperts: RouterRoute[];
-  expertAnswers: ExpertAnswer[];
-  failures: Array<{ expertId: MoeExpertId; error: string }>;
+};
+type ExpertTurnMsg = {
+  role: "expert";
+  round: 1 | 2;
+  expertId: MoeExpertId;
+  content: string;
+  confidence?: ExpertAnswer["confidence"];
+  status: "done" | "failed";
+};
+type ModeratorMsg = {
+  role: "moderator";
+  content: string;
+  status: "streaming" | "done";
 };
 type ChatMsg =
   | { role: "user"; content: string }
   | SingleAssistantMsg
-  | MoeAssistantMsg;
+  | PanelHeaderMsg
+  | ExpertTurnMsg
+  | ModeratorMsg;
 
 type Props = {
   settings: UserSettings;
@@ -214,26 +225,105 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           { role: "assistant", mode: "single", content: content.trim(), personaId: singleExpert },
         ]);
       } else {
-        const result = await runMoeTurn({
+        await runMoeTurnStreaming({
           mode,
           question: trimmed,
           docs: [],
           settings,
           preferredExpertId: mode === "auto" ? (roleId ?? singleExpert) : undefined,
           panelExperts: mode === "panel" ? effectivePanel : undefined,
-          onStage: (s) => setLoadingStage(s),
-        });
-        setMessages((m) => [
-          ...m,
-          {
-            role: "assistant",
-            mode,
-            content: result.synthesis,
-            selectedExperts: result.selectedExperts,
-            expertAnswers: result.expertAnswers,
-            failures: result.failures,
+          onEvent: (evt: MoeStreamEvent) => {
+            if (evt.type === "stage") {
+              setLoadingStage(
+                evt.stage === "round1"
+                  ? "consulting"
+                  : evt.stage === "round2"
+                    ? "consulting"
+                    : "synthesizing",
+              );
+              return;
+            }
+            if (evt.type === "routed") {
+              setMessages((m) => [
+                ...m,
+                { role: "panel-header", mode, selectedExperts: evt.selectedExperts },
+              ]);
+              return;
+            }
+            if (evt.type === "expertAnswer") {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: "expert",
+                  round: 1,
+                  expertId: evt.answer.expertId,
+                  content: evt.answer.answer,
+                  confidence: evt.answer.confidence,
+                  status: "done",
+                },
+              ]);
+              return;
+            }
+            if (evt.type === "reactionAnswer") {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: "expert",
+                  round: 2,
+                  expertId: evt.reaction.expertId,
+                  content: evt.reaction.content,
+                  status: "done",
+                },
+              ]);
+              return;
+            }
+            if (evt.type === "expertFailed") {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: "expert",
+                  round: evt.round,
+                  expertId: evt.expertId,
+                  content: `Couldn't respond: ${evt.error}`,
+                  status: "failed",
+                },
+              ]);
+              return;
+            }
+            if (evt.type === "moderatorStart") {
+              setMessages((m) => [...m, { role: "moderator", content: "", status: "streaming" }]);
+              return;
+            }
+            if (evt.type === "moderatorDelta") {
+              setMessages((m) => {
+                const next = m.slice();
+                for (let i = next.length - 1; i >= 0; i--) {
+                  const msg = next[i];
+                  if (msg.role === "moderator" && msg.status === "streaming") {
+                    next[i] = { ...msg, content: msg.content + evt.text };
+                    break;
+                  }
+                }
+                return next;
+              });
+              return;
+            }
+            if (evt.type === "moderatorDone") {
+              setMessages((m) => {
+                const next = m.slice();
+                for (let i = next.length - 1; i >= 0; i--) {
+                  const msg = next[i];
+                  if (msg.role === "moderator" && msg.status === "streaming") {
+                    next[i] = { ...msg, content: evt.fullText, status: "done" };
+                    break;
+                  }
+                }
+                return next;
+              });
+              return;
+            }
           },
-        ]);
+        });
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -450,7 +540,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                 </div>
               );
             }
-            if (m.mode === "single") {
+            if (m.role === "assistant" && m.mode === "single") {
               const Icon = PERSONA_ICONS[m.personaId];
               return (
                 <div key={i} className="flex items-start gap-2">
@@ -466,87 +556,99 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                 </div>
               );
             }
-            return (
-              <div key={i} className="space-y-3">
-                <div>
+            if (m.role === "panel-header") {
+              return (
+                <div key={i} className="rounded-md border border-border bg-muted/30 px-3 py-2">
                   <div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-                    {m.mode === "auto" ? "Auto-routed answer" : "Expert Panel synthesis"}
+                    {m.mode === "auto" ? "Auto-picked panel" : "Expert panel assembled"}
                   </div>
-                  <MarkdownBlock>{m.content}</MarkdownBlock>
-                </div>
-                {m.selectedExperts.length > 0 && (
-                  <div>
-                    <div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-                      Selected experts
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {m.selectedExperts.map((r) => (
-                        <ExpertChip key={r.expertId} expertId={r.expertId} reason={r.reason} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {m.failures.length > 0 && (
-                  <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-700 dark:text-amber-300">
-                    <div className="mb-1 flex items-center gap-1.5 font-medium">
-                      <AlertTriangle className="size-3.5" />
-                      Some experts failed
-                    </div>
-                    <ul className="space-y-0.5">
-                      {m.failures.map((f) => (
-                        <li key={f.expertId}>
-                          <strong>{MOE_EXPERT_LABELS[f.expertId]}</strong>: {f.error}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {m.expertAnswers.length > 0 && (
-                  <div className="space-y-1.5">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                      Expert contributions
-                    </div>
-                    {m.expertAnswers.map((ea) => (
-                      <details
-                        key={ea.expertId}
-                        className="group rounded-md border border-border bg-muted/20"
-                      >
-                        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-xs">
-                          <span className="flex items-center gap-2">
-                            {(() => {
-                              const Icon = PERSONA_ICONS[ea.expertId];
-                              return <Icon className="size-5" />;
-                            })()}
-                            <span className="font-medium text-foreground">
-                              {MOE_EXPERT_LABELS[ea.expertId]}
-                            </span>
-                            <span className="rounded-full border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                              {ea.confidence} confidence
-                            </span>
-                          </span>
-                          <ChevronDown className="size-4 text-muted-foreground transition group-open:rotate-180" />
-                        </summary>
-                        <div className="space-y-2 border-t border-border px-3 py-2">
-                          <MarkdownBlock>{ea.answer}</MarkdownBlock>
-                          {ea.recommendations.length > 0 && (
-                            <div>
-                              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                                Recommendations
-                              </div>
-                              <ul className="ml-4 list-disc text-xs text-foreground">
-                                {ea.recommendations.map((x, j) => (
-                                  <li key={j}>{x}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      </details>
+                  <div className="flex flex-wrap gap-1.5">
+                    {m.selectedExperts.map((r) => (
+                      <ExpertChip key={r.expertId} expertId={r.expertId} reason={r.reason} />
                     ))}
                   </div>
-                )}
-              </div>
-            );
+                </div>
+              );
+            }
+            if (m.role === "expert") {
+              const Icon = PERSONA_ICONS[m.expertId];
+              const isReaction = m.round === 2;
+              const failed = m.status === "failed";
+              return (
+                <div key={i} className="flex items-start gap-2">
+                  <div
+                    className={
+                      "mt-1 flex size-7 shrink-0 items-center justify-center rounded-full " +
+                      (failed ? "bg-amber-500/20" : "bg-muted")
+                    }
+                  >
+                    <Icon className="size-4" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="mb-1 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <span className="font-medium text-foreground">
+                        {MOE_EXPERT_LABELS[m.expertId]}
+                      </span>
+                      {isReaction && (
+                        <span className="rounded-full border border-border px-1.5 py-0.5 text-[9px] normal-case tracking-normal text-muted-foreground">
+                          replying
+                        </span>
+                      )}
+                      {m.confidence && !isReaction && (
+                        <span className="rounded-full border border-border px-1.5 py-0.5 text-[9px] normal-case tracking-normal text-muted-foreground">
+                          {m.confidence} confidence
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      className={
+                        "rounded-2xl px-3 py-2 " +
+                        (failed
+                          ? "border border-amber-500/40 bg-amber-500/10 text-[12px] text-amber-700 dark:text-amber-300"
+                          : "bg-muted/40")
+                      }
+                    >
+                      {failed ? (
+                        <div className="flex items-center gap-1.5">
+                          <AlertTriangle className="size-3.5" />
+                          {m.content}
+                        </div>
+                      ) : (
+                        <MarkdownBlock>{m.content}</MarkdownBlock>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            if (m.role === "moderator") {
+              return (
+                <div key={i} className="flex items-start gap-2">
+                  <div className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                    <MessagesSquare className="size-4" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="mb-1 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <span className="font-medium text-foreground">Moderator synthesis</span>
+                      {m.status === "streaming" && (
+                        <span className="inline-flex items-center gap-1 text-[10px] normal-case tracking-normal text-muted-foreground">
+                          <Loader2 className="size-3 animate-spin" />
+                          writing…
+                        </span>
+                      )}
+                    </div>
+                    <div className="rounded-2xl border border-primary/20 bg-primary/5 px-3 py-2">
+                      {m.content ? (
+                        <MarkdownBlock>{m.content}</MarkdownBlock>
+                      ) : (
+                        <div className="text-xs text-muted-foreground">Preparing summary…</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return null;
           })}
           {sending && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
