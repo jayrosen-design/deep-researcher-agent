@@ -110,7 +110,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="rounded-md p-1 text-muted-foreground hover:bg-foreground hover:text-background"
+          className="clay-neutral inline-flex size-8 items-center justify-center rounded-full"
           title="Collapse sidebar"
         >
           <PanelLeftClose className="size-4" />
@@ -120,7 +120,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={onNew}
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
+          className="clay inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs"
         >
           <Plus className="size-3.5" />
           New research
