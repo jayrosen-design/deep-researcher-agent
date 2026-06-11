@@ -503,10 +503,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
                   type="button"
                   onClick={() => setPanelPreset(pid)}
                   className={
-                    "rounded-full border px-4 py-2 text-sm font-medium transition " +
-                    (active
-                      ? "border-foreground/40 bg-foreground text-background"
-                      : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
+                    "rounded-full px-4 py-2 text-sm " +
+                    (active ? "clay-dark" : "clay-neutral")
                   }
                 >
                   {MOE_PANEL_PRESET_META[pid].label}
@@ -517,10 +515,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
               type="button"
               onClick={() => setPanelPreset("custom")}
               className={
-                "rounded-full border px-4 py-2 text-sm font-medium transition " +
-                (panelPreset === "custom"
-                  ? "border-foreground/40 bg-foreground text-background"
-                  : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
+                "rounded-full px-4 py-2 text-sm " +
+                (panelPreset === "custom" ? "clay-dark" : "clay-neutral")
               }
             >
               Custom
