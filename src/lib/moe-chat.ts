@@ -84,6 +84,7 @@ export async function routeExperts(args: {
   docs: MoeDoc[];
   settings: UserSettings;
   preferredExpertId?: MoeExpertId;
+  conversationHistory?: string;
 }): Promise<RouterRoute[]> {
   const merged = mergeDocs(args.docs);
   const context = buildExpertContextBlock(merged);
@@ -91,6 +92,7 @@ export async function routeExperts(args: {
     context,
     userQuestion: args.question,
     preferredExpertId: args.preferredExpertId,
+    conversationHistory: args.conversationHistory,
   });
 
   try {
@@ -142,6 +144,7 @@ export async function askExpert(args: {
   question: string;
   docs: MoeDoc[];
   settings: UserSettings;
+  conversationHistory?: string;
 }): Promise<ExpertAnswer> {
   const merged = mergeDocs(args.docs);
   const context = buildExpertContextBlock(merged);
@@ -156,13 +159,14 @@ ${args.settings.moeExpertPrompt}`;
     expertId: args.expertId,
     context,
     userQuestion: args.question,
+    conversationHistory: args.conversationHistory,
   });
 
   const { content } = await navigatorChat({
     data: {
       model: personaCfg.model || args.settings.synthesisModel,
       temperature: 0.3,
-      maxTokens: 4000,
+      maxTokens: 1200,
       responseFormat: "json_object",
       apiKey: args.settings.navigatorApiKey || undefined,
       messages: [
@@ -206,6 +210,8 @@ export async function synthesizePanel(args: {
   docs: MoeDoc[];
   expertAnswers: ExpertAnswer[];
   settings: UserSettings;
+  discussionAnswers?: ExpertReaction[];
+  conversationHistory?: string;
 }): Promise<string> {
   const merged = mergeDocs(args.docs);
   const context = buildExpertContextBlock(merged);
@@ -213,6 +219,8 @@ export async function synthesizePanel(args: {
     context,
     userQuestion: args.question,
     expertAnswers: args.expertAnswers,
+    discussionAnswers: args.discussionAnswers,
+    conversationHistory: args.conversationHistory,
   });
 
   const { content } = await navigatorChat({
