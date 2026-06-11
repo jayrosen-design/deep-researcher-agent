@@ -1101,12 +1101,12 @@ function Index() {
                   <img
                     src={PERSONA_IMAGES[roleId]}
                     alt="Your persona"
-                    className="h-48 w-auto object-contain dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
+                    className="h-32 w-auto object-contain sm:h-48 dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
                   />
                   <img
                     src={AGENT_IMAGES.workingTogether}
                     alt="Research agents working together"
-                    className="h-48 w-auto object-contain dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
+                    className="hidden h-48 w-auto object-contain md:block dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]"
                   />
                 </div>
                 <div className="text-base font-medium text-foreground text-center">
