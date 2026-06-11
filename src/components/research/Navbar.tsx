@@ -13,7 +13,7 @@ type Props = {
 
 export function Navbar({ settings, onSettingsChange }: Props) {
   return (
-    <div className="flex h-28 items-center justify-between px-4">
+    <div className="flex h-28 items-center justify-center md:justify-between px-4">
       <BrandLockup />
       <div className="hidden md:inline-flex items-center gap-2">
         <Link
