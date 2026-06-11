@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Settings as SettingsIcon, FileText, RotateCcw } from "lucide-react";
+import { Settings as SettingsIcon, RotateCcw } from "lucide-react";
 
 import {
   Dialog,
