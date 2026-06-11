@@ -297,36 +297,40 @@
 /* ===== Clay button system =====
  * Soft, tactile, press-down buttons tuned for the deep-sea palette. */
 :root {
-  --clay-primary: oklch(0.78 0.16 210);
-  --clay-primary-hi: oklch(0.88 0.14 205);
-  --clay-primary-low: oklch(0.46 0.14 220);
-  --clay-primary-ink: oklch(0.14 0.05 245);
+  /* Aqua Clay primary CTA — same in light & dark per brand guide */
+  --clay-primary: #28C7D7;
+  --clay-primary-hi: #5EE7EF;
+  --clay-primary-low: #0D8C9D;
+  --clay-primary-ink: #ffffff;
 
-  --clay-neutral: oklch(0.32 0.06 240);
-  --clay-neutral-hi: oklch(0.42 0.06 235);
-  --clay-neutral-low: oklch(0.18 0.05 245);
-  --clay-neutral-ink: oklch(0.96 0.02 220);
+  /* Dark-mode chip = muted blue clay */
+  --clay-neutral: #153D55;
+  --clay-neutral-hi: #235F7A;
+  --clay-neutral-low: #082033;
+  --clay-neutral-ink: #EAFBFF;
 
-  --clay-dark: oklch(0.22 0.06 245);
-  --clay-dark-hi: oklch(0.32 0.07 240);
-  --clay-dark-low: oklch(0.10 0.04 245);
-  --clay-dark-ink: oklch(0.96 0.02 220);
+  /* Active = Deep Navy */
+  --clay-dark: #06233A;
+  --clay-dark-hi: #0E3D60;
+  --clay-dark-low: #02101D;
+  --clay-dark-ink: #ffffff;
 }
 :root.light {
-  --clay-primary: oklch(0.62 0.16 220);
-  --clay-primary-hi: oklch(0.78 0.14 215);
-  --clay-primary-low: oklch(0.42 0.14 230);
-  --clay-primary-ink: oklch(0.99 0.01 220);
+  --clay-primary: #28C7D7;
+  --clay-primary-hi: #5EE7EF;
+  --clay-primary-low: #0D8C9D;
+  --clay-primary-ink: #ffffff;
 
-  --clay-neutral: oklch(0.96 0.02 220);
-  --clay-neutral-hi: oklch(1 0 0);
-  --clay-neutral-low: oklch(0.78 0.04 220);
-  --clay-neutral-ink: oklch(0.20 0.05 245);
+  /* Light-mode chip = pale clay token */
+  --clay-neutral: #F2FBFC;
+  --clay-neutral-hi: #FFFFFF;
+  --clay-neutral-low: #B7E9ED;
+  --clay-neutral-ink: #07304A;
 
-  --clay-dark: oklch(0.22 0.06 245);
-  --clay-dark-hi: oklch(0.32 0.07 240);
-  --clay-dark-low: oklch(0.10 0.04 245);
-  --clay-dark-ink: oklch(0.99 0.01 220);
+  --clay-dark: #06233A;
+  --clay-dark-hi: #0E3D60;
+  --clay-dark-low: #02101D;
+  --clay-dark-ink: #ffffff;
 }
 
 @utility clay {
