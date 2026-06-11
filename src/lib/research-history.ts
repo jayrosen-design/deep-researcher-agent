@@ -7,6 +7,14 @@ import type { UserRoleId } from "./research-templates";
 const KEY = "dr-history-v1";
 const MAX_ENTRIES = 100;
 
+export type MoeHistoryPayload = {
+  mode: "single" | "auto" | "panel";
+  panelPreset?: string;
+  customPanel?: string[];
+  singleExpert?: string;
+  messages: unknown[]; // serialized ChatMsg[] from MoeChatWorkspace
+};
+
 export type HistoryEntry = {
   id: string;
   prompt: string;
@@ -16,6 +24,8 @@ export type HistoryEntry = {
   sources: SearchResult[];
   createdAt: number;
   roleId?: UserRoleId;
+  kind?: "research" | "moe";
+  moe?: MoeHistoryPayload;
 };
 
 function safeParse(raw: string | null): HistoryEntry[] {
@@ -29,9 +39,14 @@ function safeParse(raw: string | null): HistoryEntry[] {
         typeof e === "object" &&
         typeof e.id === "string" &&
         typeof e.prompt === "string" &&
-        typeof e.report === "string" &&
-        typeof e.createdAt === "number",
-    );
+        typeof e.createdAt === "number" &&
+        (typeof e.report === "string" || (e.kind === "moe" && e.moe && Array.isArray(e.moe.messages))),
+    ).map((e: HistoryEntry) => ({
+      ...e,
+      report: typeof e.report === "string" ? e.report : "",
+      sources: Array.isArray(e.sources) ? e.sources : [],
+      plan: e.plan ?? null,
+    }));
   } catch {
     return [];
   }
