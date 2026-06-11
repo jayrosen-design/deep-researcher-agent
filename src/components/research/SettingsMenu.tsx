@@ -49,9 +49,8 @@ type Props = {
 };
 
 export function SettingsMenu({ settings, onSettingsChange }: Props) {
-  const [showSettings, setShowSettings] = useState(false);
   const [showPrompts, setShowPrompts] = useState(false);
-  const [promptsTab, setPromptsTab] = useState<"research" | "chat">("research");
+  const [promptsTab, setPromptsTab] = useState<"research" | "chat" | "apikeys">("research");
   const [draft, setDraft] = useState<UserSettings>(settings);
   const [remoteModels, setRemoteModels] = useState<string[] | null>(null);
   const [modelsLoading, setModelsLoading] = useState(false);
@@ -102,22 +101,14 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
     <>
       <button
         type="button"
-        onClick={() => setShowSettings(true)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-foreground hover:text-background"
-        title="API keys"
-      >
-        <SettingsIcon className="size-3.5" />
-        API keys
-      </button>
-      <button
-        type="button"
         onClick={() => setShowPrompts(true)}
         className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-foreground hover:text-background"
-        title="System prompts"
+        title="Settings"
       >
-        <FileText className="size-3.5" />
-        System prompts
+        <SettingsIcon className="size-3.5" />
+        Settings
       </button>
+
 
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent className="max-w-2xl">
