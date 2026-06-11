@@ -3,8 +3,7 @@ import { Lock, HelpCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { setAuthed, verifyPassword } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
-import { BrandLockup } from "./BrandLockup";
-import logoImg from "@/assets/deep-researcherl-logo.png";
+import logoImg from "@/assets/deep-researcherl-logo2.png";
 import signInBtnLight from "@/assets/sign-in-button-light.png";
 import signInBtnDark from "@/assets/sign-in-button-dark.png";
 
@@ -33,8 +32,7 @@ export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div className="relative min-h-screen w-full">
-      <header className="flex w-full items-center justify-between px-6 pt-4">
-        <BrandLockup />
+      <header className="flex w-full items-center justify-end px-6 pt-4">
         <div className="inline-flex items-center gap-2">
           <Link
             to="/how-it-works"
