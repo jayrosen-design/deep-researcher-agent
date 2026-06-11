@@ -347,17 +347,23 @@ export const MOE_EXPERT_ANSWER_INSTRUCTIONS = `You are now answering as the sele
 
 You will receive:
 - The original research question.
-- The completed report.
-- The selected sources (grounded knowledge base).
+- The completed report, if one exists.
+- The selected sources (grounded knowledge base), if any were provided.
+- The prior panel conversation, if this is a follow-up turn.
 - The user's follow-up question.
 
 Your job:
 - Answer only from your expert perspective.
-- Use the completed report and selected sources as the primary knowledge base.
+- Use the completed report and selected sources as the primary knowledge base when they are available.
+- If no report or sources are available, continue from the panel conversation and your professional expertise.
 - Use your professional expertise to interpret, organize, and apply the report.
 - Do not invent facts or citations.
 - If evidence is missing, say what is missing.
 - Separate source-grounded findings from expert judgment.
+- Keep this conversational and concise for a live expert chat.
+- Make 1-2 sharp points, not a mini-essay.
+- Keep the main answer to 2-4 sentences, roughly 120 words max.
+- Keep evidenceUsed, missingEvidence, and recommendations to at most 2 short items each.
 
 Return ONLY valid JSON in this exact shape:
 {
@@ -373,8 +379,9 @@ export const MOE_MODERATOR_SYSTEM_PROMPT = `You are the moderator of a post-repo
 
 You will receive:
 - The user's follow-up question.
-- The completed report.
-- The selected sources.
+- The completed report, if one exists.
+- The selected sources, if any were provided.
+- The prior panel conversation, if this is a continuation.
 - Several expert responses (each with expertId, answer, confidence, evidenceUsed, missingEvidence, recommendations).
 
 Your job:
@@ -443,7 +450,7 @@ export function buildExpertContextBlock(args: {
 ${args.originalQuery}
 
 Compiled report:
-${args.compiledReport}
+${args.compiledReport.trim() || "(no compiled report provided for this chat)"}
 
 Selected sources:
 ${sourcesBlock || "(no sources provided)"}`;
@@ -453,8 +460,14 @@ export function buildRouterUserMessage(args: {
   context: string;
   userQuestion: string;
   preferredExpertId?: MoeExpertId;
+  conversationHistory?: string;
 }): string {
   return `${args.context}
+
+${args.conversationHistory ? `Prior panel conversation:
+${args.conversationHistory}
+
+` : ""}
 
 User follow-up question:
 ${args.userQuestion}
@@ -472,8 +485,14 @@ export function buildExpertUserMessage(args: {
   expertId: MoeExpertId;
   context: string;
   userQuestion: string;
+  conversationHistory?: string;
 }): string {
   return `${args.context}
+
+${args.conversationHistory ? `Prior panel conversation:
+${args.conversationHistory}
+
+` : ""}
 
 User follow-up question:
 ${args.userQuestion}
@@ -485,7 +504,8 @@ export function buildModeratorUserMessage(args: {
   context: string;
   userQuestion: string;
   expertAnswers: ExpertAnswer[];
-  reactionAnswers?: ExpertReaction[];
+  discussionAnswers?: ExpertReaction[];
+  conversationHistory?: string;
 }): string {
   const expertBlock = args.expertAnswers
     .map(
@@ -507,20 +527,25 @@ ${e.recommendations.map((x) => `- ${x}`).join("\n") || "- (none)"}`,
     .join("\n\n");
 
   const reactionBlock =
-    args.reactionAnswers && args.reactionAnswers.length > 0
+    args.discussionAnswers && args.discussionAnswers.length > 0
       ? `
 
-Discussion round (each expert responding to the others' first takes):
-${args.reactionAnswers
+Discussion rounds:
+${args.discussionAnswers
   .map(
     (r) =>
-      `--- ${MOE_EXPERT_LABELS[r.expertId] ?? r.expertId} reaction ---
+      `--- Round ${r.round}: ${MOE_EXPERT_LABELS[r.expertId] ?? r.expertId} ---
 ${r.content}`,
   )
   .join("\n\n")}`
       : "";
 
   return `${args.context}
+
+${args.conversationHistory ? `Prior panel conversation:
+${args.conversationHistory}
+
+` : ""}
 
 User follow-up question:
 ${args.userQuestion}
@@ -529,41 +554,48 @@ Expert responses:
 ${expertBlock}${reactionBlock}
 
 Synthesize these expert responses${
-    args.reactionAnswers && args.reactionAnswers.length > 0 ? " and the discussion round" : ""
+    args.discussionAnswers && args.discussionAnswers.length > 0 ? " and the discussion rounds" : ""
   } using the exact Markdown structure described in the system prompt.`;
 }
 
 export type ExpertReaction = {
   expertId: MoeExpertId;
+  round: number;
   content: string;
 };
 
-export const MOE_EXPERT_REACTION_INSTRUCTIONS = `You have just seen the FIRST RESPONSES from the other experts on this panel.
-Respond in 1-2 short paragraphs, in first person, as your assigned persona. You may:
+export const MOE_EXPERT_REACTION_INSTRUCTIONS = `You are in an active live panel discussion.
+Respond in 1 short paragraph, in first person, as your assigned persona. You may:
 - Agree with and reinforce specific points another expert made.
 - Respectfully push back on something you'd frame differently.
 - Build on another expert's idea with what your perspective uniquely adds.
+- Add only one fresh idea if it materially moves the discussion forward.
 Address other experts by their role name (e.g. "I agree with the Researcher that..."). Be concrete and brief.
-Plain prose only. No headings. No JSON. No bullet lists. No preamble like "As a ...". Just the reaction.`;
+Keep it conversational, specific, and under 90 words. Plain prose only. No headings. No JSON. No bullet lists. No preamble like "As a ...". Just the reaction.`;
 
 export function buildExpertReactionUserMessage(args: {
   expertId: MoeExpertId;
+  round: number;
   userQuestion: string;
-  otherAnswers: ExpertAnswer[];
+  otherMessages: Array<{ expertId: MoeExpertId; content: string }>;
+  conversationHistory?: string;
 }): string {
-  const others = args.otherAnswers
+  const others = args.otherMessages
     .filter((a) => a.expertId !== args.expertId)
     .map(
       (a) =>
         `--- ${MOE_EXPERT_LABELS[a.expertId] ?? a.expertId} said ---
-${a.answer}`,
+${a.content}`,
     )
     .join("\n\n");
 
-  return `User question:
+  return `${args.conversationHistory ? `Prior panel conversation:
+${args.conversationHistory}
+
+` : ""}User question:
 ${args.userQuestion}
 
-Your own first response has already been delivered. Now react to the OTHER experts below.
+You have already spoken earlier in this panel. This is round ${args.round}. Now react to the OTHER experts below.
 
 ${others}
 
