@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { setAuthed, verifyPassword } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
 import { BrandLockup } from "./BrandLockup";
-import logoImg from "@/assets/deep-researcherl-logo.png";
+import logoImg from "@/assets/deep-researcherl-logo2.png";
 import signInBtnLight from "@/assets/sign-in-button-light.png";
 import signInBtnDark from "@/assets/sign-in-button-dark.png";
 
