@@ -59,9 +59,9 @@ function HowItWorks() {
         How it Works
       </h1>
       <p className="mt-3 text-base text-muted-foreground">
-        Deep Researcher Agent is an autonomous research assistant that plans,
-        searches the web, reads sources, and writes a fully cited Markdown
-        report — all in a single run.
+        This app has two modes: a <strong className="text-foreground">Mixture of Experts Chat</strong> for
+        conversing with expert personas, and a <strong className="text-foreground">Deep Research</strong> agent that
+        autonomously plans, searches the web, and writes a fully cited report.
       </p>
 
       <section className="mt-10">
