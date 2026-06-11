@@ -202,7 +202,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
           <button
             type="button"
             onClick={onSignOut}
-            className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
+            className="clay-neutral inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
           >
             <LogOut className="size-3.5" />
             Sign out
