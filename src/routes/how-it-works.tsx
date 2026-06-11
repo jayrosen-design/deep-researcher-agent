@@ -135,6 +135,57 @@ function HowItWorks() {
 
       <section className="mt-12">
         <h2 className="text-xl font-semibold text-foreground">
+          How the Mixture of Experts Chat works
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Mixture of Experts (MoE) Chat lets you converse with carefully prompted
+          expert personas instead of running a full research loop. Pick one
+          expert for a focused 1:1 conversation, or convene a panel of experts
+          who each weigh in from their own perspective.
+        </p>
+        <div className="mt-5 space-y-4">
+          <div className="flex gap-4 rounded-xl border border-border bg-card p-5">
+            <img
+              src="/moe/product-design-moe.png"
+              alt="Single expert chat"
+              className="hidden h-28 w-28 shrink-0 rounded-lg object-cover sm:block dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.3)]"
+            />
+            <div>
+              <div className="text-sm font-semibold text-foreground">
+                1. Single Expert
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Choose one expert persona and chat with them directly. The expert
+                stays in character, drawing on their domain knowledge to answer
+                your questions, brainstorm ideas, or critique your work. Best
+                when you already know which lens you want applied.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-4 rounded-xl border border-border bg-card p-5">
+            <img
+              src="/moe/product-design-moe.png"
+              alt="Expert panel chat"
+              className="hidden h-28 w-28 shrink-0 rounded-lg object-cover sm:block dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.3)]"
+            />
+            <div>
+              <div className="text-sm font-semibold text-foreground">
+                2. Expert Panel
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Convene a group of experts on a topic and let each one respond
+                in turn to the same prompt. You see multiple viewpoints
+                side-by-side — useful for design reviews, strategy decisions, or
+                pressure-testing an idea from several angles at once.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section className="mt-12">
+        <h2 className="text-xl font-semibold text-foreground">
           What you can configure
         </h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
