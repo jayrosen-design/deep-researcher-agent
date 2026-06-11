@@ -187,7 +187,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
       <div className="flex flex-col gap-2 border-t border-border px-3 py-2 md:hidden">
         <Link
           to="/how-it-works"
-          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
+          className="clay-neutral inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
         >
           <HelpCircle className="size-3.5" />
           How it Works
