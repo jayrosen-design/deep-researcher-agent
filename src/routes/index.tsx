@@ -937,7 +937,7 @@ function Index() {
           <div className="inline-flex items-center rounded-full border border-border bg-muted/40 p-1 text-sm">
             {([
               { id: "research", label: "Deep Research" },
-              { id: "moe", label: "MoE Chat" },
+              { id: "moe", label: "Chat" },
             ] as const).map((t) => {
               const active = workflowMode === t.id;
               return (

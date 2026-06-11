@@ -427,10 +427,6 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
             }
           />
         )}
-        <div className="mt-2 mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
-          <MessagesSquare className="size-3.5" />
-          Mixture of Experts · No research run required
-        </div>
         <h1 className="text-center text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           Chat with Mixture of Experts
         </h1>
