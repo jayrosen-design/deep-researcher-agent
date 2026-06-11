@@ -44,7 +44,7 @@ type PanelHeaderMsg = {
 };
 type ExpertTurnMsg = {
   role: "expert";
-  round: 1 | 2;
+  round: 1 | 2 | 3 | 4;
   expertId: MoeExpertId;
   content: string;
   confidence?: ExpertAnswer["confidence"];
@@ -68,7 +68,7 @@ type Props = {
 };
 
 type PanelPreset = PanelPresetId | "custom";
-type LoadingStage = "routing" | "consulting" | "synthesizing" | null;
+type LoadingStage = "routing" | "round1" | "round2" | "round3" | "round4" | "moderator" | null;
 
 function MarkdownBlock({ children }: { children: string }) {
   return (
@@ -100,6 +100,25 @@ function ExpertChip({ expertId, reason }: { expertId: MoeExpertId; reason?: stri
       {MOE_EXPERT_LABELS[expertId]}
     </span>
   );
+}
+
+function buildMoeConversationHistory(messages: ChatMsg[]): string | undefined {
+  const lines = messages.flatMap((m) => {
+    if (m.role === "user") return [`User: ${m.content}`];
+    if (m.role === "panel-header") {
+      return [
+        `Panel: ${m.selectedExperts.map((r) => MOE_EXPERT_LABELS[r.expertId]).join(", ")}`,
+      ];
+    }
+    if (m.role === "expert") {
+      return [`Round ${m.round} — ${MOE_EXPERT_LABELS[m.expertId]}: ${m.content}`];
+    }
+    if (m.role === "moderator") return [`Moderator: ${m.content}`];
+    return [];
+  });
+
+  const history = lines.join("\n\n").trim();
+  return history || undefined;
 }
 
 export function MoeChatWorkspace({ settings, roleId }: Props) {
@@ -170,8 +189,11 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
 
   const stageLabel: Record<Exclude<LoadingStage, null>, string> = {
     routing: "Routing question…",
-    consulting: "Consulting experts…",
-    synthesizing: "Synthesizing answer…",
+    round1: "Round 1 · opening takes…",
+    round2: "Round 2 · discussion…",
+    round3: "Round 3 · discussion…",
+    round4: "Round 4 · discussion…",
+    moderator: "Moderator synthesis…",
   };
 
   const toggleCustomExpert = (id: MoeExpertId) => {
@@ -225,6 +247,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           { role: "assistant", mode: "single", content: content.trim(), personaId: singleExpert },
         ]);
       } else {
+        const conversationHistory = buildMoeConversationHistory(messages);
         await runMoeTurnStreaming({
           mode,
           question: trimmed,
@@ -232,15 +255,10 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
           settings,
           preferredExpertId: mode === "auto" ? (roleId ?? singleExpert) : undefined,
           panelExperts: mode === "panel" ? effectivePanel : undefined,
+          conversationHistory,
           onEvent: (evt: MoeStreamEvent) => {
             if (evt.type === "stage") {
-              setLoadingStage(
-                evt.stage === "round1"
-                  ? "consulting"
-                  : evt.stage === "round2"
-                    ? "consulting"
-                    : "synthesizing",
-              );
+              setLoadingStage(evt.stage);
               return;
             }
             if (evt.type === "routed") {
@@ -269,7 +287,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                 ...m,
                 {
                   role: "expert",
-                  round: 2,
+                  round: evt.round,
                   expertId: evt.reaction.expertId,
                   content: evt.reaction.content,
                   status: "done",
