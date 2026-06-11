@@ -936,6 +936,7 @@ function Index() {
         <div className="mx-auto mt-4 flex w-full max-w-4xl justify-center px-4 sm:px-6">
           <div className="inline-flex items-center rounded-full border border-border bg-muted/40 p-1 text-sm">
             {([
+              { id: "research", label: "Deep Research" },
               { id: "moe", label: "Chat" },
             ] as const).map((t) => {
               const active = workflowMode === t.id;
