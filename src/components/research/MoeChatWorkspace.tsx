@@ -4,7 +4,6 @@ import remarkGfm from "remark-gfm";
 import {
   Send,
   Loader2,
-  ChevronDown,
   AlertTriangle,
   MessagesSquare,
   LayoutTemplate,
