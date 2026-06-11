@@ -33,7 +33,6 @@ function HowItWorks() {
       <header className="flex w-full items-center justify-between px-6 pt-4">
         <BrandLockup />
         <div className="inline-flex items-center gap-2">
-          <ThemeToggle />
           <Link
             to="/"
             className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -41,6 +40,7 @@ function HowItWorks() {
             <ArrowLeft className="size-3.5" />
             Back
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 
