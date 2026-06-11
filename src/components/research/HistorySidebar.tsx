@@ -98,7 +98,15 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
 
 
   return (
-    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-sidebar">
+    <>
+      {isMobile && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40"
+          onClick={() => setCollapsed(true)}
+          aria-hidden
+        />
+      )}
+    <aside className={`flex h-screen w-64 shrink-0 flex-col border-r border-border bg-sidebar ${isMobile ? "fixed inset-y-0 left-0 z-50" : "sticky top-0"}`}>
       <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2.5">
         <div className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           <History className="size-3.5" />
