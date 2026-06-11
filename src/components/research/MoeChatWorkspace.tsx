@@ -30,7 +30,7 @@ import {
   type PanelPresetId,
   type RouterRoute,
 } from "@/lib/moe-prompts";
-import { runMoeTurn, type MoeMode } from "@/lib/moe-chat";
+import { runMoeTurnStreaming, type MoeMode, type MoeStreamEvent } from "@/lib/moe-chat";
 
 type SingleAssistantMsg = {
   role: "assistant";
@@ -38,18 +38,30 @@ type SingleAssistantMsg = {
   content: string;
   personaId: MoeExpertId;
 };
-type MoeAssistantMsg = {
-  role: "assistant";
+type PanelHeaderMsg = {
+  role: "panel-header";
   mode: "auto" | "panel";
-  content: string;
   selectedExperts: RouterRoute[];
-  expertAnswers: ExpertAnswer[];
-  failures: Array<{ expertId: MoeExpertId; error: string }>;
+};
+type ExpertTurnMsg = {
+  role: "expert";
+  round: 1 | 2;
+  expertId: MoeExpertId;
+  content: string;
+  confidence?: ExpertAnswer["confidence"];
+  status: "done" | "failed";
+};
+type ModeratorMsg = {
+  role: "moderator";
+  content: string;
+  status: "streaming" | "done";
 };
 type ChatMsg =
   | { role: "user"; content: string }
   | SingleAssistantMsg
-  | MoeAssistantMsg;
+  | PanelHeaderMsg
+  | ExpertTurnMsg
+  | ModeratorMsg;
 
 type Props = {
   settings: UserSettings;
