@@ -171,7 +171,7 @@
   }
 
   :root.light body {
-    background-image: url('/images/lightmode-bg.png');
+    background-image: url('/images/light-bg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
