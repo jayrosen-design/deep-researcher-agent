@@ -178,10 +178,8 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
                     type="button"
                     onClick={() => setPromptsTab(tab.id)}
                     className={
-                      "rounded-full px-5 py-2 transition " +
-                      (active
-                        ? "bg-foreground text-background"
-                        : "text-muted-foreground hover:text-foreground")
+                      "rounded-full px-5 py-2 text-sm " +
+                      (active ? "clay-dark" : "clay-neutral")
                     }
                   >
                     {tab.label}
