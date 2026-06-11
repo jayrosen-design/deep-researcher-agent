@@ -117,9 +117,9 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
           <DialogHeader>
             <div className="flex items-center justify-between gap-4">
               <div>
-                <DialogTitle>System prompts</DialogTitle>
+                <DialogTitle>Settings</DialogTitle>
                 <DialogDescription>
-                  Customize the system prompts for each agent and persona. Stored only in your browser.
+                  Customize system prompts and API keys. Stored only in your browser.
                 </DialogDescription>
               </div>
               <button
@@ -135,7 +135,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
                       agentSystemPrompt: DEFAULT_SETTINGS.agentSystemPrompt,
                       synthesisSystemPrompt: DEFAULT_SETTINGS.synthesisSystemPrompt,
                     });
-                  } else {
+                  } else if (promptsTab === "chat") {
                     persistDraft({
                       ...draft,
                       personaChatBasePrompt: PERSONA_CHAT_BASE_SYSTEM_PROMPT,
@@ -145,6 +145,14 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
                       moeModeratorPrompt: MOE_MODERATOR_SYSTEM_PROMPT,
                       moeRouterModel: DEFAULT_SETTINGS.moeRouterModel,
                       moeModeratorModel: DEFAULT_SETTINGS.moeModeratorModel,
+                    });
+                  } else {
+                    persistDraft({
+                      ...draft,
+                      navigatorApiKey: DEFAULT_SETTINGS.navigatorApiKey,
+                      firecrawlApiKey: DEFAULT_SETTINGS.firecrawlApiKey,
+                      tavilyApiKey: DEFAULT_SETTINGS.tavilyApiKey,
+                      searchProvider: DEFAULT_SETTINGS.searchProvider,
                     });
                   }
                 }}
@@ -161,6 +169,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
               {([
                 { id: "research", label: "Deep Research" },
                 { id: "chat", label: "Chat" },
+                { id: "apikeys", label: "API Keys" },
               ] as const).map((tab) => {
                 const active = promptsTab === tab.id;
                 return (
@@ -183,15 +192,114 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
           </div>
 
           <div className="space-y-4">
-            <div className="text-[11px] text-muted-foreground/80">
-              {modelsLoading
-                ? "Loading models…"
-                : remoteModels
-                  ? `${remoteModels.length} models available for your key`
-                  : modelsError
-                    ? "Using bundled defaults (key has no model list)"
-                    : "Using bundled defaults"}
-            </div>
+            {promptsTab !== "apikeys" && (
+              <div className="text-[11px] text-muted-foreground/80">
+                {modelsLoading
+                  ? "Loading models…"
+                  : remoteModels
+                    ? `${remoteModels.length} models available for your key`
+                    : modelsError
+                      ? "Using bundled defaults (key has no model list)"
+                      : "Using bundled defaults"}
+              </div>
+            )}
+
+            {promptsTab === "apikeys" && (
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground">
+                  Stored only in your browser (localStorage) and sent with each request.
+                  Leave blank to use the server's default keys.
+                </p>
+                <label className="block">
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>NaviGator API key</span>
+                    <a
+                      href="https://api.ai.it.ufl.edu/ui/?page=api-keys"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground/70 underline-offset-2 hover:underline"
+                    >
+                      Get key ↗
+                    </a>
+                  </div>
+                  <input
+                    type="password"
+                    value={draft.navigatorApiKey}
+                    onChange={(e) =>
+                      persistDraft({ ...draft, navigatorApiKey: e.target.value.trim() })
+                    }
+                    placeholder="sk-…"
+                    className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                  />
+                </label>
+                <label className="block">
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Search provider</span>
+                    <span className="text-[10px] text-muted-foreground/70">
+                      Falls back to the other if the primary fails
+                    </span>
+                  </div>
+                  <select
+                    value={draft.searchProvider}
+                    onChange={(e) =>
+                      persistDraft({
+                        ...draft,
+                        searchProvider: e.target.value as "firecrawl" | "tavily",
+                      })
+                    }
+                    className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                  >
+                    <option value="firecrawl">Firecrawl (default)</option>
+                    <option value="tavily">Tavily</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Firecrawl API key</span>
+                    <a
+                      href="https://www.firecrawl.dev/app/api-keys"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground/70 underline-offset-2 hover:underline"
+                    >
+                      Get key ↗
+                    </a>
+                  </div>
+                  <input
+                    type="password"
+                    value={draft.firecrawlApiKey}
+                    onChange={(e) =>
+                      persistDraft({ ...draft, firecrawlApiKey: e.target.value.trim() })
+                    }
+                    placeholder="fc-…"
+                    className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                  />
+                </label>
+                <label className="block">
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Tavily API key</span>
+                    <a
+                      href="https://www.tavily.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground/70 underline-offset-2 hover:underline"
+                    >
+                      Get key ↗
+                    </a>
+                  </div>
+                  <input
+                    type="password"
+                    value={draft.tavilyApiKey}
+                    onChange={(e) =>
+                      persistDraft({ ...draft, tavilyApiKey: e.target.value.trim() })
+                    }
+                    placeholder="tvly-…"
+                    className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground focus:border-foreground/30 focus:outline-none dark:bg-background"
+                  />
+                </label>
+              </div>
+            )}
+
 
             {promptsTab === "research" &&
               ([
