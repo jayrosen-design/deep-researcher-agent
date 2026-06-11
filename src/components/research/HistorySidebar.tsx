@@ -59,7 +59,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={() => setCollapsed(false)}
-          className="fixed left-3 top-3 z-40 rounded-md border border-border bg-background p-2 text-foreground shadow-sm"
+          className="fixed right-3 top-3 z-40 rounded-md border border-border bg-background p-2 text-foreground shadow-sm"
           title="Open menu"
           aria-label="Open menu"
         >
