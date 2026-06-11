@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { BrandLockup } from "@/components/research/BrandLockup";
 import { ThemeToggle } from "@/components/research/ThemeToggle";
-import { AGENT_IMAGES } from "@/lib/persona-images";
+import { AGENT_IMAGES, PERSONA_IMAGES } from "@/lib/persona-images";
 import navigatorKeyImg from "@/assets/navigator-key.png.asset.json";
 import searchKeyImg from "@/assets/search-key.png.asset.json";
 
