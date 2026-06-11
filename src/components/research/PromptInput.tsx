@@ -40,7 +40,7 @@ export function PromptInput({
   const personaImage = PERSONA_IMAGES[activeRoleId];
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-8 pb-12">
+    <div className="mx-auto flex w-full max-w-5xl flex-col items-center px-6 pt-8 pb-12">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full items-center justify-center gap-6">
           <img
