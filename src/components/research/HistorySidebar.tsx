@@ -54,6 +54,19 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
 
 
   if (collapsed) {
+    if (isMobile) {
+      return (
+        <button
+          type="button"
+          onClick={() => setCollapsed(false)}
+          className="fixed left-3 top-3 z-40 rounded-md border border-border bg-background p-2 text-foreground shadow-sm"
+          title="Open menu"
+          aria-label="Open menu"
+        >
+          <Menu className="size-5" />
+        </button>
+      );
+    }
     return (
       <aside className="sticky top-0 flex h-screen w-12 shrink-0 flex-col items-center gap-2 border-r border-border bg-sidebar py-3">
         <button
@@ -72,29 +85,11 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         >
           <Plus className="size-4" />
         </button>
-        <div className="mt-auto flex flex-col items-center gap-2 md:hidden">
-          <Link
-            to="/how-it-works"
-            className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
-            title="How it Works"
-          >
-            <HelpCircle className="size-4" />
-          </Link>
-          <ThemeToggle />
-          {onSignOut && (
-            <button
-              type="button"
-              onClick={onSignOut}
-              className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
-              title="Sign out"
-            >
-              <LogOut className="size-4" />
-            </button>
-          )}
-        </div>
       </aside>
     );
   }
+
+
 
 
   return (
