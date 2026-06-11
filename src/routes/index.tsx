@@ -172,6 +172,8 @@ function Index() {
   const savedReportRef = useRef<string | null>(null);
   const [roleId, setRoleId] = useState<UserRoleId>("researcher");
   const [workflowMode, setWorkflowMode] = useState<"research" | "moe">("research");
+  const [moeEntryId, setMoeEntryId] = useState<string | null>(null);
+  const [moeInitialEntry, setMoeInitialEntry] = useState<HistoryEntry | null>(null);
 
 
   // Persist completed researches to localStorage (per-device only).
