@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { setAuthed, verifyPassword } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
 import logoImg from "@/assets/deep-researcherl-logo.png";
+import signInBtnImg from "@/assets/sign-in-button-light.png";
 
 
 
