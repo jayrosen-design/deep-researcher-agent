@@ -159,7 +159,9 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
                         {e.title || e.prompt}
                       </div>
                       <div className={`mt-0.5 text-[10px] ${isActive ? "text-background/70" : "text-muted-foreground"}`}>
-                        {formatDate(e.createdAt)} · {e.sources.length} sources
+                        {formatDate(e.createdAt)} · {e.kind === "moe"
+                          ? `MoE · ${(e.moe?.messages?.length ?? 0)} msgs`
+                          : `${e.sources.length} sources`}
                       </div>
                     </div>
                     <button

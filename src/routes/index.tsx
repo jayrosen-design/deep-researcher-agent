@@ -172,6 +172,8 @@ function Index() {
   const savedReportRef = useRef<string | null>(null);
   const [roleId, setRoleId] = useState<UserRoleId>("researcher");
   const [workflowMode, setWorkflowMode] = useState<"research" | "moe">("research");
+  const [moeEntryId, setMoeEntryId] = useState<string | null>(null);
+  const [moeInitialEntry, setMoeInitialEntry] = useState<HistoryEntry | null>(null);
 
 
   // Persist completed researches to localStorage (per-device only).
@@ -726,6 +728,8 @@ function Index() {
     savedReportRef.current = null;
     setFollowUps([]);
     setReviewing(false);
+    setMoeEntryId(null);
+    setMoeInitialEntry(null);
   }, []);
 
   const handleSelectHistory = useCallback((entry: HistoryEntry) => {
@@ -735,6 +739,22 @@ function Index() {
     setPlanError(null);
     setFatalError(null);
     setTrace([]);
+    if (entry.kind === "moe" && entry.moe) {
+      setWorkflowMode("moe");
+      setMoeEntryId(entry.id);
+      setMoeInitialEntry(entry);
+      setActiveHistoryId(entry.id);
+      if (entry.roleId) setRoleId(entry.roleId);
+      setPhase("input");
+      setPrompt(null);
+      setReport(null);
+      setSources([]);
+      savedReportRef.current = null;
+      return;
+    }
+    setWorkflowMode("research");
+    setMoeEntryId(null);
+    setMoeInitialEntry(null);
     setPrompt(entry.prompt);
     setPlan(entry.plan);
     setSources(entry.sources);
@@ -746,6 +766,52 @@ function Index() {
     setReviewing(false);
     setPhase("research");
   }, []);
+
+  const handleMoeSnapshot = useCallback(
+    (snapshot: import("@/components/research/MoeChatWorkspace").MoeSnapshot) => {
+      const firstUser = snapshot.messages.find((m): m is { role: "user"; content: string } => m.role === "user");
+      const prompt = firstUser?.content ?? "MoE chat";
+      const title = prompt.trim().slice(0, 80);
+      const moePayload = {
+        mode: snapshot.mode,
+        panelPreset: snapshot.panelPreset,
+        customPanel: snapshot.customPanel,
+        singleExpert: snapshot.singleExpert,
+        messages: snapshot.messages,
+      };
+      const personaRole: UserRoleId | undefined =
+        snapshot.mode === "single"
+          ? snapshot.singleExpert
+          : (snapshot.customPanel?.[0] as UserRoleId | undefined);
+
+      if (!moeEntryId) {
+        const created = saveEntry({
+          prompt,
+          title,
+          plan: null,
+          report: "",
+          sources: [],
+          roleId: personaRole,
+          kind: "moe",
+          moe: moePayload,
+        });
+        setMoeEntryId(created.id);
+        setActiveHistoryId(created.id);
+        setHistoryRefresh((n) => n + 1);
+      } else {
+        updateEntry(moeEntryId, { title, moe: moePayload, roleId: personaRole });
+        setHistoryRefresh((n) => n + 1);
+      }
+    },
+    [moeEntryId],
+  );
+
+  const handleMoeResetEntry = useCallback(() => {
+    setMoeEntryId(null);
+    setMoeInitialEntry(null);
+    setActiveHistoryId(null);
+  }, []);
+
 
   const handleRetry = useCallback(() => {
     if (prompt) void runAgent(prompt, plan);
@@ -904,7 +970,13 @@ function Index() {
             />
           </>
         ) : (
-          <MoeChatWorkspace settings={settings} roleId={roleId} />
+          <MoeChatWorkspace
+            settings={settings}
+            roleId={roleId}
+            initialEntry={moeInitialEntry}
+            onSnapshot={handleMoeSnapshot}
+            onResetEntry={handleMoeResetEntry}
+          />
         )}
         <Disclaimer />
       </>
