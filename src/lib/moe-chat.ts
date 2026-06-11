@@ -314,11 +314,15 @@ export async function runMoeTurn(args: {
 
 // ------------------------- Streaming group-chat orchestration -------------------------
 
+const MOE_TOTAL_ROUNDS = 4;
+
 export async function askExpertReaction(args: {
   expertId: MoeExpertId;
+  round: number;
   question: string;
-  otherAnswers: ExpertAnswer[];
+  otherMessages: Array<{ expertId: MoeExpertId; content: string }>;
   settings: UserSettings;
+  conversationHistory?: string;
 }): Promise<ExpertReaction> {
   const personaCfg = args.settings.personaChat[args.expertId];
   const system = `${args.settings.personaChatBasePrompt}
@@ -329,15 +333,17 @@ ${MOE_EXPERT_REACTION_INSTRUCTIONS}`;
 
   const userMsg = buildExpertReactionUserMessage({
     expertId: args.expertId,
+    round: args.round,
     userQuestion: args.question,
-    otherAnswers: args.otherAnswers,
+    otherMessages: args.otherMessages,
+    conversationHistory: args.conversationHistory,
   });
 
   const { content } = await navigatorChat({
     data: {
       model: personaCfg.model || args.settings.synthesisModel,
       temperature: 0.5,
-      maxTokens: 600,
+      maxTokens: 400,
       apiKey: args.settings.navigatorApiKey || undefined,
       messages: [
         { role: "system", content: system },
@@ -346,15 +352,15 @@ ${MOE_EXPERT_REACTION_INSTRUCTIONS}`;
     },
   });
 
-  return { expertId: args.expertId, content: content.trim() };
+  return { expertId: args.expertId, round: args.round, content: content.trim() };
 }
 
 export type MoeStreamEvent =
   | { type: "routed"; selectedExperts: RouterRoute[] }
-  | { type: "stage"; stage: "round1" | "round2" | "moderator" }
+  | { type: "stage"; stage: "round1" | "round2" | "round3" | "round4" | "moderator" }
   | { type: "expertAnswer"; round: 1; answer: ExpertAnswer }
-  | { type: "expertFailed"; round: 1 | 2; expertId: MoeExpertId; error: string }
-  | { type: "reactionAnswer"; round: 2; reaction: ExpertReaction }
+  | { type: "expertFailed"; round: 1 | 2 | 3 | 4; expertId: MoeExpertId; error: string }
+  | { type: "reactionAnswer"; round: 2 | 3 | 4; reaction: ExpertReaction }
   | { type: "moderatorStart" }
   | { type: "moderatorDelta"; text: string }
   | { type: "moderatorDone"; fullText: string };
@@ -363,9 +369,10 @@ export async function streamModeratorSynthesis(args: {
   question: string;
   docs: MoeDoc[];
   expertAnswers: ExpertAnswer[];
-  reactionAnswers: ExpertReaction[];
+  discussionAnswers: ExpertReaction[];
   settings: UserSettings;
   onDelta: (text: string) => void;
+  conversationHistory?: string;
 }): Promise<string> {
   const merged = mergeDocs(args.docs);
   const context = buildExpertContextBlock(merged);
@@ -373,7 +380,8 @@ export async function streamModeratorSynthesis(args: {
     context,
     userQuestion: args.question,
     expertAnswers: args.expertAnswers,
-    reactionAnswers: args.reactionAnswers,
+    discussionAnswers: args.discussionAnswers,
+    conversationHistory: args.conversationHistory,
   });
 
   const res = await fetch("/api/navigator-stream", {
