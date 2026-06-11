@@ -60,9 +60,9 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
           type="button"
           onClick={() => setCollapsed(false)}
           className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
-          title="Open history"
+          title="Open menu"
         >
-          <PanelLeft className="size-4" />
+          <Menu className="size-4" />
         </button>
         <button
           type="button"
@@ -80,6 +80,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
           >
             <HelpCircle className="size-4" />
           </Link>
+          <ThemeToggle />
           {onSignOut && (
             <button
               type="button"
