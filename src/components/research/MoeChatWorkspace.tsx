@@ -590,7 +590,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
             }
             if (m.role === "expert") {
               const Icon = PERSONA_ICONS[m.expertId];
-              const isReaction = m.round === 2;
+              const isReaction = m.round > 1;
               const failed = m.status === "failed";
               return (
                 <div key={i} className="flex items-start gap-2">
@@ -609,7 +609,7 @@ export function MoeChatWorkspace({ settings, roleId }: Props) {
                       </span>
                       {isReaction && (
                         <span className="rounded-full border border-border px-1.5 py-0.5 text-[9px] normal-case tracking-normal text-muted-foreground">
-                          replying
+                          round {m.round}
                         </span>
                       )}
                       {m.confidence && !isReaction && (
