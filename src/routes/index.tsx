@@ -970,7 +970,13 @@ function Index() {
             />
           </>
         ) : (
-          <MoeChatWorkspace settings={settings} roleId={roleId} />
+          <MoeChatWorkspace
+            settings={settings}
+            roleId={roleId}
+            initialEntry={moeInitialEntry}
+            onSnapshot={handleMoeSnapshot}
+            onResetEntry={handleMoeResetEntry}
+          />
         )}
         <Disclaimer />
       </>
