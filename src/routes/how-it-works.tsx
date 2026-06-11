@@ -29,18 +29,22 @@ export const Route = createFileRoute("/how-it-works")({
 
 function HowItWorks() {
   return (
-    <div className="relative mx-auto min-h-screen w-full max-w-3xl px-6 pb-24 pt-20">
-      <BrandLockup className="absolute left-4 top-4" />
-      <div className="absolute right-4 top-4 inline-flex items-center gap-2">
-        <ThemeToggle />
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
-        >
-          <ArrowLeft className="size-3.5" />
-          Back
-        </Link>
-      </div>
+    <div className="relative min-h-screen w-full pb-24">
+      <header className="flex w-full items-center justify-between px-6 pt-4">
+        <BrandLockup />
+        <div className="inline-flex items-center gap-2">
+          <ThemeToggle />
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            <ArrowLeft className="size-3.5" />
+            Back
+          </Link>
+        </div>
+      </header>
+
+      <div className="mx-auto w-full max-w-3xl px-6 pt-10">
 
       <div className="mt-4 flex justify-center">
         <img
