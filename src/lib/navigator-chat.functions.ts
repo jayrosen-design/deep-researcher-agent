@@ -46,9 +46,15 @@ export const navigatorChat = createServerFn({ method: "POST" })
     }
 
     const json = (await res.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
+      choices?: Array<{ message?: { content?: string | null }; finish_reason?: string }>;
     };
-    const content = json.choices?.[0]?.message?.content;
-    if (!content) throw new Error("NaviGator returned no content");
+    const choice = json.choices?.[0];
+    const content = choice?.message?.content ?? "";
+    if (!content) {
+      console.warn("NaviGator returned empty content", {
+        finish_reason: choice?.finish_reason,
+        raw: JSON.stringify(json).slice(0, 500),
+      });
+    }
     return { content };
   });
