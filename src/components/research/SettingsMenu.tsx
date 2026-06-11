@@ -165,7 +165,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
           </DialogHeader>
 
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 p-1.5 text-sm">
+            <div className="clay-toggle">
               {([
                 { id: "research", label: "Deep Research" },
                 { id: "chat", label: "Chat" },
@@ -177,10 +177,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
                     key={tab.id}
                     type="button"
                     onClick={() => setPromptsTab(tab.id)}
-                    className={
-                      "rounded-full px-5 py-2 text-sm " +
-                      (active ? "clay-dark" : "clay-neutral")
-                    }
+                    className={active ? "clay-dark rounded-full px-5 py-2 text-sm" : "clay-toggle-item"}
                   >
                     {tab.label}
                   </button>
