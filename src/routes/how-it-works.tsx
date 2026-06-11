@@ -213,7 +213,7 @@ function HowItWorks() {
       </section>
 
 
-      <section className="mt-12">
+      <section className="mt-12 rounded-xl border border-border bg-card p-6">
         <h2 className="text-xl font-semibold text-foreground">API keys</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           API keys are stored only in your browser (localStorage) and sent with
