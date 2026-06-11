@@ -4,7 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { setAuthed, verifyPassword } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
 import logoImg from "@/assets/deep-researcherl-logo.png";
-import signInBtnImg from "@/assets/sign-in-button-light.png";
+import signInBtnLight from "@/assets/sign-in-button-light.png";
+import signInBtnDark from "@/assets/sign-in-button-dark.png";
 
 
 
@@ -69,12 +70,17 @@ export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
         <button
           type="submit"
           disabled={!value || busy}
-          className="w-full transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex w-full items-center justify-center transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <img
-            src={signInBtnImg}
+            src={signInBtnLight}
             alt="Sign in"
-            className="h-12 w-auto object-contain"
+            className="block h-auto w-full object-contain dark:hidden"
+          />
+          <img
+            src={signInBtnDark}
+            alt="Sign in"
+            className="hidden h-auto w-full object-contain dark:block"
           />
         </button>
       </form>
