@@ -146,7 +146,7 @@ function HowItWorks() {
         <div className="mt-5 space-y-4">
           <div className="flex gap-4 rounded-xl border border-border bg-card p-5">
             <img
-              src="/moe/product-design-moe.png"
+              src={PERSONA_IMAGES["instructional-designer"]}
               alt="Single expert chat"
               className="hidden h-28 w-28 shrink-0 rounded-lg object-cover sm:block dark:drop-shadow-[0_0_22px_rgba(0,242,254,0.3)]"
             />
