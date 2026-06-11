@@ -1,15 +1,17 @@
 import { navigatorChat } from "./navigator-chat.functions";
 import type { UserSettings } from "./user-settings";
 import {
-  MOE_EXPERT_ANSWER_INSTRUCTIONS,
   MOE_EXPERT_IDS,
   MOE_EXPERT_LABELS,
+  MOE_EXPERT_REACTION_INSTRUCTIONS,
   buildExpertContextBlock,
+  buildExpertReactionUserMessage,
   buildExpertUserMessage,
   buildModeratorUserMessage,
   buildRouterUserMessage,
   isMoeExpertId,
   type ExpertAnswer,
+  type ExpertReaction,
   type MoeExpertId,
   type RouterRoute,
 } from "./moe-prompts";
