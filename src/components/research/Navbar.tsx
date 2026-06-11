@@ -13,9 +13,9 @@ type Props = {
 
 export function Navbar({ onSignOut, settings, onSettingsChange }: Props) {
   return (
-    <div className="relative h-14">
-      <BrandLockup className="absolute left-4 top-4" />
-      <div className="absolute right-4 top-4 hidden md:inline-flex items-center gap-2">
+    <div className="flex h-28 items-center justify-between px-4">
+      <BrandLockup />
+      <div className="hidden md:inline-flex items-center gap-2">
         {settings && onSettingsChange && (
           <SettingsMenu settings={settings} onSettingsChange={onSettingsChange} />
         )}
