@@ -55,7 +55,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
 
   if (collapsed) {
     return (
-      <aside className="sticky top-0 flex h-screen w-12 shrink-0 flex-col items-center gap-2 border-r border-border bg-card py-3">
+      <aside className="sticky top-0 flex h-screen w-12 shrink-0 flex-col items-center gap-2 border-r border-border bg-sidebar py-3">
         <button
           type="button"
           onClick={() => setCollapsed(false)}
@@ -97,7 +97,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
 
 
   return (
-    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-card">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-sidebar">
       <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2.5">
         <div className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           <History className="size-3.5" />
@@ -155,10 +155,10 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
                       className="size-8 shrink-0 rounded-full object-cover"
                     />
                     <div className="min-w-0 flex-1">
-                      <div className={`truncate text-xs font-medium ${isActive ? "text-background" : "text-foreground"}`} title={e.prompt}>
+                      <div className={`truncate text-xs font-medium ${isActive ? "text-background" : "text-foreground group-hover:text-background"}`} title={e.prompt}>
                         {e.title || e.prompt}
                       </div>
-                      <div className={`mt-0.5 text-[10px] ${isActive ? "text-background/70" : "text-muted-foreground"}`}>
+                      <div className={`mt-0.5 text-[10px] ${isActive ? "text-background/70" : "text-muted-foreground group-hover:text-background/70"}`}>
                         {formatDate(e.createdAt)} · {e.kind === "moe"
                           ? `MoE · ${(e.moe?.messages?.length ?? 0)} msgs`
                           : `${e.sources.length} sources`}
