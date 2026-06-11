@@ -439,7 +439,7 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
 
 
       {/* Mode tabs */}
-      <div className="inline-flex w-full items-center rounded-full border border-border bg-muted/40 p-1 text-xs">
+      <div className="clay-toggle w-full">
         {([
           { id: "single", label: "Single Expert" },
           { id: "auto", label: "Auto-Pick" },
@@ -452,10 +452,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
               type="button"
               onClick={() => handleModeChange(t.id)}
               className={
-                "flex-1 rounded-full px-3 py-1.5 font-medium transition " +
-                (active
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:text-foreground")
+                "flex-1 " +
+                (active ? "clay-dark rounded-full px-3 py-1.5 text-xs" : "clay-toggle-item")
               }
             >
               {t.label}
@@ -475,10 +473,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
                 type="button"
                 onClick={() => setSingleExpert(id)}
                 className={
-                  "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition " +
-                  (active
-                    ? "border-foreground/40 bg-foreground text-background"
-                    : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
+                  "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm " +
+                  (active ? "clay-dark" : "clay-neutral")
                 }
               >
                 <Icon className="size-4" />
@@ -507,10 +503,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
                   type="button"
                   onClick={() => setPanelPreset(pid)}
                   className={
-                    "rounded-full border px-4 py-2 text-sm font-medium transition " +
-                    (active
-                      ? "border-foreground/40 bg-foreground text-background"
-                      : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
+                    "rounded-full px-4 py-2 text-sm " +
+                    (active ? "clay-dark" : "clay-neutral")
                   }
                 >
                   {MOE_PANEL_PRESET_META[pid].label}
@@ -521,10 +515,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
               type="button"
               onClick={() => setPanelPreset("custom")}
               className={
-                "rounded-full border px-4 py-2 text-sm font-medium transition " +
-                (panelPreset === "custom"
-                  ? "border-foreground/40 bg-foreground text-background"
-                  : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
+                "rounded-full px-4 py-2 text-sm " +
+                (panelPreset === "custom" ? "clay-dark" : "clay-neutral")
               }
             >
               Custom
@@ -551,20 +543,18 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
                   const active = customPanel.includes(id);
                   const Icon = PERSONA_ICONS[id];
                   return (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => toggleCustomExpert(id)}
-                      className={
-                        "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition " +
-                        (active
-                          ? "border-foreground/40 bg-foreground text-background"
-                          : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
-                      }
-                    >
-                      <Icon className="size-4" />
-                      {MOE_EXPERT_LABELS[id]}
-                    </button>
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => toggleCustomExpert(id)}
+                    className={
+                      "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm " +
+                      (active ? "clay-dark" : "clay-neutral")
+                    }
+                  >
+                    <Icon className="size-4" />
+                    {MOE_EXPERT_LABELS[id]}
+                  </button>
                   );
                 })}
               </div>
