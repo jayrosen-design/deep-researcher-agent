@@ -73,42 +73,42 @@ export const MOE_PANEL_PRESET_META: Record<
   { label: string; bestFor: string; description: string }
 > = {
   education: {
-    label: "Education Panel",
+    label: "Education",
     bestFor:
       "K-12 learning, classroom use, curriculum decisions, instructional strategy, school implementation.",
     description:
       "Evaluates research through classroom practice, learning design, and education leadership perspectives.",
   },
   "higher-education": {
-    label: "Higher Education Panel",
+    label: "Higher Education",
     bestFor:
       "College teaching, online courses, academic integrity, student engagement, course design, and assessment.",
     description:
       "Combines research evidence, university teaching practice, learning design, and student experience.",
   },
   "product-design": {
-    label: "Product Design Panel",
+    label: "Product Design",
     bestFor:
       "Turning research into an app, website, platform, prototype, or user-facing product.",
     description:
       "Reviews the idea from UX, technical feasibility, audience positioning, and operational sustainability.",
   },
   "implementation-strategy": {
-    label: "Implementation Strategy Panel",
+    label: "Implementation Strategy",
     bestFor:
       "Adoption planning, stakeholder buy-in, funding, rollout strategy, policy alignment, and organizational change.",
     description:
       "Translates research into a practical implementation plan with leadership, communication, and operational considerations.",
   },
   "technical-feasibility": {
-    label: "Technical Feasibility Panel",
+    label: "Technical Feasibility",
     bestFor:
       "Evaluating whether an idea can realistically be built, scaled, maintained, and supported.",
     description:
       "Assesses evidence, system architecture, user experience, cost, staffing, privacy, security, and long-term maintainability.",
   },
   default: {
-    label: "Default Panel",
+    label: "Default",
     bestFor: "General multi-perspective analysis.",
     description:
       "Balanced cross-functional panel covering research, UX, engineering, and operations.",
