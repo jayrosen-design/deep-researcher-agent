@@ -465,7 +465,7 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
       </div>
 
       {mode === "single" && (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
           {MOE_EXPERT_IDS.map((id) => {
             const active = singleExpert === id;
             const Icon = PERSONA_ICONS[id];
@@ -475,10 +475,10 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
                 type="button"
                 onClick={() => setSingleExpert(id)}
                 className={
-                  "inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] transition " +
+                  "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition " +
                   (active
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border bg-background text-foreground hover:bg-accent")
+                    ? "border-foreground/40 bg-foreground text-background"
+                    : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
                 }
               >
                 <Icon className="size-4" />
