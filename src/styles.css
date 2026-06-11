@@ -95,12 +95,12 @@
   --chart-4: oklch(0.75 0.15 250);
   --chart-5: oklch(0.65 0.16 200);
 
-  --sidebar: oklch(0.18 0.05 245 / 0.7);
-  --sidebar-foreground: oklch(0.96 0.02 220);
+  --sidebar: oklch(0.14 0.04 245);
+  --sidebar-foreground: oklch(0.98 0.02 220);
   --sidebar-primary: oklch(0.85 0.18 210);
   --sidebar-primary-foreground: oklch(0.12 0.04 245);
   --sidebar-accent: oklch(0.26 0.06 250);
-  --sidebar-accent-foreground: oklch(0.96 0.02 220);
+  --sidebar-accent-foreground: oklch(0.98 0.02 220);
   --sidebar-border: oklch(0.85 0.18 210 / 0.15);
   --sidebar-ring: oklch(0.85 0.18 210 / 0.5);
 }
@@ -134,12 +134,12 @@
   --input: oklch(0.55 0.18 220 / 0.22);
   --ring: oklch(0.55 0.18 220 / 0.5);
 
-  --sidebar: oklch(0.97 0.02 220 / 0.85);
-  --sidebar-foreground: oklch(0.20 0.05 245);
+  --sidebar: oklch(0.99 0.01 220);
+  --sidebar-foreground: oklch(0.15 0.05 245);
   --sidebar-primary: oklch(0.55 0.18 220);
   --sidebar-primary-foreground: oklch(0.99 0.01 220);
   --sidebar-accent: oklch(0.90 0.03 220);
-  --sidebar-accent-foreground: oklch(0.20 0.05 245);
+  --sidebar-accent-foreground: oklch(0.15 0.05 245);
   --sidebar-border: oklch(0.55 0.18 220 / 0.2);
   --sidebar-ring: oklch(0.55 0.18 220 / 0.45);
 }
@@ -147,6 +147,10 @@
 @layer base {
   * {
     border-color: var(--color-border);
+  }
+
+  html {
+    font-size: 17px;
   }
 
   html, body {
@@ -158,11 +162,11 @@
 
   /* Deep-sea atmospheric background — light filtering down from above */
   body {
-    background-image: url('/images/darkmode-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-image: linear-gradient(rgba(4, 12, 26, 0.55), rgba(4, 12, 26, 0.55)), url('/images/darkmode-bg.png');
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed, fixed;
     min-height: 100vh;
   }
 
