@@ -42,7 +42,7 @@ export function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
         <ThemeToggle />
       </div>
 
-      <img src={logoImg} alt="Deep Researcher" className="mb-4 h-16 w-auto object-contain" />
+      <img src={logoImg} alt="Deep Researcher" className="mb-6 h-28 w-auto object-contain" />
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
 
         <Lock className="size-3.5" />
