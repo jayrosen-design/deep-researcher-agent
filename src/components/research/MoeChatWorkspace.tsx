@@ -498,7 +498,7 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
 
       {mode === "panel" && (
         <div className="space-y-2">
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap items-center gap-2">
             {PANEL_PRESET_ORDER.map((pid) => {
               const active = panelPreset === pid;
               return (
@@ -507,10 +507,10 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
                   type="button"
                   onClick={() => setPanelPreset(pid)}
                   className={
-                    "rounded-full border px-3 py-1 text-[11px] transition " +
+                    "rounded-full border px-4 py-2 text-sm font-medium transition " +
                     (active
-                      ? "border-foreground bg-foreground text-background"
-                      : "border-border bg-background text-foreground hover:bg-accent")
+                      ? "border-foreground/40 bg-foreground text-background"
+                      : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
                   }
                 >
                   {MOE_PANEL_PRESET_META[pid].label}
@@ -521,10 +521,10 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
               type="button"
               onClick={() => setPanelPreset("custom")}
               className={
-                "rounded-full border px-3 py-1 text-[11px] transition " +
+                "rounded-full border px-4 py-2 text-sm font-medium transition " +
                 (panelPreset === "custom"
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border bg-background text-foreground hover:bg-accent")
+                  ? "border-foreground/40 bg-foreground text-background"
+                  : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
               }
             >
               Custom
@@ -546,7 +546,7 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
               <div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">
                 Pick 2–6 experts ({customPanel.length} selected)
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap items-center gap-2">
                 {MOE_EXPERT_IDS.map((id) => {
                   const active = customPanel.includes(id);
                   const Icon = PERSONA_ICONS[id];
@@ -556,10 +556,10 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
                       type="button"
                       onClick={() => toggleCustomExpert(id)}
                       className={
-                        "inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] transition " +
+                        "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition " +
                         (active
-                          ? "border-foreground bg-foreground text-background"
-                          : "border-border bg-background text-foreground hover:bg-accent")
+                          ? "border-foreground/40 bg-foreground text-background"
+                          : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background")
                       }
                     >
                       <Icon className="size-4" />
