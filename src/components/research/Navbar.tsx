@@ -16,9 +16,6 @@ export function Navbar({ settings, onSettingsChange }: Props) {
     <div className="flex h-28 items-center justify-between px-4">
       <BrandLockup />
       <div className="hidden md:inline-flex items-center gap-2">
-        {settings && onSettingsChange && (
-          <SettingsMenu settings={settings} onSettingsChange={onSettingsChange} />
-        )}
         <Link
           to="/how-it-works"
           className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-foreground hover:text-background"
@@ -27,6 +24,9 @@ export function Navbar({ settings, onSettingsChange }: Props) {
           <HelpCircle className="size-3.5" />
           How it Works
         </Link>
+        {settings && onSettingsChange && (
+          <SettingsMenu settings={settings} onSettingsChange={onSettingsChange} />
+        )}
         <ThemeToggle />
       </div>
     </div>
