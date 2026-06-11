@@ -189,20 +189,23 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
           How it Works
         </Link>
         <ThemeToggle />
-        {onSignOut && (
-          <button
-            type="button"
-            onClick={onSignOut}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
-          >
-            <LogOut className="size-3.5" />
-            Sign out
-          </button>
-        )}
       </div>
       <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
         Saved locally on this device only.
       </div>
+      {onSignOut && (
+        <div className="border-t border-border px-3 py-2">
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground hover:bg-foreground hover:text-background"
+          >
+            <LogOut className="size-3.5" />
+            Sign out
+          </button>
+        </div>
+      )}
+
 
     </aside>
   );
