@@ -68,11 +68,11 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
       );
     }
     return (
-      <aside className="sticky top-0 flex h-screen w-12 shrink-0 flex-col items-center gap-2 border-r border-border bg-sidebar py-3">
+      <aside className="sticky top-0 flex h-screen w-14 shrink-0 flex-col items-center gap-2 border-r border-border bg-sidebar py-3">
         <button
           type="button"
           onClick={() => setCollapsed(false)}
-          className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
+          className="clay-neutral inline-flex size-9 items-center justify-center rounded-full"
           title="Open menu"
         >
           <Menu className="size-4" />
@@ -80,7 +80,7 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
         <button
           type="button"
           onClick={onNew}
-          className="rounded-md p-2 text-muted-foreground hover:bg-foreground hover:text-background"
+          className="clay inline-flex size-9 items-center justify-center rounded-full"
           title="New research"
         >
           <Plus className="size-4" />
