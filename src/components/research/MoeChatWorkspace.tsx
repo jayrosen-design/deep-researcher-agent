@@ -454,7 +454,7 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
             <button
               key={t.id}
               type="button"
-              onClick={() => setMode(t.id)}
+              onClick={() => handleModeChange(t.id)}
               className={
                 "flex-1 rounded-full px-3 py-1.5 font-medium transition " +
                 (active
