@@ -3,7 +3,7 @@ import { Lock, HelpCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { setAuthed, verifyPassword } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
-import { BrandLockup } from "./BrandLockup";
+import logoImg from "@/assets/deep-researcherl-logo.png";
 
 
 
