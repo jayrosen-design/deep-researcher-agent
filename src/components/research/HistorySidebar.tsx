@@ -217,5 +217,6 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
 
 
     </aside>
+    </>
   );
 }
