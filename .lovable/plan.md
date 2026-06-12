@@ -1,36 +1,49 @@
 ## Goal
-Give every button across the app a soft, tactile "clay" appearance with a satisfying press-down feel — without hand-editing each button site.
 
-## Approach
-Drive the look from the design system so it propagates everywhere:
+1. API keys typed into Settings should stick to the device between visits.
+2. The server-side fallback to built-in NaviGator / Firecrawl / Tavily keys is removed — every user must bring their own.
+3. People can still browse, pick personas, draft prompts, and open panels. They only get blocked when they actually click **Send / Start research**. At that point a dialog explains a key is missing and jumps them straight into Settings → API Keys.
 
-1. **Add clay tokens to `src/styles.css`** (light + dark) — clay surfaces, highlight/shadow colors, and a couple of shared gradients/shadow recipes used by the variants. Keeps colors semantic; no hardcoded hex in components.
+## Changes
 
-2. **Extend `src/components/ui/button.tsx`** with clay variants and shared interaction styles:
-   - New variants: `clay` (aqua primary CTA), `clayNeutral` (cream/light pill — for chips/secondary), `clayDark` (active/selected state).
-   - Make existing variants (`default`, `secondary`, `outline`) inherit the clay treatment so buttons already in the app pick up the new look with no per-call changes.
-   - Shared base adds: pill `rounded-full`, inset highlight + bottom "lip" shadow, soft outer shadow, `translate-y` press animation (hover lifts 2px, active presses down 3–4px with reduced lip shadow), `transition-[transform,box-shadow,filter]`.
-   - Keep `ghost`, `link`, and `icon` size lightweight (no lip) so icon-only nav buttons in the sidebar/navbar don't look chunky — they still get subtle press feedback.
+### 1. Settings persistence (already auto-saves — verify only)
+`SettingsMenu.persistDraft` already calls `saveSettings()` on each keystroke, and `loadSettings()` runs on app mount. No code change needed; mention this so the user knows their key is saved as soon as it is typed.
 
-3. **Sweep ad-hoc button-like elements** that don't use the `Button` component so they match:
-   - Persona/expert panel buttons (`src/components/research/PromptInput.tsx`)
-   - Template chips, mode toggle tabs (Deep Research / Chat / API Keys), Start research CTA
-   - Sidebar new-chat, hamburger, sign-out
-   - Navbar pills (How It Works, Settings, theme toggle)
-   Where they already use `<Button>`, just confirm the variant is right. Where they use raw `<button>`, swap to `<Button variant="…">` or apply a shared `clay-*` utility class.
+### 2. Remove server-side default keys
+- `src/lib/navigator-chat.functions.ts`: stop reading `process.env.UF_NAVIGATOR_API_KEY`. Require `data.apiKey`; throw `Missing NaviGator API key. Open Settings → API Keys to add one.` when absent.
+- `src/lib/web-search.functions.ts` and `src/lib/read-url.functions.ts`: stop reading `process.env.TAVILY_API_KEY` / `process.env.FIRECRAWL_API_KEY`. Only use the keys passed from the client. If neither is configured, throw `Missing search API key. Open Settings → API Keys to add Firecrawl or Tavily.`
 
-4. **Respect motion preferences** — wrap the transform animation in `motion-safe:` so `prefers-reduced-motion` users get color/shadow change only.
+### 3. New "Missing API key" dialog
+Create `src/components/research/ApiKeyMissingDialog.tsx` using shadcn `Dialog`:
+- Title: "API key required"
+- Body: short message listing which key(s) are missing (NaviGator, Firecrawl/Tavily).
+- Buttons: **Cancel** and **Enter API Key** (primary). The primary button dispatches `window.dispatchEvent(new CustomEvent("app:open-settings", { detail: { tab: "apikeys" } }))` then closes the dialog.
 
-5. **Verify** in the preview on desktop + mobile: hover lift, active press, dark mode parity, focus ring still visible.
+### 4. SettingsMenu reacts to the open event
+In `src/components/research/SettingsMenu.tsx`, add a `useEffect` listening for `app:open-settings`; when fired it sets `setShowPrompts(true)` and `setPromptsTab(detail.tab ?? "apikeys")`.
 
-## Scope guardrails
-- Frontend/presentation only. No logic, routing, or data changes.
-- No new dependencies.
-- Keep current layout, sizes, and spacing — only visual + micro-interaction changes.
-- Don't touch form inputs, cards, or non-button surfaces.
+### 5. Gate Send buttons
+Add a small helper `getMissingKeys(settings, { needsSearch })` → returns `{ navigator: boolean, search: boolean }`.
+
+Wire gating before each network call (no key check done in disabled state — buttons stay clickable so the dialog can teach the user):
+
+- `src/components/research/PromptInput.tsx` — in `handleSubmit`, if `navigatorApiKey` empty OR (firecrawl AND tavily) empty → show dialog instead of calling `onSubmit`. Needs `settings` (already passed) and a new local `dialogOpen` state.
+- `src/components/research/ResearchChat.tsx` — in `handleSend`, require `navigatorApiKey`; show dialog if missing.
+- `src/components/research/MoeChatWorkspace.tsx` — same, in `handleSend`.
+
+Each component renders `<ApiKeyMissingDialog open=… onOpenChange=… missing=… />`.
+
+### 6. Copy update
+On the API Keys tab in Settings, replace "Leave blank to use the server's default keys." with "An API key is required to run searches and chats."
+
+## Technical notes
+
+- `loadSettings()` already reads from `localStorage` (`dr-settings-v1`), so persistence works the moment we save — no migration needed.
+- Throwing inside server functions surfaces the message in the existing error toasts/`fatalError` flow, so even if a user bypasses the dialog (e.g. clears a key mid-run) they still get a clear message.
+- No business-logic changes beyond key enforcement; deep-research orchestration, MoE flow, and history all stay intact.
 
 ## Out of scope
-- Redesigning the page background, prompt card, or template cards (the example HTML includes an aqua gradient page background and seafloor decoration — not part of this request).
-- Changing button copy, order, or which buttons exist.
 
-Confirm and I'll implement.
+- No new persistence layer (still localStorage, per device, as requested).
+- No changes to other Settings tabs (prompts, models).
+- No server-side secret management — keys remain BYO-key on the client.
