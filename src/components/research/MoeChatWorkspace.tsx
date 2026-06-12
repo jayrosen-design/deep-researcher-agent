@@ -797,6 +797,11 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
         </Collapsible>
       </div>
 
+      <ApiKeyMissingDialog
+        open={keyDialogOpen}
+        onOpenChange={setKeyDialogOpen}
+        missing={missingKeys}
+      />
     </div>
   );
 }
