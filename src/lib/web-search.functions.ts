@@ -119,8 +119,11 @@ async function searchFirecrawl(
 export const webSearch = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }): Promise<{ results: SearchResult[]; providerUsed: "firecrawl" | "tavily" }> => {
-    const tavilyKey = data.tavilyApiKey || data.apiKey || process.env.TAVILY_API_KEY;
-    const firecrawlKey = data.firecrawlApiKey || process.env.FIRECRAWL_API_KEY;
+    const tavilyKey = data.tavilyApiKey || data.apiKey;
+    const firecrawlKey = data.firecrawlApiKey;
+    if (!tavilyKey && !firecrawlKey) {
+      throw new Error("Missing search API key. Open Settings → API Keys to add Firecrawl or Tavily.");
+    }
     const preferred = data.provider ?? "firecrawl";
 
     const order: Array<"firecrawl" | "tavily"> =
