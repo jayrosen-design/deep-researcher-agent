@@ -61,6 +61,16 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
   }, [settings]);
 
   useEffect(() => {
+    const onOpen = (e: Event) => {
+      const detail = (e as CustomEvent<{ tab?: "research" | "chat" | "apikeys" }>).detail;
+      setPromptsTab(detail?.tab ?? "apikeys");
+      setShowPrompts(true);
+    };
+    window.addEventListener("app:open-settings", onOpen);
+    return () => window.removeEventListener("app:open-settings", onOpen);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     setModelsError(null);
     setModelsLoading(true);
