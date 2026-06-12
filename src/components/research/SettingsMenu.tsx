@@ -212,8 +212,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
             {promptsTab === "apikeys" && (
               <div className="space-y-3">
                 <p className="text-xs text-muted-foreground">
-                  Stored only in your browser (localStorage) and sent with each request.
-                  Leave blank to use the server's default keys.
+                  An API key is required to run searches and chats. Keys are stored only on this device (localStorage) and sent with each request.
                 </p>
                 <label className="block">
                   <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
