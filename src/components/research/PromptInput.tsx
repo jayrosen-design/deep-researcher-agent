@@ -181,6 +181,11 @@ export function PromptInput({
           </Collapsible>
         </div>
       </div>
+      <ApiKeyMissingDialog
+        open={keyDialogOpen}
+        onOpenChange={setKeyDialogOpen}
+        missing={missingKeys}
+      />
     </div>
   );
 }
