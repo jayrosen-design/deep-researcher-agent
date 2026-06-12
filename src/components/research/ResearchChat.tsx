@@ -4,6 +4,12 @@ import remarkGfm from "remark-gfm";
 import { MessageSquare, Send, Plus, X, Loader2, BookOpen, Minus, ChevronDown, AlertTriangle, Maximize2, Minimize2 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
+import {
+  ApiKeyMissingDialog,
+  getMissingKeys,
+  hasMissing,
+  type MissingKeys,
+} from "./ApiKeyMissingDialog";
 import { loadHistory, type HistoryEntry } from "@/lib/research-history";
 import type { SearchResult } from "@/lib/web-search.functions";
 import type { UserSettings } from "@/lib/user-settings";
