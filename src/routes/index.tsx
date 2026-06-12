@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { RotateCcw, ChevronDown, ChevronRight, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 
 import { PromptInput } from "@/components/research/PromptInput";
-import { PasswordGate } from "@/components/research/PasswordGate";
 import { PlanReview } from "@/components/research/PlanReview";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
