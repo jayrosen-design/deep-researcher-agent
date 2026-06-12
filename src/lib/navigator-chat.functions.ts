@@ -18,8 +18,8 @@ const inputSchema = z.object({
 export const navigatorChat = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
-    const apiKey = data.apiKey || process.env.UF_NAVIGATOR_API_KEY;
-    if (!apiKey) throw new Error("NaviGator API key not configured. Add one in Settings.");
+    const apiKey = data.apiKey;
+    if (!apiKey) throw new Error("Missing NaviGator API key. Open Settings → API Keys to add one.");
 
     const body: Record<string, unknown> = {
       model: data.model ?? "gemini-1.5-pro",
