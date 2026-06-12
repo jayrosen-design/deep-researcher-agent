@@ -142,6 +142,8 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   const [loadingStage, setLoadingStage] = useState<LoadingStage>(null);
   const [error, setError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [missingKeys, setMissingKeys] = useState<MissingKeys>({ navigator: false, search: false });
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
