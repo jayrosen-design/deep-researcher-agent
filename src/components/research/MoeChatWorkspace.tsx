@@ -255,6 +255,12 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
   const handleSend = async () => {
     const trimmed = input.trim();
     if (!trimmed || sending) return;
+    const missing = getMissingKeys(settings, { needsSearch: false });
+    if (hasMissing(missing)) {
+      setMissingKeys(missing);
+      setKeyDialogOpen(true);
+      return;
+    }
     setError(null);
 
     if (mode === "panel") {
