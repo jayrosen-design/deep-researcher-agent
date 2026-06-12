@@ -753,6 +753,11 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
           </button>
         </div>
       </div>
+      <ApiKeyMissingDialog
+        open={keyDialogOpen}
+        onOpenChange={setKeyDialogOpen}
+        missing={missingKeys}
+      />
     </div>
   );
 }
