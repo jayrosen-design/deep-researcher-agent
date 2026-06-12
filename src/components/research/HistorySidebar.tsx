@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { History, Plus, Trash2, PanelLeftClose, PanelLeft, HelpCircle, LogOut, Menu } from "lucide-react";
+import { History, Plus, Trash2, PanelLeftClose, PanelLeft, HelpCircle, Menu } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import {
