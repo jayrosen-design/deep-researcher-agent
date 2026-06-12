@@ -29,10 +29,10 @@ export const Route = createFileRoute("/api/navigator-stream")({
           );
         }
 
-        const apiKey = parsed.apiKey || process.env.UF_NAVIGATOR_API_KEY;
+        const apiKey = parsed.apiKey;
         if (!apiKey) {
-          return new Response("NaviGator API key not configured. Add one in Settings.", {
-            status: 500,
+          return new Response("Missing NaviGator API key. Open Settings → API Keys to add one.", {
+            status: 400,
           });
         }
 

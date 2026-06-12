@@ -4,6 +4,12 @@ import remarkGfm from "remark-gfm";
 import { MessageSquare, Send, Plus, X, Loader2, BookOpen, Minus, ChevronDown, AlertTriangle, Maximize2, Minimize2 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
+import {
+  ApiKeyMissingDialog,
+  getMissingKeys,
+  hasMissing,
+  type MissingKeys,
+} from "./ApiKeyMissingDialog";
 import { loadHistory, type HistoryEntry } from "@/lib/research-history";
 import type { SearchResult } from "@/lib/web-search.functions";
 import type { UserSettings } from "@/lib/user-settings";
@@ -136,6 +142,8 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   const [loadingStage, setLoadingStage] = useState<LoadingStage>(null);
   const [error, setError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [missingKeys, setMissingKeys] = useState<MissingKeys>({ navigator: false, search: false });
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -201,6 +209,12 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
   const handleSend = async () => {
     const trimmed = input.trim();
     if (!trimmed || sending) return;
+    const missing = getMissingKeys(settings, { needsSearch: false });
+    if (hasMissing(missing)) {
+      setMissingKeys(missing);
+      setKeyDialogOpen(true);
+      return;
+    }
     setError(null);
 
     if (mode === "panel") {
@@ -739,6 +753,11 @@ export function ResearchChat({ currentDoc, settings, roleId }: Props) {
           </button>
         </div>
       </div>
+      <ApiKeyMissingDialog
+        open={keyDialogOpen}
+        onOpenChange={setKeyDialogOpen}
+        missing={missingKeys}
+      />
     </div>
   );
 }

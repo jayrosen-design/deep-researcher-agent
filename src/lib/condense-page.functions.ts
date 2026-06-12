@@ -83,8 +83,8 @@ async function runWithConcurrency<T, R>(
 export const condensePage = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }): Promise<{ condensed: string; chunkCount: number; wasCondensed: boolean }> => {
-    const apiKey = data.apiKey || process.env.UF_NAVIGATOR_API_KEY;
-    if (!apiKey) throw new Error("NaviGator API key not configured.");
+    const apiKey = data.apiKey;
+    if (!apiKey) throw new Error("Missing NaviGator API key. Open Settings → API Keys to add one.");
 
     if (data.content.length <= PASS_THROUGH_THRESHOLD) {
       return { condensed: data.content, chunkCount: 1, wasCondensed: false };

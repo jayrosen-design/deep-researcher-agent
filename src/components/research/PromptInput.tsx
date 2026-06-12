@@ -5,6 +5,12 @@ import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { SOURCE_COUNT_OPTIONS, type UserSettings } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates";
 import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
+import {
+  ApiKeyMissingDialog,
+  getMissingKeys,
+  hasMissing,
+  type MissingKeys,
+} from "./ApiKeyMissingDialog";
 
 export function PromptInput({
   onSubmit,
@@ -28,10 +34,19 @@ export function PromptInput({
   };
   const [showTemplates, setShowTemplates] = useState(true);
 
+  const [missingKeys, setMissingKeys] = useState<MissingKeys>({ navigator: false, search: false });
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = value.trim();
     if (!trimmed) return;
+    const missing = getMissingKeys(settings, { needsSearch: true });
+    if (hasMissing(missing)) {
+      setMissingKeys(missing);
+      setKeyDialogOpen(true);
+      return;
+    }
     onSubmit(trimmed);
   };
 
@@ -166,6 +181,11 @@ export function PromptInput({
           </Collapsible>
         </div>
       </div>
+      <ApiKeyMissingDialog
+        open={keyDialogOpen}
+        onOpenChange={setKeyDialogOpen}
+        missing={missingKeys}
+      />
     </div>
   );
 }

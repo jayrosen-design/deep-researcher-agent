@@ -10,6 +10,12 @@ import {
 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
+import {
+  ApiKeyMissingDialog,
+  getMissingKeys,
+  hasMissing,
+  type MissingKeys,
+} from "./ApiKeyMissingDialog";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import type { UserSettings } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId, type ResearchTemplate } from "@/lib/research-templates";
@@ -149,6 +155,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
     "software-developer",
   ]);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [missingKeys, setMissingKeys] = useState<MissingKeys>({ navigator: false, search: false });
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false);
 
   // Hydrate from a history entry when one is supplied (or its id changes).
   const hydratedFor = useRef<string | null>(null);
@@ -247,6 +255,12 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
   const handleSend = async () => {
     const trimmed = input.trim();
     if (!trimmed || sending) return;
+    const missing = getMissingKeys(settings, { needsSearch: false });
+    if (hasMissing(missing)) {
+      setMissingKeys(missing);
+      setKeyDialogOpen(true);
+      return;
+    }
     setError(null);
 
     if (mode === "panel") {
@@ -783,6 +797,11 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
         </Collapsible>
       </div>
 
+      <ApiKeyMissingDialog
+        open={keyDialogOpen}
+        onOpenChange={setKeyDialogOpen}
+        missing={missingKeys}
+      />
     </div>
   );
 }
