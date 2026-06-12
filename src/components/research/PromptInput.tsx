@@ -34,10 +34,19 @@ export function PromptInput({
   };
   const [showTemplates, setShowTemplates] = useState(true);
 
+  const [missingKeys, setMissingKeys] = useState<MissingKeys>({ navigator: false, search: false });
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = value.trim();
     if (!trimmed) return;
+    const missing = getMissingKeys(settings, { needsSearch: true });
+    if (hasMissing(missing)) {
+      setMissingKeys(missing);
+      setKeyDialogOpen(true);
+      return;
+    }
     onSubmit(trimmed);
   };
 
