@@ -196,18 +196,6 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props)
       <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
         Saved locally on this device only.
       </div>
-      {onSignOut && (
-        <div className="border-t border-border px-3 py-2">
-          <button
-            type="button"
-            onClick={onSignOut}
-            className="clay-neutral inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
-          >
-            <LogOut className="size-3.5" />
-            Sign out
-          </button>
-        </div>
-      )}
 
 
     </aside>
