@@ -5,6 +5,12 @@ import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { SOURCE_COUNT_OPTIONS, type UserSettings } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId } from "@/lib/research-templates";
 import { PERSONA_IMAGES, AGENT_IMAGES } from "@/lib/persona-images";
+import {
+  ApiKeyMissingDialog,
+  getMissingKeys,
+  hasMissing,
+  type MissingKeys,
+} from "./ApiKeyMissingDialog";
 
 export function PromptInput({
   onSubmit,
