@@ -6,7 +6,6 @@ import { SettingsMenu } from "./SettingsMenu";
 import type { UserSettings } from "@/lib/user-settings";
 
 type Props = {
-  onSignOut?: () => void;
   settings?: UserSettings;
   onSettingsChange?: (s: UserSettings) => void;
 };

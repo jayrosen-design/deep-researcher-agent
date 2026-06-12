@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { RotateCcw, ChevronDown, ChevronRight, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 
 import { PromptInput } from "@/components/research/PromptInput";
-import { PasswordGate } from "@/components/research/PasswordGate";
 import { PlanReview } from "@/components/research/PlanReview";
 import { AgentTrace, type TraceStep } from "@/components/research/AgentTrace";
 import { ProgressTracker, type Phase } from "@/components/research/ProgressTracker";
@@ -46,7 +45,6 @@ import {
   buildPlanUserMessage,
 } from "@/lib/plan-prompts";
 import { type NavigatorModel } from "@/lib/models";
-import { isAuthed, setAuthed } from "@/lib/auth";
 import {
   DEFAULT_SETTINGS,
   loadSettings,
@@ -142,11 +140,6 @@ function parseTurn(raw: string): AgentTurn {
 }
 
 function Index() {
-  const [authed, setAuthedState] = useState(false);
-  useEffect(() => {
-    setAuthedState(isAuthed());
-  }, []);
-
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
   useEffect(() => {
     setSettings(loadSettings());
@@ -227,21 +220,6 @@ function Index() {
       }
     })();
   }, [report, prompt, plan, sources, activeHistoryId, settings.investigatorModel, settings.navigatorApiKey]);
-
-  const handleSignOut = useCallback(() => {
-    setAuthed(false);
-    setAuthedState(false);
-    setPrompt(null);
-    setPhase("input");
-    setPlan(null);
-    setPlanError(null);
-    setPlanLoading(false);
-    setTrace([]);
-    setReport(null);
-    setSources([]);
-    setFatalError(null);
-    cancelled.current = true;
-  }, []);
 
   const appendStep = useCallback((step: TraceStep) => {
     setTrace((t) => [...t, step]);
@@ -930,15 +908,11 @@ function Index() {
     ];
   }, [phase, trace.length, report, running]);
 
-  if (!authed) {
-    return <PasswordGate onSuccess={() => setAuthedState(true)} />;
-  }
-
   let content: ReactNode;
   if (phase === "input" || !prompt) {
     content = (
       <>
-        <Navbar onSignOut={handleSignOut} settings={settings} onSettingsChange={setSettings} />
+        <Navbar settings={settings} onSettingsChange={setSettings} />
         <div className="mx-auto mt-4 flex w-full max-w-4xl justify-center px-4 sm:px-6">
           <div className="clay-toggle">
             {([
@@ -985,7 +959,7 @@ function Index() {
   } else if (phase === "plan") {
     content = (
       <>
-        <Navbar onSignOut={handleSignOut} settings={settings} onSettingsChange={setSettings} />
+        <Navbar settings={settings} onSettingsChange={setSettings} />
         <WorkflowStepper steps={workflowSteps} />
         <div className="mx-auto w-full max-w-4xl px-4 pt-6 sm:px-6">
           <StageHeader stage="plan" title="Strategist is drafting your research plan" />
@@ -1006,7 +980,7 @@ function Index() {
   } else {
     content = (
       <>
-        <Navbar onSignOut={handleSignOut} settings={settings} onSettingsChange={setSettings} />
+        <Navbar settings={settings} onSettingsChange={setSettings} />
         <WorkflowStepper steps={workflowSteps} />
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
           <header className="mb-8 flex items-start justify-between gap-4">
@@ -1203,7 +1177,6 @@ function Index() {
         onSelect={handleSelectHistory}
         onNew={handleReset}
         refreshKey={historyRefresh}
-        onSignOut={handleSignOut}
       />
 
       <div className="min-w-0 flex-1">{content}</div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { History, Plus, Trash2, PanelLeftClose, PanelLeft, HelpCircle, LogOut, Menu } from "lucide-react";
+import { History, Plus, Trash2, PanelLeftClose, PanelLeft, HelpCircle, Menu } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import {
@@ -16,7 +16,6 @@ type Props = {
   onSelect: (entry: HistoryEntry) => void;
   onNew: () => void;
   refreshKey?: number;
-  onSignOut?: () => void;
 };
 
 
@@ -33,7 +32,7 @@ function formatDate(ts: number): string {
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOut }: Props) {
+export function HistorySidebar({ activeId, onSelect, onNew, refreshKey }: Props) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
@@ -197,18 +196,6 @@ export function HistorySidebar({ activeId, onSelect, onNew, refreshKey, onSignOu
       <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
         Saved locally on this device only.
       </div>
-      {onSignOut && (
-        <div className="border-t border-border px-3 py-2">
-          <button
-            type="button"
-            onClick={onSignOut}
-            className="clay-neutral inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
-          >
-            <LogOut className="size-3.5" />
-            Sign out
-          </button>
-        </div>
-      )}
 
 
     </aside>
