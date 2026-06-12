@@ -155,6 +155,8 @@ export function MoeChatWorkspace({ settings, roleId, initialEntry, onSnapshot, o
     "software-developer",
   ]);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [missingKeys, setMissingKeys] = useState<MissingKeys>({ navigator: false, search: false });
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false);
 
   // Hydrate from a history entry when one is supplied (or its id changes).
   const hydratedFor = useRef<string | null>(null);
