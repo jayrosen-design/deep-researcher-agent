@@ -1,5 +1,7 @@
 # Deep Researcher Agent
 
+![Logo](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/deep-researcherl-logo2.png)
+
 An AI research assistant for the UF College of Education with two modes:
 
 - **Deep Research** — an autonomous agent that plans, searches the web, reads
