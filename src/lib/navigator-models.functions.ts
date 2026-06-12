@@ -8,8 +8,8 @@ const inputSchema = z.object({
 export const listNavigatorModels = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
-    const apiKey = data.apiKey || process.env.UF_NAVIGATOR_API_KEY;
-    if (!apiKey) throw new Error("NaviGator API key not configured.");
+    const apiKey = data.apiKey;
+    if (!apiKey) return { models: [] };
 
     const res = await fetch("https://api.ai.it.ufl.edu/v1/models", {
       headers: {
