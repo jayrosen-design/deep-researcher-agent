@@ -10,6 +10,12 @@ import {
 } from "lucide-react";
 
 import { navigatorChat } from "@/lib/navigator-chat.functions";
+import {
+  ApiKeyMissingDialog,
+  getMissingKeys,
+  hasMissing,
+  type MissingKeys,
+} from "./ApiKeyMissingDialog";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import type { UserSettings } from "@/lib/user-settings";
 import { RESEARCH_ROLE_GROUPS, type UserRoleId, type ResearchTemplate } from "@/lib/research-templates";
