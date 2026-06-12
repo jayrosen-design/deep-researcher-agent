@@ -140,11 +140,6 @@ function parseTurn(raw: string): AgentTurn {
 }
 
 function Index() {
-  const [authed, setAuthedState] = useState(false);
-  useEffect(() => {
-    setAuthedState(isAuthed());
-  }, []);
-
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
   useEffect(() => {
     setSettings(loadSettings());
@@ -225,21 +220,6 @@ function Index() {
       }
     })();
   }, [report, prompt, plan, sources, activeHistoryId, settings.investigatorModel, settings.navigatorApiKey]);
-
-  const handleSignOut = useCallback(() => {
-    setAuthed(false);
-    setAuthedState(false);
-    setPrompt(null);
-    setPhase("input");
-    setPlan(null);
-    setPlanError(null);
-    setPlanLoading(false);
-    setTrace([]);
-    setReport(null);
-    setSources([]);
-    setFatalError(null);
-    cancelled.current = true;
-  }, []);
 
   const appendStep = useCallback((step: TraceStep) => {
     setTrace((t) => [...t, step]);
@@ -928,15 +908,11 @@ function Index() {
     ];
   }, [phase, trace.length, report, running]);
 
-  if (!authed) {
-    return <PasswordGate onSuccess={() => setAuthedState(true)} />;
-  }
-
   let content: ReactNode;
   if (phase === "input" || !prompt) {
     content = (
       <>
-        <Navbar onSignOut={handleSignOut} settings={settings} onSettingsChange={setSettings} />
+        <Navbar settings={settings} onSettingsChange={setSettings} />
         <div className="mx-auto mt-4 flex w-full max-w-4xl justify-center px-4 sm:px-6">
           <div className="clay-toggle">
             {([
