@@ -78,11 +78,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
       .then((res) => {
         if (cancelled) return;
         setRemoteModels(res.models.length > 0 ? res.models : null);
-      })
-      .catch((e: unknown) => {
-        if (cancelled) return;
-        setRemoteModels(null);
-        setModelsError(e instanceof Error ? e.message : String(e));
+        setModelsError(res.error);
       })
       .finally(() => {
         if (!cancelled) setModelsLoading(false);
@@ -204,7 +200,7 @@ export function SettingsMenu({ settings, onSettingsChange }: Props) {
                   : remoteModels
                     ? `${remoteModels.length} models available for your key`
                     : modelsError
-                      ? "Using bundled defaults (key has no model list)"
+                      ? modelsError
                       : "Using bundled defaults"}
               </div>
             )}
