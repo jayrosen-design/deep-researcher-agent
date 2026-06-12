@@ -15,11 +15,18 @@ An AI research assistant for the UF College of Education with two modes:
 
 ## Screenshots
 
-![Prompt](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/1-prompt.png)
-![Planning](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/2-planning.png)
-![Search](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/3-search.png)
-![Report](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/4-report.png)
-![Continue Research](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/5-continue-research.png)
+![Deep Research Home](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/1%20deep%20research%20home.png)
+![About](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/2%20about.png)
+![Planning](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/3%20planning.png)
+![Plan](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/4%20plan.png)
+![Searcher](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/5%20searcher.png)
+![Writer](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/6%20writer.png)
+![Report Generated](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/7%20report%20generated.png)
+![Report Generated Chat](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/8%20report%20generated%20chat.png)
+![Expert Individual](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/9%20expert%20individual.png)
+![Expert Panel](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/10%20expert%20panel.png)
+![Experts Chat](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/11%20experts%20chat.png)
+![System Prompts Experts](https://raw.githubusercontent.com/jayrosen-design/deep-researcher-agent/main/images/12%20system%20promtps%20experts.png)
 
 ---
 
