@@ -16,7 +16,6 @@ type Props = {
   onSelect: (entry: HistoryEntry) => void;
   onNew: () => void;
   refreshKey?: number;
-  onSignOut?: () => void;
 };
 
 

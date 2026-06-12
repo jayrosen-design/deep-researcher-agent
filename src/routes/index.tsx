@@ -959,7 +959,7 @@ function Index() {
   } else if (phase === "plan") {
     content = (
       <>
-        <Navbar onSignOut={handleSignOut} settings={settings} onSettingsChange={setSettings} />
+        <Navbar settings={settings} onSettingsChange={setSettings} />
         <WorkflowStepper steps={workflowSteps} />
         <div className="mx-auto w-full max-w-4xl px-4 pt-6 sm:px-6">
           <StageHeader stage="plan" title="Strategist is drafting your research plan" />
@@ -980,7 +980,7 @@ function Index() {
   } else {
     content = (
       <>
-        <Navbar onSignOut={handleSignOut} settings={settings} onSettingsChange={setSettings} />
+        <Navbar settings={settings} onSettingsChange={setSettings} />
         <WorkflowStepper steps={workflowSteps} />
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
           <header className="mb-8 flex items-start justify-between gap-4">
@@ -1177,7 +1177,6 @@ function Index() {
         onSelect={handleSelectHistory}
         onNew={handleReset}
         refreshKey={historyRefresh}
-        onSignOut={handleSignOut}
       />
 
       <div className="min-w-0 flex-1">{content}</div>
