@@ -45,7 +45,6 @@ import {
   buildPlanUserMessage,
 } from "@/lib/plan-prompts";
 import { type NavigatorModel } from "@/lib/models";
-import { isAuthed, setAuthed } from "@/lib/auth";
 import {
   DEFAULT_SETTINGS,
   loadSettings,
